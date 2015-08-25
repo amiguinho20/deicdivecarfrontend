@@ -1,0 +1,353 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+	template="/WEB-INF/template.xhtml">
+
+	<ui:define name="content">
+		<h:outputScript name="js/janelafilha.js" library="fences" />
+		<script>
+			janelaFilhaURL = "#{baseURL}modulo/roubocarga/mapaSozinho.xhtml";
+			janelaFilhaTitulo = "mapaSozinho";
+		</script>
+
+		<h:form id="form">
+			<p:messages id="messages" showDetail="true" autoUpdate="true"
+				closable="true" />
+
+			<div class="layout-portlets-box">
+				<div class="Container100">
+					<div class="ContainerIndent">
+						<p:breadCrumb>
+							<p:menuitem value="A..." url="#" disabled="true" />
+							<p:menuitem value="DEIC" url="#" disabled="true" />
+							<p:menuitem value="DIVECAR" url="#" disabled="true" />
+							<p:menuitem value="Roubo de carga e receptação" disabled="true"
+								url="#" />
+							<p:menuitem value="Ocorrência" url="#" />
+						</p:breadCrumb>
+					</div>
+				</div>
+			</div>
+			<div class="layout-portlets-box">
+				<div class="Container100">
+					<div class="ContainerIndent">
+						<h1 class="BigTopic TexAlLeft">Ocorrência</h1>
+						<div class="EmptyBox10"></div>
+						<p:panel id="panelPesquisa" header="Filtros"
+							styleClass="leaden-back">
+
+							<h:panelGrid columns="2">
+								<h:outputText value="Data de registro: " />
+								<h:panelGroup>
+									<p:calendar id="dataInicial"
+										value="#{rdoRouboCargaReceptacaoMB.filtro.dataInicial}"
+										showOn="button" popupIconOnly="false" pattern="dd/MM/yyyy"
+										locale="pt" navigator="true" label="Data de registro inicial"
+										placeholder="De / maior que">
+										<p:ajax event="dateSelect" update="dataFinal" />
+									</p:calendar>
+									<p:calendar id="dataFinal"
+										value="#{rdoRouboCargaReceptacaoMB.filtro.dataFinal}"
+										showOn="button"
+										mindate="#{rdoRouboCargaReceptacaoMB.filtro.dataInicial}"
+										popupIconOnly="false" pattern="dd/MM/yyyy" navigator="true"
+										locale="pt" label="Data de registro final"
+										style="margin-left: 15px;" placeholder="Até / menor que">
+										<f:attribute name="dataInicial"
+											value="#{rdoRouboCargaReceptacaoMB.filtro.dataInicial}" />
+										<f:validator validatorId="primeDataInicialRangeValidator"
+											disabled="true" />
+									</p:calendar>
+								</h:panelGroup>
+
+								<h:outputText value="Flagrante:" />
+								<p:selectOneMenu id="flagrante"
+									value="#{rdoRouboCargaReceptacaoMB.filtro.flagFlagrante}"
+									style="width:150px">
+									<f:selectItem itemLabel="Todos" itemValue="" />
+									<f:selectItem itemLabel="Sim" itemValue="S" />
+									<f:selectItem itemLabel="Não" itemValue="N" />
+								</p:selectOneMenu>
+
+								<h:outputText value="Natureza:" />
+								<p:selectOneMenu id="natureza"
+									value="#{rdoRouboCargaReceptacaoMB.filtro.natureza}"
+									style="width:150px">
+									<f:selectItem itemLabel="Todos" itemValue="" />
+									<f:selectItem itemLabel="Carga" itemValue="C" />
+									<f:selectItem itemLabel="Receptação" itemValue="R" />
+								</p:selectOneMenu>
+
+								<h:outputText value="Complementares:" />
+								<p:selectOneMenu id="complemento"
+									value="#{rdoRouboCargaReceptacaoMB.filtro.complemento}">
+									<f:selectItem itemLabel="Todos" itemValue="" />
+									<f:selectItem
+										itemLabel="Sem complementar (localização/devolução)"
+										itemValue="A" />
+									<f:selectItem
+										itemLabel="Com complementar (localização/devolução)"
+										itemValue="B" />
+									<f:selectItem
+										itemLabel="Apenas complementar (localização/devolução)"
+										itemValue="C" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+
+							<f:facet name="footer">
+								<h:panelGroup layout="block" style="text-align:right;">
+									<p:commandButton id="btnLimpar" value="Limpar"
+										actionListener="#{rdoRouboCargaReceptacaoMB.limpar}"
+										oncomplete="recarregarJanelaFilha()"
+										icon="fa fa-eraser Fs16 white"
+										update="listaDeOcorrenciasLazy panelPesquisa panelMapa" />
+									<ui:remove>
+										<!-- 
+										update="listaDeOcorrenciasLazy panelMapa panelPesquisa panelGrafico"
+										 -->
+									</ui:remove>
+
+									<p:commandButton id="btnPesquisar" value="Pesquisar"
+										actionListener="#{rdoRouboCargaReceptacaoMB.pesquisar}"
+										oncomplete="recarregarJanelaFilha()"
+										icon="fa fa-search Fs16 white"
+										update="listaDeOcorrenciasLazy panelMapa" />
+									<ui:remove>
+										<!-- 
+									update="listaDeOcorrenciasLazy panelMapa panelGrafico"
+									 -->
+									</ui:remove>
+								</h:panelGroup>
+							</f:facet>
+						</p:panel>
+						<div class="EmptyBox40"></div>
+						<p:dataTable id="listaDeOcorrenciasLazy" var="ocorrencia"
+							value="#{rdoRouboCargaReceptacaoMB.ocorrenciasResultadoLazy}"
+							lazy="true"
+							selection="#{rdoRouboCargaReceptacaoMB.ocorrenciasSelecionadas}"
+							disabledSelection="#{ocorrencia.auxiliar.geocoderStatus != 'OK'}"
+							rowSelectMode="checkbox" rowKey="#{ocorrencia.id}"
+							paginator="true" dataLocale="pt"
+							currentPageReportTemplate="Página {currentPage} de {totalPages}"
+							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rows="5" rowsPerPageTemplate="5,10,15,50,100"
+							reflow="true">
+
+							<f:facet name="header">
+								<div class="TexAlLeft">Ocorrências</div>
+							</f:facet>
+							<p:column selectionMode="multiple"
+								style="width:20px;text-align:center" />
+
+							<p:column headerText="Ocorrência">
+								<h:outputText
+									value="#{rdoRouboCargaReceptacaoMB.formatarOcorrencia(ocorrencia)}" />
+							</p:column>
+							<p:column headerText="Data de registro">
+								<h:outputText
+									value="#{rdoRouboCargaReceptacaoMB.formatarData(ocorrencia.datahoraRegistroBo)}" />
+							</p:column>
+							<p:column headerText="Local do fato">
+								<h:outputText
+									value="#{rdoRouboCargaReceptacaoMB.formatarEndereco(ocorrencia)}" />
+							</p:column>
+							<p:column headerText="Complementar" style="width:15%">
+								<h:outputText value="Sim"
+									rendered="#{not empty ocorrencia.anoReferenciaBo}" />
+								<h:outputText value="Não"
+									rendered="#{empty ocorrencia.anoReferenciaBo}" />
+							</p:column>
+							<p:column headerText="Complementos" style="width:15%">
+								<h:outputText value="#{fn:length(ocorrencia.auxiliar.filhos)}" />
+							</p:column>
+							<p:column style="width:120px;text-align:center">
+								<p:menuButton value="Opções">
+									<p:menuitem value="Boletim de ocorrência" icon="fa fa-file" action="ocorrenciadetalhe.xhtml">
+										<f:setPropertyActionListener value="#{ocorrencia}" target="#{rdoRouboCargaReceptacaoMB.ocorrenciaDetalhe}" />
+									</p:menuitem>
+								</p:menuButton>
+							</p:column>
+
+							<f:facet name="footer">
+								<h:outputText
+									value="Total reg. da Pesquisa: #{rdoRouboCargaReceptacaoMB.ocorrenciasResultadoLazy.rowCount}   " />
+							</f:facet>
+						</p:dataTable>
+						<div class="EmptyBox5"></div>
+						<h:panelGroup layout="block" style="text-align:right;">
+							<p:commandButton update="@widgetVar(mapaWidget)"
+								actionListener="#{rdoRouboCargaReceptacaoMB.exibirRegistrosSelecionadosNoMapa}"
+								icon="fa fa-search Fs16 white" value="Expor no mapa"
+								onsuccess="recarregarJanelaFilha()" />
+						</h:panelGroup>
+
+					</div>
+				</div>
+			</div>
+
+
+			<div class="layout-portlets-box">
+				<div class="Container100">
+					<div class="ContainerIndent">
+						<h1 class="BigTopic TexAlLeft">Mapa</h1>
+						<div class="EmptyBox10"></div>
+
+						<h:panelGroup id="panelMapa" layout="block">
+							<p:remoteCommand name="janelaFechadaPeloUsuario"
+								update="panelMapa"
+								actionListener="#{rdoRouboCargaReceptacaoMB.filtroMapa.setExibirJanelaFilha(false)}" />
+
+							<h:panelGroup layout="block"
+								rendered="#{not rdoRouboCargaReceptacaoMB.filtroMapa.exibirJanelaFilha}">
+								<ui:include src="mapa.xhtml">
+									<ui:param name="style" value="width:100%;height:400px" />
+								</ui:include>
+							</h:panelGroup>
+
+							<h:panelGroup layout="block"
+								rendered="#{rdoRouboCargaReceptacaoMB.filtroMapa.exibirJanelaFilha}">
+								<p>
+									<h:outputText styleClass="textoItalico" value="A opção " />
+									<h:outputText styleClass="textoNegrito"
+										value="Exibir em janela separada " />
+									<h:outputText styleClass="textoItalico" value="está acionada. " />
+								</p>
+								<p>
+									<h:outputText styleClass="textoItalico"
+										value="Atente-se ao bloqueador de janela pop-up do seu navegador, caso ela não apareça." />
+								</p>
+								<p>
+									<h:outputText styleClass="textoItalico"
+										value="Caso a janela separada deixe de ser atualizada, por favor, desligue e religue a opção " />
+									<h:outputText styleClass="textoNegrito"
+										value="Exibir em janela separada." />
+								</p>
+							</h:panelGroup>
+
+							<div class="EmptyBox10"></div>
+
+							<h2 class="BigTopic TexAlLeft">Controles</h2>
+							<div class="EmptyBox10"></div>
+
+							<div class="Responsive50 Container50">
+								<div class="ContainerIndent">
+									<h2 class="BigTopic TexAlLeft">Geral</h2>
+									<div class="EmptyBox10"></div>
+
+									<h:panelGrid columns="2">
+										<h:outputText value="Roubo de carga: " style="color: red;" />
+										<p:inputSwitch
+											value="#{rdoRouboCargaReceptacaoMB.filtroMapa.exibirRoubo}"
+											onchange="recarregarJanelaFilha()">
+											<p:ajax
+												listener="#{rdoRouboCargaReceptacaoMB.exibirRegistrosSelecionadosNoMapa}"
+												update="panelMapa" />
+										</p:inputSwitch>
+
+										<h:outputText value="Receptação: " style="color: blue;" />
+										<p:inputSwitch
+											value="#{rdoRouboCargaReceptacaoMB.filtroMapa.exibirReceptacao}"
+											onchange="recarregarJanelaFilha()">
+											<p:ajax
+												listener="#{rdoRouboCargaReceptacaoMB.exibirRegistrosSelecionadosNoMapa}"
+												update="panelMapa" />
+										</p:inputSwitch>
+
+										<h:outputText value="Complementar: " style="color: green;" />
+										<p:inputSwitch
+											value="#{rdoRouboCargaReceptacaoMB.filtroMapa.exibirComplementar}"
+											onchange="recarregarJanelaFilha()">
+											<p:ajax
+												listener="#{rdoRouboCargaReceptacaoMB.exibirRegistrosSelecionadosNoMapa}"
+												update="panelMapa" />
+										</p:inputSwitch>
+
+										<h:outputText value="Apenas linhas: " style="color: grey;" />
+										<p:inputSwitch
+											value="#{rdoRouboCargaReceptacaoMB.filtroMapa.exibirApenasLinhas}"
+											onchange="recarregarJanelaFilha()">
+											<p:ajax
+												listener="#{rdoRouboCargaReceptacaoMB.exibirRegistrosSelecionadosNoMapa}"
+												update="panelMapa" />
+										</p:inputSwitch>
+
+										<h:outputText value="Exibir em janela separada: "
+											style="color: grey;" />
+										<p:inputSwitch
+											value="#{rdoRouboCargaReceptacaoMB.filtroMapa.exibirJanelaFilha}"
+											onchange="#{not rdoRouboCargaReceptacaoMB.filtroMapa.exibirJanelaFilha ? 'abrirJanelaFilha()' : 'fecharJanelaFilha()'}">
+											<p:ajax
+												listener="#{rdoRouboCargaReceptacaoMB.exibirRegistrosSelecionadosNoMapa}"
+												update="panelMapa" />
+										</p:inputSwitch>
+									</h:panelGrid>
+								</div>
+							</div>
+
+							<div class="Responsive50 Container50">
+								<div class="ContainerIndent">
+									<h2 class="BigTopic TexAlLeft">Endereço avulso</h2>
+									<div class="EmptyBox10"></div>
+									<h:panelGrid columns="2">
+										<h:outputText value="Mercado: " />
+										<p:inputSwitch
+											value="#{rdoRouboCargaReceptacaoMB.filtroMapa.exibirAvulsoMercado}"
+											onchange="recarregarJanelaFilha()">
+											<p:ajax
+												listener="#{rdoRouboCargaReceptacaoMB.exibirRegistrosSelecionadosNoMapa}"
+												update="panelMapa" />
+										</p:inputSwitch>
+
+										<h:outputText value="Galpão: " />
+										<p:inputSwitch
+											value="#{rdoRouboCargaReceptacaoMB.filtroMapa.exibirAvulsoGalpao}"
+											onchange="recarregarJanelaFilha()">
+											<p:ajax
+												listener="#{rdoRouboCargaReceptacaoMB.exibirRegistrosSelecionadosNoMapa}"
+												update="panelMapa" />
+										</p:inputSwitch>
+
+										<h:outputText value="Depósito: " />
+										<p:inputSwitch
+											value="#{rdoRouboCargaReceptacaoMB.filtroMapa.exibirAvulsoDeposito}"
+											onchange="recarregarJanelaFilha()">
+											<p:ajax
+												listener="#{rdoRouboCargaReceptacaoMB.exibirRegistrosSelecionadosNoMapa}"
+												update="panelMapa" />
+										</p:inputSwitch>
+
+										<h:outputText value="Desmanche: " />
+										<p:inputSwitch
+											value="#{rdoRouboCargaReceptacaoMB.filtroMapa.exibirAvulsoDesmanche}"
+											onchange="recarregarJanelaFilha()">
+											<p:ajax
+												listener="#{rdoRouboCargaReceptacaoMB.exibirRegistrosSelecionadosNoMapa}"
+												update="panelMapa" />
+										</p:inputSwitch>
+									</h:panelGrid>
+								</div>
+							</div>
+							<h:panelGroup layout="block" style="text-align:right;">
+								<p:commandButton id="btnLimparMapa" value="Limpar mapa"
+									icon="fa fa-eraser Fs16 white"
+									actionListener="#{rdoRouboCargaReceptacaoMB.limparMapa}"
+									oncomplete="recarregarJanelaFilha()"
+									update="panelMapa" />
+							</h:panelGroup>
+
+
+						</h:panelGroup>
+
+					</div>
+				</div>
+			</div>
+		</h:form>
+	</ui:define>
+
+
+
+</ui:composition>

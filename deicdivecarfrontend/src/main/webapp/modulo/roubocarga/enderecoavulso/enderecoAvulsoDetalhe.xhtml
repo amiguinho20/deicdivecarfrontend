@@ -1,0 +1,138 @@
+	<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+<h:body>
+ 
+<ui:composition template="template.xhtml">
+<ui:define name="content">
+
+
+<h:form id="formEnderecoAvulsoDetalhe">
+	<p:messages id="messages" showDetail="false" autoUpdate="true" closable="true" style="margin:20px;"/>
+
+	<p:panel header="#{empty enderecoAvulsoMB.enderecoAvulso.id ? 'Inclusão' : 'Alteração'} de endereço avulso"  style="margin:20px;">
+		<h:panelGrid columns="3">
+			
+			<p:outputLabel for="razaoSocial" value="Razão social:" />
+			<p:inputText id="razaoSocial"
+				value="#{enderecoAvulsoMB.enderecoAvulso.razaoSocial}"
+				required="true" requiredMessage="A razão social é obrigatória">
+				<f:validator validatorId="textoRegexValidator"/>
+			</p:inputText>
+			<p:message for="razaoSocial" />
+
+			<p:outputLabel for="logradouro" value="Logradouro:" />
+			<p:inputText id="logradouro"
+				value="#{enderecoAvulsoMB.enderecoAvulso.logradouro}"
+				required="true" requiredMessage="O logradouro é obrigatório" >
+				<f:validator validatorId="textoRegexValidator"/>
+			</p:inputText>
+			<p:message for="logradouro" />
+
+			<p:outputLabel for="numero" value="Número:" />
+			<p:inputText id="numero"
+				value="#{enderecoAvulsoMB.enderecoAvulso.numero}" required="true"
+				requiredMessage="O número é obrigatório" maxlength="5" >
+				<f:validator validatorId="numeroResidencialRegexValidator" />
+			</p:inputText>
+			<p:message for="numero" />
+
+			<p:outputLabel for="bairro" value="Bairro:" />
+			<p:inputText id="bairro"
+				value="#{enderecoAvulsoMB.enderecoAvulso.bairro}" required="true"
+				requiredMessage="O bairro é obrigatório" >
+				<f:validator validatorId="textoRegexValidator"/>
+			</p:inputText>
+			<p:message for="bairro" />
+
+
+			<p:outputLabel for="cidade" value="Cidade:" />
+			<p:inputText id="cidade"
+				value="#{enderecoAvulsoMB.enderecoAvulso.cidade}" required="true"
+				requiredMessage="A cidade é obrigatória" >
+				<f:validator validatorId="textoRegexValidator"/>
+			</p:inputText>	
+			<p:message for="cidade" />
+
+			<p:outputLabel for="uf" value="UF:"  />
+			<p:selectOneMenu id="uf"  value="#{enderecoAvulsoMB.enderecoAvulso.uf}" style="width:125px" required="true">
+				<f:selectItem itemLabel="SP" itemValue="SP"  />
+				<f:selectItem itemLabel="AC" itemValue="AC"  />
+				<f:selectItem itemLabel="AL" itemValue="AL"  />
+				<f:selectItem itemLabel="AP" itemValue="AP"  />
+				<f:selectItem itemLabel="AM" itemValue="AM"  />
+				<f:selectItem itemLabel="BA" itemValue="BA"  />
+				<f:selectItem itemLabel="CE" itemValue="CE"  />
+				<f:selectItem itemLabel="DF" itemValue="DF"  />
+				<f:selectItem itemLabel="ES" itemValue="ES"  />
+				<f:selectItem itemLabel="GO" itemValue="GO"  />
+				<f:selectItem itemLabel="MA" itemValue="MA"  />
+				<f:selectItem itemLabel="MT" itemValue="MT"  />
+				<f:selectItem itemLabel="MS" itemValue="MS"  />
+				<f:selectItem itemLabel="MG" itemValue="MG"  />
+				<f:selectItem itemLabel="PA" itemValue="PA"  />
+				<f:selectItem itemLabel="PB" itemValue="PB"  />
+				<f:selectItem itemLabel="PR" itemValue="PR"  />
+				<f:selectItem itemLabel="PE" itemValue="PE"  />
+				<f:selectItem itemLabel="PI" itemValue="PI"  />
+				<f:selectItem itemLabel="RJ" itemValue="RJ"  />
+				<f:selectItem itemLabel="RN" itemValue="RN"  />
+				<f:selectItem itemLabel="RS" itemValue="RS"  />
+				<f:selectItem itemLabel="RO" itemValue="RO"  />
+				<f:selectItem itemLabel="RR" itemValue="RR"  />
+				<f:selectItem itemLabel="SC" itemValue="SC"  />
+				<f:selectItem itemLabel="SE" itemValue="SE"  />
+				<f:selectItem itemLabel="TO" itemValue="TO"  />
+			</p:selectOneMenu>
+			<p:message for="uf" />
+				
+			<p:outputLabel for="cep" value="CEP:" />
+			<p:inputText id="cep" value="#{enderecoAvulsoMB.enderecoAvulso.cep}" maxlength="8">
+				<f:validator validatorId="cepRegexValidator"/>
+			</p:inputText>
+			<p:message for="cep" />
+			
+			<p:outputLabel for="tipo" value="Tipo:"  />
+			<p:selectOneMenu id="tipo"  value="#{enderecoAvulsoMB.enderecoAvulso.tipo}" style="width:125px" required="true" requiredMessage="O tipo é obrigatório">
+				<f:selectItem itemLabel="Mercado" itemValue="MERCADO"  />
+				<f:selectItem itemLabel="Galpão" itemValue="GALPAO"  />
+				<f:selectItem itemLabel="Deposito" itemValue="DEPOSITO"  />
+				<f:selectItem itemLabel="Desmanche" itemValue="DESMANCHE"  />
+			</p:selectOneMenu>
+				<p:message for="tipo" />				
+				
+		</h:panelGrid>
+		
+		<f:facet name="footer" >
+			<h:panelGroup layout="block" style="text-align:right;">
+				<p:commandButton action="enderecoAvulso" icon="ui-icon-cancel"
+					value="Cancelar" immediate="true">
+					<f:param name="i" value="1" />
+				</p:commandButton>
+				<p:commandButton icon="ui-icon-check"
+					action="#{enderecoAvulsoMB.incluir}" value="Incluir"
+					update="@form"
+					rendered="#{empty enderecoAvulsoMB.enderecoAvulso.id}">
+					<f:param name="i" value="1" />
+				</p:commandButton>
+				<p:commandButton icon="ui-icon-check"
+					action="#{enderecoAvulsoMB.alterar}" value="Alterar"
+					update="@form"
+					rendered="#{not empty enderecoAvulsoMB.enderecoAvulso.id}">
+					<f:param name="i" value="1" />
+				</p:commandButton>
+
+			</h:panelGroup>
+		</f:facet>
+		
+	</p:panel>
+</h:form>
+	
+</ui:define>
+</ui:composition>
+</h:body>
+</html>

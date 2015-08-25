@@ -1,0 +1,71 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+
+<cc:interface>
+	<cc:attribute name="label" required="true"
+		displayName="O valor do outputLabel do componente" />
+	<cc:attribute name="text" required="true"
+		displayName="O valor do outputText do componente" />
+	<cc:attribute name="text2" default=""
+		displayName="O valor do outputText do componente composto" />
+
+	<cc:attribute name="styleClassDiv" default="Container20 Responsive"
+		displayName="O estilo da div do componente" />
+	<cc:attribute name="styleClassText" default="black"
+		displayName="O estilo do outputText do componente" />
+	<cc:attribute name="isData" default="false" />
+	<cc:attribute name="isFlag" default="false" />
+	<cc:attribute name="escape" default="true" />
+
+</cc:interface>
+
+<cc:implementation>
+	<h:panelGroup
+		rendered="#{not empty cc.attrs.text and cc.attrs.text != '0.0' and cc.attrs.text != '0' and cc.attrs.text != 'I'}">
+		<div class="#{cc.attrs.styleClassDiv}">
+			<h:panelGrid columns="1">
+				<h:outputLabel value="#{cc.attrs.label}" />
+				<h:outputText value="#{cc.attrs.text}"
+					styleClass="#{cc.attrs.styleClassText}"
+					rendered="#{not cc.attrs.isData and not cc.attrs.isFlag}"
+					escape="#{cc.attrs.escape}" />
+
+				<h:panelGroup rendered="#{cc.attrs.isData}">
+					<h:outputText value="#{cc.attrs.text}"
+						styleClass="#{cc.attrs.styleClassText}"
+						rendered="#{cc.attrs.isData}">
+						<f:converter converterId="dataConverter" />
+					</h:outputText>
+
+					<h:outputText value=" #{cc.attrs.text2}"
+						styleClass="#{cc.attrs.styleClassText}"
+						rendered="#{not empty cc.attrs.text2}">
+					</h:outputText>
+				</h:panelGroup>
+
+				<h:panelGroup rendered="#{cc.attrs.isFlag}">
+					<h:outputText value="Sim" styleClass="#{cc.attrs.styleClassText}"
+						rendered="#{cc.attrs.text == 'S'}" />
+					<h:outputText value="Não" styleClass="#{cc.attrs.styleClassText}"
+						rendered="#{cc.attrs.text == 'N'}" />
+					<h:outputText value="Masculino"
+						styleClass="#{cc.attrs.styleClassText}"
+						rendered="#{cc.attrs.text == 'M'}" />
+					<h:outputText value="Feminino"
+						styleClass="#{cc.attrs.styleClassText}"
+						rendered="#{cc.attrs.text == 'F'}" />
+				</h:panelGroup>
+			</h:panelGrid>
+		</div>
+	</h:panelGroup>
+
+</cc:implementation>
+
+</html>

@@ -1,0 +1,623 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+	xmlns:fe="http://xmlns.jcp.org/jsf/composite/fences/cc"
+	template="/WEB-INF/template.xhtml">
+
+	<ui:define name="content">
+
+		<h:form>
+			<c:set var="ocorrencia"
+				value="#{rdoRouboCargaReceptacaoMB.ocorrenciaDetalhe}" />
+			<p:messages id="messages" showDetail="true" autoUpdate="true"
+				closable="true" />
+
+			<div class="layout-portlets-box">
+				<div class="Container100">
+					<div class="ContainerIndent">
+						<p:breadCrumb>
+							<p:menuitem value="A..." url="#" disabled="true" />
+							<p:menuitem value="DEIC" url="#" disabled="true" />
+							<p:menuitem value="DIVECAR" url="#" disabled="true" />
+							<p:menuitem value="Roubo de carga e receptação" disabled="true"
+								url="#" />
+							<p:menuitem value="Ocorrência" url="ocorrencia.xhtml" />
+							<p:menuitem value="Boletim de ocorrência" />
+						</p:breadCrumb>
+					</div>
+				</div>
+			</div>
+
+			<div class="layout-portlets-box">
+				<div class="Container100">
+					<div class="ContainerIndent">
+						<h1 class="BigTopic TexAlLeft">Boletim de ocorrência</h1>
+						<div class="EmptyBox10"></div>
+
+						<fe:exibir label="Dependência" text="#{ocorrencia.nomeDelegacia}" />
+						<fe:exibir label="Boletim No."
+							text="#{ocorrencia.numBo}/#{ocorrencia.anoBo}" />
+						<fe:exibir label="Iniciado"
+							text="#{ocorrencia.datahoraRegistroBo}" isData="true" />
+						<fe:exibir label="Emitido"
+							text="#{ocorrencia.datahoraImpressaoBo}" isData="true" />
+						<fe:exibir label="Boletim de ocorrência de autoria"
+							text="#{ocorrencia.flagAutoriaBo == 'S' ? 'Conhecida' : 'Desconhecida'}" />
+
+						<h:panelGroup rendered="#{not empty ocorrencia.auxiliar.pai}">
+							<c:set var="pai" value="#{ocorrencia.auxiliar.pai}" />
+							<div class="EmptyBox10" />
+							<div class="Container100">
+								<h:panelGrid columns="1">
+									<p:outputLabel value="Complementar ao(s) R.D.O.(s) No.(s)" />
+									<p:commandLink
+										value="#{pai.numBo}/#{pai.anoBo} - #{pai.nomeDelegacia}"
+										actionListener="#{rdoRouboCargaReceptacaoMB.atualizarOcorrenciaDetalhe(pai)}"
+										update="@form">
+										<ui:remove>
+										<f:setPropertyActionListener value="#{pai}"
+											target="#{rdoRouboCargaReceptacaoMB.ocorrenciaDetalhe}" />
+										</ui:remove>
+									</p:commandLink>
+								</h:panelGrid>
+							</div>
+						</h:panelGroup>
+
+						<h:panelGroup
+							rendered="#{fn:length(ocorrencia.auxiliar.filhos) > 0}">
+							<div class="Container100 Responsive">
+								<h:panelGrid columns="1">
+									<p:outputLabel value="Complementado pelo(s) R.D.O.(s) No.(s)" />
+									<h:panelGrid columns="1">
+										<ui:repeat value="#{ocorrencia.auxiliar.filhos.toArray()}" var="filho">
+											<p:commandLink
+												value="#{filho.numBo}/#{filho.anoBo} - #{filho.nomeDelegacia}"
+												actionListener="#{rdoRouboCargaReceptacaoMB.atualizarOcorrenciaDetalhe(filho)}"
+												update="@form">
+											</p:commandLink>
+										</ui:repeat>
+									</h:panelGrid>
+								</h:panelGrid>
+							</div>
+						</h:panelGroup>
+
+						<div class="BigTopic">
+							<div class="Fs18">Natureza</div>
+						</div>
+						<h:outputText
+							value="#{rdoRouboCargaReceptacaoMB.montarNatureza(ocorrencia)}"
+							styleClass="Container100 black" escape="false" />
+
+
+						<div class="EmptyBox20" />
+						<fe:exibirEndereco label="Local do fato"
+							logradouro="#{ocorrencia.logradouro}"
+							numero="#{ocorrencia.numeroLogradouro}"
+							complemento="#{ocorrencia.complemento}"
+							bairro="#{ocorrencia.bairro}" cep="#{ocorrencia.cep}"
+							cidade="#{ocorrencia.cidade}" uf="#{ocorrencia.idUf}" />
+
+						<fe:exibir label="Tipo de local"
+							text="#{ocorrencia.descrTipolocal} - #{ocorrencia.descrSubtipolocal}" />
+
+						<div class="EmptyBox20" />
+						<fe:exibir label="Circunscrição"
+							text="#{ocorrencia.descrCircunscricao}" />
+						<fe:exibir label="Ocorrência"
+							text="#{ocorrencia.dataOcorrenciaBo}"
+							text2="#{empty ocorrencia.horaOcorrenciaBo ? ocorrencia.descrPeriodo : ocorrencia.horaOcorrenciaBo}"
+							isData="true" />
+						<fe:exibir label="Comunicação"
+							text="#{ocorrencia.dataComunicacaoBo}"
+							text2="#{ocorrencia.horaComunicacaoBo}" isData="true" />
+						<fe:exibir label="Elaboração"
+							text="#{ocorrencia.datahoraRegistroBo}" isData="true" />
+						<fe:exibir label="Flagrante" text="#{ocorrencia.flagFlagrante}"
+							isFlag="true" />
+
+						<h:panelGroup rendered="#{fn:length(ocorrencia.pessoas) > 0}">
+							<div class="EmptyBox20" />
+							<div class="BigTopic">
+								<div class="Fs18">
+									<h:outputText
+										value="#{fn:length(ocorrencia.pessoas) == 1 ? 'Pessoa' : 'Pessoas'}" />
+								</div>
+							</div>
+							<ui:repeat value="#{ocorrencia.pessoas}" var="pessoa">
+								<p:panel styleClass="leaden-back">
+									<div class="Container">
+										<fe:exibir label="Tipo" text="#{pessoa.descrTipoPessoa}" />
+
+										<fe:exibir label="Nome" text="#{pessoa.nomePessoa}" />
+										<fe:exibir label="Estado civil"
+											text="#{pessoa.descrEstadoCivil}" />
+										<fe:exibir label="Vulgo" text="#{pessoa.vulgoPessoa}" />
+										<fe:exibir label="Nome do pai" text="#{pessoa.nomepaiPessoa}" />
+										<fe:exibir label="Nome da mãe" text="#{pessoa.nomemaePessoa}" />
+										<fe:exibir label="Nascimento"
+											text="#{pessoa.dataNascimentoPessoa}" isData="true" />
+										<fe:exibir label="Idade" text="#{pessoa.idadePessoa}" />
+										<fe:exibir label="Sexo"
+											text="#{pessoa.sexoPessoa == 'M' ? 'Masculino' : 'Feminino' }" />
+										<fe:exibir label="RG" text="#{pessoa.rg}" />
+										<fe:exibir label="RG UF" text="#{pessoa.rgUf}" />
+										<fe:exibir label="Emissão do RG"
+											text="#{pessoa.rgDataEmissao}" isData="true" />
+										<fe:exibir label="RG original" text="#{pessoa.flagRgOriginal}"
+											isFlag="true" rendered="#{not empty pessoa.rg}" />
+										<fe:exibir label="CPF" text="#{pessoa.cpf}" />
+										<fe:exibir label="CNH" text="#{pessoa.cnh}" />
+										<fe:exibir label="Título de eleitor"
+											text="#{pessoa.nrTitEleitor}" />
+										<fe:exibir label="Zona do título de eleitor"
+											text="#{pessoa.zonaTitEleitor}" />
+										<fe:exibir label="Seção do título de eleitor"
+											text="#{pessoa.secaoTitEleitor}" />
+										<fe:exibir label="Número da carteira profissional"
+											text="#{pessoa.nrCartProf}" />
+										<fe:exibir label="Série da carteira profissional"
+											text="#{pessoa.serieCartProf}" />
+										<fe:exibir label="UF da carteira profissional"
+											text="#{pessoa.ufCartProf}" />
+										<fe:exibir label="Outros documentos"
+											text="#{pessoa.outrosDocumentos}" />
+										<fe:exibir label="Nacionalidade"
+											text="#{pessoa.nacionalidadePessoa}" />
+										<fe:exibir label="Naturalidade"
+											text="#{pessoa.naturalidadePessoa}" />
+										<fe:exibir label="E-Mail" text="#{pessoa.emailPessoa}" />
+										<fe:exibir label="Profissão" text="#{pessoa.descrProfissao}" />
+										<fe:exibir label="Grau de instrução"
+											text="#{pessoa.descrGrauInstrucao}" />
+										<fe:exibir label="Peso" text="#{pessoa.pesoCaracteristica}" />
+										<fe:exibir label="Altura"
+											text="#{pessoa.alturaCaracteristica}" />
+										<fe:exibir label="Compleição"
+											text="#{pessoa.compleicaoCaracteristica}" />
+										<fe:exibir label="Tipo de cabelo"
+											text="#{pessoa.descrTipoCabelo}" />
+										<fe:exibir label="Comprimento do cabelo"
+											text="#{pessoa.comprimentoCabeloCaract}" />
+										<fe:exibir label="Cor do cabelo"
+											text="#{pessoa.descrCorCabelo}" />
+										<fe:exibir label="Cor do olho" text="#{pessoa.descrCorOlho}" />
+										<fe:exibir label="Cor da cútis" text="#{pessoa.descrCorCutis}" />
+										<fe:exibir label="Observações" text="#{pessoa.observacoes}"
+											styleClassDiv="Container60 Responsive" />
+
+
+										<h:panelGroup rendered="#{fn:length(pessoa.enderecos) == 1}">
+											<ui:repeat value="#{pessoa.enderecos}" var="endereco">
+												<fe:exibirEndereco label="Endereço"
+													tipo="#{endereco.tipoEndereco}"
+													logradouro="#{endereco.logradouroEndereco}"
+													numero="#{endereco.numeroLogradouroEndereco}"
+													complemento="#{endereco.complementoEndereco}"
+													bairro="#{endereco.bairroEndereco}"
+													cep="#{endereco.cepEndereco}"
+													cidade="#{endereco.cidadeEndereco}" uf="#{endereco.idUf}"
+													nomeEmpresa="#{endereco.nomeEmpresa}"
+													pontoReferencia="#{endereco.pontoReferenciaEndereco}" />
+											</ui:repeat>
+										</h:panelGroup>
+										<h:panelGroup rendered="#{fn:length(pessoa.enderecos) > 1}"
+											layout="block" styleClass="Container100">
+											<h:panelGrid columns="1">
+												<h:outputText value="Endereços" />
+												<p:dataTable value="#{pessoa.enderecos}" var="endereco"
+													reflow="true">
+													<p:column headerText="Tipo">
+														<h:outputText
+															value="#{endereco.tipoEndereco == 'R' ? 'Residencial' : 'Comercial'}" />
+													</p:column>
+													<p:column headerText="Logradouro">
+														<h:outputText value="#{endereco.logradouroEndereco}" />
+													</p:column>
+													<p:column headerText="Número" style="width:5%">
+														<h:outputText value="#{endereco.numeroLogradouroEndereco}" />
+													</p:column>
+													<p:column headerText="Comple.">
+														<h:outputText value="#{endereco.complementoEndereco}" />
+													</p:column>
+													<p:column headerText="Bairro">
+														<h:outputText value="#{endereco.bairroEndereco}" />
+													</p:column>
+													<p:column headerText="Cidade">
+														<h:outputText value="#{endereco.cidadeEndereco}" />
+													</p:column>
+													<p:column headerText="UF" style="width:5%">
+														<h:outputText value="#{endereco.idUf}" />
+													</p:column>
+													<p:column headerText="Empresa">
+														<h:outputText value="#{endereco.nomeEmpresa}" />
+													</p:column>
+													<p:column headerText="Referência">
+														<h:outputText value="#{endereco.pontoReferenciaEndereco}" />
+													</p:column>
+												</p:dataTable>
+											</h:panelGrid>
+											<div class="EmptyBox10" />
+										</h:panelGroup>
+
+										<h:panelGroup rendered="#{fn:length(pessoa.vestuarios) == 1}">
+											<ui:repeat value="#{pessoa.vestuarios}" var="vestuario">
+												<fe:exibir label="Tipo do vestuário"
+													text="#{vestuario.descrTipoVestuario}" />
+												<fe:exibir label="Característica do vestuário"
+													text="#{vestuario.caracteristicaVestuario}" />
+											</ui:repeat>
+										</h:panelGroup>
+										<h:panelGroup rendered="#{fn:length(pessoa.vestuarios) > 1}"
+											layout="block" styleClass="Container100">
+											<h:panelGrid columns="1">
+												<h:outputText value="Vestuários" />
+												<p:dataTable value="#{pessoa.vestuarios}" var="vestuario"
+													reflow="true">
+													<p:column headerText="Tipo">
+														<h:outputText value="#{vestuario.descrTipoVestuario}" />
+													</p:column>
+													<p:column headerText="Característica">
+														<h:outputText value="#{vestuario.caracteristicaVestuario}" />
+													</p:column>
+												</p:dataTable>
+											</h:panelGrid>
+											<div class="EmptyBox10" />
+										</h:panelGroup>
+
+										<h:panelGroup rendered="#{fn:length(pessoa.adornos) == 1}">
+											<ui:repeat value="#{pessoa.adornos}" var="adorno">
+												<fe:exibir label="Tipo do adorno"
+													text="#{adorno.descrTipoAdorno}" />
+												<fe:exibir label="Local do adorno"
+													text="#{adorno.descrLocalCorpo}" />
+												<fe:exibir label="Característica do adorno"
+													text="#{adorno.caracteristicaAdorno}" />
+											</ui:repeat>
+										</h:panelGroup>
+										<h:panelGroup rendered="#{fn:length(pessoa.adornos) > 1}"
+											layout="block" styleClass="Container100">
+											<h:panelGrid columns="1">
+												<h:outputText value="Adornos" />
+												<p:dataTable value="#{pessoa.adornos}" var="adorno"
+													reflow="true">
+													<p:column headerText="Tipo">
+														<h:outputText value="#{adorno.descrTipoAdorno}" />
+													</p:column>
+													<p:column headerText="Local do corpo">
+														<h:outputText value="#{adorno.descrLocalCorpo}" />
+													</p:column>
+													<p:column headerText="Característica">
+														<h:outputText value="#{adorno.caracteristicaAdorno}" />
+													</p:column>
+												</p:dataTable>
+											</h:panelGrid>
+											<div class="EmptyBox10" />
+										</h:panelGroup>
+
+										<h:panelGroup
+											rendered="#{fn:length(pessoa.deformidades) == 1}">
+											<ui:repeat value="#{pessoa.deformidades}" var="deformidade">
+												<fe:exibir label="Descrição da deformidade"
+													text="#{deformidade.descrTipoDeformidade}" />
+												<fe:exibir label="Local da deformidade"
+													text="#{deformidade.descrLocalCorpo}" />
+											</ui:repeat>
+										</h:panelGroup>
+										<h:panelGroup rendered="#{fn:length(pessoa.deformidades) > 1}"
+											layout="block" styleClass="Container100">
+											<h:panelGrid columns="1">
+												<h:outputText value="Deformidades" />
+												<p:dataTable value="#{pessoa.deformidades}"
+													var="deformidade" reflow="true">
+													<p:column headerText="Descrição">
+														<h:outputText value="#{deformidade.descrTipoDeformidade}" />
+													</p:column>
+													<p:column headerText="Local do corpo">
+														<h:outputText value="#{deformidade.descrLocalCorpo}" />
+													</p:column>
+												</p:dataTable>
+											</h:panelGrid>
+											<div class="EmptyBox10" />
+										</h:panelGroup>
+
+										<fe:exibir label="Natureza"
+											text="#{rdoRouboCargaReceptacaoMB.montarNaturezaPessoa(pessoa)}"
+											styleClassDiv="Container100 black" escape="false" />
+
+										<fe:exibir label="Telefone"
+											text="#{rdoRouboCargaReceptacaoMB.formatarColecaoEmUmBox('-', '; ', pessoa.telefones, 'dddTelefone', 'numeroTelefone')}" />
+									</div>
+								</p:panel>
+								<div class="EmptyBox10" />
+							</ui:repeat>
+						</h:panelGroup>
+
+						<h:panelGroup rendered="#{fn:length(ocorrencia.veiculos) > 0}">
+							<div class="EmptyBox20" />
+							<div class="BigTopic">
+								<div class="Fs18">
+									<h:outputText
+										value="#{fn:length(ocorrencia.veiculos) == 1 ? 'Veículo' : 'Veículos'}" />
+								</div>
+							</div>
+							<ui:repeat value="#{ocorrencia.veiculos}" var="veiculo">
+
+								<p:panel styleClass="leaden-back">
+									<div class="Container">
+										<fe:exibir label="Placa" text="#{veiculo.placaVeiculo}" />
+										<fe:exibir label="Chassis" text="#{veiculo.chassisVeiculo}" />
+										<fe:exibir label="Ano de fabricação"
+											text="#{veiculo.anoFabricacao}" />
+										<fe:exibir label="Ano do modelo" text="#{veiculo.anoModelo}" />
+										<fe:exibir label="Tipo" text="#{veiculo.descrTipoVeiculo}" />
+										<fe:exibir label="Marca" text="#{veiculo.descrMarcaVeiculo}" />
+										<fe:exibir label="Combustível"
+											text="#{veiculo.descrCombustivel}" />
+										<fe:exibir label="Cidade" text="#{veiculo.cidadeVeiculo}" />
+										<fe:exibir label="Renavam" text="#{veiculo.codRenavam}" />
+										<fe:exibir label="Proprietário"
+											text="#{veiculo.nomeProprietarioVeiculo}" />
+
+										<fe:exibir label="Ocorrência"
+											text="#{veiculo.descrOcorrenciaVeiculo}" />
+										<fe:exibir label="Tipo de local"
+											text="#{veiculo.descrTipolocal}" />
+										<fe:exibir label="Seguro" text="#{veiculo.flagSeguroVeiculo}"
+											isFlag="true" />
+										<fe:exibir label="Seguradora"
+											text="#{veiculo.seguradoraVeiculo}" />
+										<fe:exibir label="Apólice" text="#{veiculo.apoliceVeiculo}" />
+										<fe:exibir label="Logotipo" text="#{veiculo.logotipoVeiculo}" />
+										<fe:exibir label="Escolta"
+											text="#{veiculo.flagEscoltaVeiculo}" isFlag="true" />
+										<fe:exibir label="Tempo de abandono"
+											text="#{veiculo.tempoAbandonoVeiculo}" />
+										<fe:exibir label="Documentos levados"
+											text="#{veiculo.documentosLevados}" />
+										<fe:exibir label="Chassis remarcado"
+											text="#{veiculo.chassisRemarcado}" />
+										<fe:exibir label="Observação"
+											text="#{veiculo.observacaoVeiculo}"
+											styleClassDiv="Container60 Responsive" />
+
+										<h:panelGroup rendered="#{fn:length(veiculo.segurancas) > 0}"
+											layout="block" styleClass="BorderedBox Container100">
+											<div class="Fs16 black">Seguranças</div>
+											<ui:repeat value="#{veiculo.segurancas}" var="seguranca">
+												<div class="ContainerIndent">
+													<fe:exibir label="Segurança"
+														text="#{seguranca.descrVeiculoSeguranca}" />
+												</div>
+											</ui:repeat>
+										</h:panelGroup>
+
+										<h:panelGroup rendered="#{fn:length(veiculo.acessos) > 0}"
+											layout="block" styleClass="BorderedBox Container100">
+											<div class="Fs16 black">Acessos</div>
+											<ui:repeat value="#{veiculo.acessos}" var="acesso">
+												<div class="ContainerIndent">
+													<fe:exibir label="Acesso"
+														text="#{acesso.descrVeiculoAcesso}" />
+												</div>
+											</ui:repeat>
+										</h:panelGroup>
+
+										<h:panelGroup rendered="#{fn:length(veiculo.cargas) > 0}"
+											layout="block" styleClass="BorderedBox Container100">
+											<div class="Fs16 black">Cargas</div>
+											<ui:repeat value="#{veiculo.cargas}" var="carga">
+												<div class="ContainerIndent">
+													<fe:exibir label="Tipo" text="#{carga.descrTipoVeiccarga}" />
+													<fe:exibir label="Escolta" text="#{carga.flagEscolta}"
+														isFlag="true" />
+													<fe:exibir label="Recuperação"
+														text="#{carga.flagRecuperacao}" isFlag="true" />
+													<fe:exibir label="Data de recuperação"
+														text="#{carga.dataRecuperacao}" isData="true" />
+													<fe:exibir label="Hora de recuperação"
+														text="#{carga.horaRecuperacao}" />
+													<fe:exibir label="Local de recuperação"
+														text="#{carga.localRecuperacao}" />
+												</div>
+											</ui:repeat>
+										</h:panelGroup>
+									</div>
+								</p:panel>
+								<div class="EmptyBox10" />
+							</ui:repeat>
+						</h:panelGroup>
+
+
+						<h:panelGroup rendered="#{fn:length(ocorrencia.cargas) > 0}">
+							<div class="EmptyBox32" />
+							<div class="BigTopic">
+								<div class="Fs18">
+									<h:outputText
+										value="#{fn:length(ocorrencia.cargas) == 1 ? 'Carga' : 'Cargas'}" />
+								</div>
+							</div>
+							<ui:repeat value="#{ocorrencia.cargas}" var="carga">
+								<p:panel styleClass="leaden-back">
+									<div class="Container">
+										<fe:exibir label="Tipo de carga"
+											text="#{carga.descrTipoCarga}" />
+										<fe:exibir label="Detalhe da carga"
+											text="#{carga.detalheCarga}" />
+										<fe:exibir label="Modo" text="#{carga.descrModoObjeto}" />
+										<fe:exibir label="Modo do objeto da carga"
+											text="#{carga.descrModoObjetoCarga}" />
+										<fe:exibir label="Unidade" text="#{carga.descrUnidade}" />
+										<fe:exibir label="Quantidade"
+											text="#{carga.descrUnidadeCarga}" />
+										<fe:exibir label="Destino" text="#{carga.destinoCarga}" />
+										<fe:exibir label="Notas fiscais"
+											text="#{carga.notasFiscaisCarga}" />
+										<fe:exibir label="Local de embarque da carga"
+											text="#{carga.localEmbarqueCarga}" />
+										<fe:exibir label="Embarcador"
+											text="#{carga.nomeEmbarcadorCarga}" />
+										<fe:exibir label="Seguro" text="#{carga.flagSeguroCarga}"
+											isFlag="true" />
+										<fe:exibir label="Origem" text="#{carga.origemCarga}" />
+										<fe:exibir label="Valor" text="#{carga.valorCarga}" />
+										<fe:exibir label="Série" text="#{carga.serieCarga}" />
+										<fe:exibir label="Marca" text="#{carga.marcaCarga}" />
+										<fe:exibir label="Recuperação"
+											text="#{carga.dataRecuperacaoCarga}"
+											text2="#{carga.horaRecuperacaoCarga}" isData="true" />
+										<fe:exibir label="Valor estimado de recuperação"
+											text="#{carga.valorEstimadoRecupCarga}" />
+										<fe:exibir label="Local de recuperação"
+											text="#{carga.localRecuperacaoCarga}" />
+									</div>
+								</p:panel>
+								<div class="EmptyBox10" />
+							</ui:repeat>
+						</h:panelGroup>
+
+						<h:panelGroup rendered="#{fn:length(ocorrencia.objetos) > 0}">
+							<div class="EmptyBox20" />
+							<div class="BigTopic">
+								<div class="Fs18">
+									<h:outputText
+										value="#{fn:length(ocorrencia.objetos) == 1 ? 'Objeto' : 'Objetos'}" />
+								</div>
+							</div>
+							<ui:repeat value="#{ocorrencia.objetos}" var="objeto">
+								<p:panel styleClass="leaden-back">
+									<div class="Container">
+										<fe:exibir label="Tipo" text="#{objeto.descrTipoObjeto}" />
+										<fe:exibir label="Subtipo" text="#{objeto.descrSubtipoObjeto}" />
+										<fe:exibir label="Modo" text="#{objeto.descrModoObjeto}" />
+										<fe:exibir label="Unidade" text="#{objeto.descrUnidade}" />
+										<fe:exibir label="Quantidade"
+											text="#{objeto.quantidadeObjeto}" />
+										<fe:exibir label="Serie" text="#{objeto.serieObjeto}" />
+										<fe:exibir label="Marca" text="#{objeto.marcaObjeto}" />
+										<fe:exibir label="IMEI" text="#{objeto.imei}" />
+										<fe:exibir label="Serial" text="#{objeto.serial}" />
+										<fe:exibir label="Observação"
+											text="#{objeto.observacaoObjeto}"
+											styleClassDiv="Container60 Responsive" />
+									</div>
+								</p:panel>
+								<div class="EmptyBox10" />
+							</ui:repeat>
+						</h:panelGroup>
+
+						<h:panelGroup rendered="#{fn:length(ocorrencia.empresas) > 0}">
+							<div class="EmptyBox20" />
+							<div class="BigTopic">
+								<div class="Fs18">
+									<h:outputText
+										value="#{fn:length(ocorrencia.empresas) == 1 ? 'Empresa' : 'Empresas'}" />
+								</div>
+							</div>
+							<ui:repeat value="#{ocorrencia.empresas}" var="empresa">
+								<p:panel styleClass="leaden-back">
+									<div class="Container">
+										<fe:exibir label="Tipo" text="#{empresa.descrTipoEmpresa}" />
+										<fe:exibir label="CNPJ" text="#{empresa.cgcEmpresa}" />
+										<fe:exibir label="Inscrição municipal"
+											text="#{empresa.inscricaoMunicipalEmpresa}" />
+										<fe:exibir label="Inscrição estadual"
+											text="#{empresa.inscricaoEstadualEmpresa}" />
+										<fe:exibir label="Razão social"
+											text="#{empresa.razaoSocialEmpresa}" />
+										<fe:exibir label="Nome fantasia"
+											text="#{empresa.nomeFantasiaEmpresa}" />
+										<fe:exibir label="Nome da pessoa" text="#{empresa.nomePessoa}" />
+										<fe:exibir label="Nome da pessoa da empresa"
+											text="#{empresa.nomePessoaEmpresa}" />
+										<fe:exibir label="Cargo do representanta"
+											text="#{empresa.cargoRepresentante}" />
+										<fe:exibir label="Telefone DDD"
+											text="#{empresa.dddTelefoneEmpresa}" />
+										<fe:exibir label="Telefone" text="#{empresa.telefoneEmpresa}" />
+										<fe:exibirEndereco label="Endereço da empresa"
+											logradouro="#{empresa.logradouroEmpresa}"
+											numero="#{empresa.numeroLogradouroEmpresa}"
+											complemento="#{empresa.complementoEmpresa}"
+											bairro="#{empresa.bairroEmpresa}" cep="#{empresa.cepEmpresa}"
+											cidade="#{empresa.cidadeEmprea}" uf="#{empresa.idUfEmpresa}" />
+										<fe:exibirEndereco label="Endereço"
+											logradouro="#{empresa.logradouro}"
+											numero="#{empresa.numeroLogradouro}"
+											complemento="#{empresa.complemento}"
+											bairro="#{empresa.bairro}" cep="#{empresa.cep}"
+											cidade="#{empresa.cidade}" uf="#{empresa.idUf}" />
+									</div>
+								</p:panel>
+								<div class="EmptyBox10" />
+							</ui:repeat>
+						</h:panelGroup>
+
+						<h:panelGroup
+							rendered="#{fn:length(ocorrencia.entorpecentes) > 0}">
+							<div class="EmptyBox20" />
+							<div class="BigTopic">
+								<div class="Fs18">
+									<h:outputText
+										value="#{fn:length(ocorrencia.entorpecentes) == 1 ? 'Entorpecente' : 'Entorpecentes'}" />
+								</div>
+							</div>
+							<ui:repeat value="#{ocorrencia.entorpecentes}" var="entorpecente">
+								<p:panel styleClass="leaden-back">
+									<div class="Container">
+										<fe:exibir label="Tóxico" text="#{entorpecente.descrToxico}" />
+										<fe:exibir label="Tóxico entorpecente"
+											text="#{entorpecente.descrToxicoEntorpecente}" />
+										<fe:exibir label="Unidade" text="#{entorpecente.descrUnidade}" />
+										<fe:exibir label="Unidade entorpecente"
+											text="#{entorpecente.descrUnidadeEntorpecente}" />
+										<fe:exibir label="Quantidade encontrada"
+											text="#{entorpecente.qtdeEncontrada}" />
+										<fe:exibir label="Acondicionamento"
+											text="#{entorpecente.descrAcondicionamento}" />
+										<fe:exibir label="Quantidade acondicionamento"
+											text="#{entorpecente.qtdeAcondicionamento}" />
+										<fe:exibir label="Invólucro"
+											text="#{entorpecente.descrInvolucro}" />
+										<fe:exibir label="Laudo IML"
+											text="#{entorpecente.numLaudoIml}" />
+										<fe:exibir label="Ano Laudo IML"
+											text="#{entorpecente.anoLaudoIml}" />
+										<fe:exibir label="Descrição IML"
+											text="#{entorpecente.descrIml}" />
+										<fe:exibir label="Nome do perito do IML"
+											text="#{entorpecente.nomePeritoIml}" />
+										<fe:exibir label="Observações"
+											text="#{entorpecente.observacoes}"
+											styleClassDiv="Container60 Responsive" />
+										<fe:exibir label="Observações entorpecente"
+											text="#{entorpecente.observacoesEntorpecente}"
+											styleClassDiv="Container60 Responsive" />
+									</div>
+								</p:panel>
+								<div class="EmptyBox10" />
+							</ui:repeat>
+						</h:panelGroup>
+
+						<div class="EmptyBox20" />
+						<fe:exibir label="Histórico" text="#{ocorrencia.historicoBo}"
+							styleClassDiv="Container100" />
+
+						<div class="EmptyBox20" />
+						<fe:exibir label="Providências tomadas"
+							text="#{ocorrencia.descrProvidencia}" />
+						<fe:exibir label="Exames requisitados"
+							text="#{ocorrencia.descrExame}" />
+						<fe:exibir label="Solução" text="#{ocorrencia.descrSolucao}" />
+
+
+
+					</div>
+				</div>
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,55 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ps="http://primefaces.org/spark"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<ui:remove>
+		<!-- recebe o 'style' por parametro -->
+	</ui:remove>
+	<p:gmap id="mapa" widgetVar="mapaWidget"
+		center="#{rdoRouboCargaReceptacaoMB.centroMapa}" zoom="9"
+		type="ROADMAP" model="#{rdoRouboCargaReceptacaoMB.geoModel}"
+		style="#{style}">
+		<p:ajax event="overlaySelect"
+			listener="#{rdoRouboCargaReceptacaoMB.onMarkerSelect}" />
+		<p:gmapInfoWindow>
+			<p>
+				<h:outputText
+					value="#{rdoRouboCargaReceptacaoMB.formatarOcorrencia(rdoRouboCargaReceptacaoMB.marcaSelecionada.data)}" />
+			</p>
+			<p>
+				<h:outputText
+					value="#{rdoRouboCargaReceptacaoMB.formatarEndereco(rdoRouboCargaReceptacaoMB.marcaSelecionada.data)}" />
+			</p>
+			<div class="TexAlRight">
+				<p:menuButton value="Opções" rendered="#{not rdoRouboCargaReceptacaoMB.filtroMapa.exibirJanelaFilha}">
+					<p:menuitem value="Boletim de ocorrência" icon="fa fa-file"
+						action="ocorrenciadetalhe.xhtml">
+						<f:setPropertyActionListener
+							value="#{rdoRouboCargaReceptacaoMB.marcaSelecionada.data}"
+							target="#{rdoRouboCargaReceptacaoMB.ocorrenciaDetalhe}" />
+					</p:menuitem>
+					<p:menuitem value="Listar ocorrências no raio de 10km" icon="fa fa-search"
+						action="#{rdoRouboCargaReceptacaoMB.listarRaio}"
+						update="@widgetVar(mapaWidget) listaDeOcorrenciasLazy">
+						<f:setPropertyActionListener
+							value="#{rdoRouboCargaReceptacaoMB.marcaSelecionada.data}"
+							target="#{rdoRouboCargaReceptacaoMB.ocorrenciaDetalhe}" />
+					</p:menuitem>
+
+					<p:menuitem value="Save" icon="ui-icon-disk" rendered="false" />
+					<p:menuitem value="Update" icon="ui-icon-arrowrefresh-1-w"
+						rendered="false" />
+					<p:menuitem value="Delete" icon="ui-icon-close" rendered="false" />
+					<p:separator rendered="false" />
+					<p:menuitem value="Homepage" icon="ui-icon-extlink"
+						rendered="false" />
+				</p:menuButton>
+			</div>
+		</p:gmapInfoWindow>
+	</p:gmap>
+
+</ui:composition>
