@@ -1,14 +1,18 @@
 <ui:composition 
-
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:ui="http://java.sun.com/jsf/facelets">
-    
+
     
     <div id="layout-topbar" class="ShadowGray">
     	<div id="layout-topbar-indent">
-        	<a href="dashboard.xhtml"><h:graphicImage name="images/LogoFences80.png" styleClass="Fleft" library="fences" id="logo" class="Fleft" /></a>
+        	<h:graphicImage name="images/LogoSigma40.png" styleClass="Fleft" library="fences" id="logo" style="margin-top:12px" />
+        	<a href="#" class="Fleft" style="margin-top:24px">
+ 	        	<h:outputText styleClass="fa fa-exclamation-triangle Fs16 softgray" style="padding-left: 10px"/>
+	        	<h:outputText styleClass="Fs16 softgray" value="Protótipo funcional" style="padding-left: 5px"/>
+	        	<h:outputText styleClass="fa fa-exclamation-triangle Fs16 softgray" style="padding-left: 5px"/>
+        	</a>
             <a href="#" id="mobile-menu-button" class="BordRad3 white ShowOnMobile"><i class="fa fa-bars"></i> Menu</a>
             <a href="#" id="mobile-menu-button-gray" class="BordRad3 white ShowOnMobile"><i class="fa fa-caret-down"></i> Menu Superior</a>
             
@@ -51,7 +55,7 @@
                     <ul style="width:175px; margin-left:-10px;" class="Animated03 submenu">
                     	<li><a class="Animated05"><i class="fa fa-user Fs30 Fleft"></i> <span class="Fright Fs20 TexAlRight">Visitante<span class="Fs10 DispBlock">Último login 18:50</span></span></a></li>
                     	<li><a href="#" class="Animated05"><i class="fa fa-dashboard"></i> Meu Perfil</a></li>
-                        <li><a href="#" class="Animated05"><i class="fa fa-magic"></i> Minhas Configurações</a></li>
+                        <li><a href="#{baseURL}/modulo/configuracao/configuracaousuario.xhtml" class="Animated05"><i class="fa fa-magic"></i> Minhas Configurações</a></li>
                         <ui:remove>
                         <!-- 
                         <li><a href="#" class="Animated05"><i class="fa fa-suitcase"></i> Tarefas <span class="notification-bubble BordRad3 Fright">24</span></a></li>

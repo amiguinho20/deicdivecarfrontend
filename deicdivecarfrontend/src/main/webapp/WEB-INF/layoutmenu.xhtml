@@ -56,7 +56,7 @@
             <p:submenu label="Menu Hierárquico" icon="fa fa-sitemap">
                 <p:submenu label="Submenu 1" icon="fa fa-folder">
                     <p:submenu label="Submenu 1.1" icon="fa fa-folder">
-                        <p:submenu label="Submenu 1.2" icon="fa fa-folder">
+                        <p:submenu label="Submenu 1.1.1" icon="fa fa-folder">
                             <p:menuitem value="Link 1" styleClass="fa fa-chain" url="#" />
                             <p:menuitem value="Link 2" styleClass="fa fa-chain" url="#" />
                             <p:menuitem value="Link 3" styleClass="fa fa-chain" url="#" />
@@ -68,6 +68,7 @@
                         <p:submenu label="Roubo de carga e receptação" icon="fa fa-folder">
                             <p:menuitem value="Ocorrência" styleClass="fa fa-chain" url="#{baseURL}modulo/roubocarga/ocorrencia.xhtml" />
                             <p:menuitem value="Endereço avulso" styleClass="fa fa-chain" url="#{baseURL}modulo/roubocarga/enderecoavulso/enderecoAvulso.xhtml" />
+                            <p:menuitem value="Indiciado" styleClass="fa fa-chain" url="/modulo/roubocarga/indiciado/indiciado.xhtml" rendered="false"/>
                         </p:submenu>
                     </p:submenu>
                 </p:submenu>
@@ -75,7 +76,7 @@
 
             <p:separator />
 
-            <p:submenu label="Links" icon="fa fa-dropbox">
+            <p:submenu label="Links" icon="fa fa-dropbox" rendered="false">
                 <p:menuitem value="Documentation" icon="fa fa-life-ring"  url="#" />
                 <p:menuitem value="Font Icons" icon="fa fa-paint-brush" url="#"/>
                 <p:menuitem value="User Profile" icon="fa fa-users" url="#"/>

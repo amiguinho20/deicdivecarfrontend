@@ -7,6 +7,23 @@
 	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
 	xmlns:fe="http://xmlns.jcp.org/jsf/composite/fences/cc"
 	template="/WEB-INF/template.xhtml">
+	
+	
+	<ui:define name="topbar">
+		<h:panelGroup layout="block" rendered="#{not usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}">
+			<ui:include src="/WEB-INF/topbar.xhtml" >
+				<ui:param name="apenasLogo" value="true" />
+			</ui:include>
+		</h:panelGroup>
+	</ui:define>
+	
+	<ui:define name="layoutmenu">
+		<h:panelGroup layout="block" rendered="#{not usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}">
+			<ui:include src="/WEB-INF/layoutmenu.xhtml" />
+		</h:panelGroup>
+	</ui:define>
+	
+	
 
 	<ui:define name="content">
 
@@ -16,6 +33,7 @@
 			<p:messages id="messages" showDetail="true" autoUpdate="true"
 				closable="true" />
 
+			<h:panelGroup layout="block" rendered="#{not usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}">
 			<div class="layout-portlets-box">
 				<div class="Container100">
 					<div class="ContainerIndent">
@@ -25,12 +43,14 @@
 							<p:menuitem value="DIVECAR" url="#" disabled="true" />
 							<p:menuitem value="Roubo de carga e receptação" disabled="true"
 								url="#" />
-							<p:menuitem value="Ocorrência" url="ocorrencia.xhtml" />
+							<p:menuitem value="Ocorrência" url="/modulo/roubocarga/ocorrencia.xhtml" />
+							<p:menuitem value="Indiciado" url="/modulo/roubocarga/indiciado/indiciado.xhtml" rendered="#{rdoRouboCargaReceptacaoMB.origemDetalhe == 'indiciado.xhtml'}" />
 							<p:menuitem value="Boletim de ocorrência" />
 						</p:breadCrumb>
 					</div>
 				</div>
 			</div>
+			</h:panelGroup>
 
 			<div class="layout-portlets-box">
 				<div class="Container100">
@@ -48,7 +68,7 @@
 						<fe:exibir label="Boletim de ocorrência de autoria"
 							text="#{ocorrencia.flagAutoriaBo == 'S' ? 'Conhecida' : 'Desconhecida'}" />
 
-						<h:panelGroup rendered="#{not empty ocorrencia.auxiliar.pai}">
+						<h:panelGroup rendered="#{not empty ocorrencia.auxiliar.pai.id}">
 							<c:set var="pai" value="#{ocorrencia.auxiliar.pai}" />
 							<div class="EmptyBox10" />
 							<div class="Container100">

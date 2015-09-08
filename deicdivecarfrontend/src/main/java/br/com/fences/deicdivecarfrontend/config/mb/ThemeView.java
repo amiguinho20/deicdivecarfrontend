@@ -20,6 +20,17 @@ public class ThemeView implements Serializable {
     public String getColor() {
         return color;
     }
+    
+    public String getCor(){
+    	if (color == null)
+    	{
+    		return "green";
+    	}
+    	else
+    	{
+    		return color.replace("-", "");
+    	}
+    }
 
     public void setColor(String color) {
         this.color = color;

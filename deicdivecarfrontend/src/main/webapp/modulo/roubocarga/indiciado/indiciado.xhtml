@@ -1,0 +1,138 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+	template="/WEB-INF/template.xhtml">
+
+
+	<ui:define name="content">
+		<h:panelGroup layout="block" id="allPanel" styleClass="classAllPanel">
+
+			<div class="layout-portlets-box">
+				<div class="Container100">
+					<div class="ContainerIndent">
+						<h:form>
+							<p:breadCrumb>
+								<p:menuitem value="A..." url="#" disabled="true" />
+								<p:menuitem value="DEIC" url="#" disabled="true" />
+								<p:menuitem value="DIVECAR" url="#" disabled="true" />
+								<p:menuitem value="Roubo de carga e receptação" disabled="true" url="#" />
+								<p:menuitem value="Ocorrência" action="/modulo/roubocarga/ocorrencia.xhtml" rendered="#{indiciadoMB.origem == 'ocorrencia.xhtml'}" />
+								<p:menuitem value="Indiciado" url="#" />
+							</p:breadCrumb>
+						</h:form>
+					</div>
+				</div>
+			</div>
+
+			<div class="layout-portlets-box">
+				<div class="Container100">
+					<div class="ContainerIndent">
+						<h1 class="BigTopic TexAlLeft">Indiciado</h1>
+						<div class="EmptyBox10"></div>
+
+
+
+						<h:form id="formLista"
+							rendered="#{indiciadoMB.formulario == 'formLista'}"
+							styleClass="classFormLista">
+
+							<p:messages id="messages" showDetail="false" autoUpdate="true"
+								closable="true" />
+
+							<p:remoteCommand name="atualizarFooter" update="formLista:listaIndiciadosLazy:footerTotalReg"/>
+							<p:dataTable id="listaIndiciadosLazy" var="indiciado"
+								widgetVar="widgetIndiciado"
+								value="#{indiciadoMB.indiciadosResultadoLazy}" lazy="true"
+								reflow="true" dataLocale="pt" rowSelectMode="checkbox"
+								rowKey="#{indiciado.id}" filterDelay="1500" paginator="true"
+								currentPageReportTemplate="Página {currentPage} de {totalPages}"
+								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								
+								rows="5" rowsPerPageTemplate="5,10,15,50,100">
+
+								<p:ajax event="filter" oncomplete="atualizarFooter()" />
+
+								<p:column style="width:15px;text-align:center">
+									<p:rowToggler />
+								</p:column>
+								<p:rowExpansion>
+									<p:panel header="Detalhe">
+										<p:panelGrid columns="2">
+											<h:outputText value="Nome:" />
+											<h:outputText value="#{indiciado.nome}" />
+
+											<h:outputText value="Nome da mãe:" />
+											<h:outputText value="#{indiciado.nomeDaMae}" />
+
+											<h:outputText value="RG:" />
+											<h:outputText value="#{indiciado.rg}" />
+
+											<h:outputText value="RG UF:" />
+											<h:outputText value="#{indiciado.rgUf}" />
+
+											<h:outputText value="Data de emissão do RG:" />
+											<h:outputText value="#{indiciado.rgDataEmissao}">
+												<f:converter converterId="dataConverter" />
+											</h:outputText>
+
+
+											<h:outputText value="Naturalidade:" />
+											<h:outputText value="#{indiciado.naturalidade}" />
+
+											<h:outputText value="Nacionalidade:" />
+											<h:outputText value="#{indiciado.nacionalidade}" />
+
+											<h:outputText value="Ocorrências:" />
+											<h:panelGroup>
+												<ui:repeat value="#{indiciado.ocorrencias.toArray()}"
+													var="ocorrencia">
+													<p:commandLink
+														actionListener="#{rdoRouboCargaReceptacaoMB.atualizarOcorrenciaDetalheString(ocorrencia.id)}"
+														action="/modulo/roubocarga/ocorrenciadetalhe.xhtml"
+														value="#{ocorrencia.numBo}/#{ocorrencia.anoBo} - #{ocorrencia.nomeDelegacia}">
+														<f:setPropertyActionListener value="indiciado.xhtml" target="#{rdoRouboCargaReceptacaoMB.origemDetalhe}"/>
+													</p:commandLink>
+												</ui:repeat>
+											</h:panelGroup>
+
+
+											<h:outputText value="Última atualização:" />
+											<h:outputText value="#{indiciado.ultimaAtualizacao}">
+												<f:converter converterId="dataConverter" />
+											</h:outputText>
+										</p:panelGrid>
+									</p:panel>
+								</p:rowExpansion>
+
+								<p:column headerText="Nome" filterBy="#{indiciado.nome}">
+									<h:outputText value="#{indiciado.nome}" />
+								</p:column>
+								<p:column headerText="Ocorrência">
+									<h:panelGroup>
+										<ui:repeat value="#{indiciado.ocorrencias.toArray()}" var="ocorrencia">
+										<p:commandLink
+											actionListener="#{rdoRouboCargaReceptacaoMB.atualizarOcorrenciaDetalheString(ocorrencia.id)}"
+											action="/modulo/roubocarga/ocorrenciadetalhe.xhtml"
+											value="#{ocorrencia.numBo}/#{ocorrencia.anoBo} - #{ocorrencia.nomeDelegacia}">
+											<f:setPropertyActionListener value="indiciado.xhtml" target="#{rdoRouboCargaReceptacaoMB.origemDetalhe}"/>
+										</p:commandLink>
+										</ui:repeat>
+									</h:panelGroup>
+								</p:column>
+								<f:facet name="footer">
+									<h:outputText id="footerTotalReg" 
+										value="Total reg. da Pesquisa: #{indiciadoMB.indiciadosResultadoLazy.rowCount}   " />
+								</f:facet>
+							</p:dataTable>
+						</h:form>
+					</div>
+				</div>
+			</div>
+		</h:panelGroup>
+	</ui:define>
+</ui:composition>
+

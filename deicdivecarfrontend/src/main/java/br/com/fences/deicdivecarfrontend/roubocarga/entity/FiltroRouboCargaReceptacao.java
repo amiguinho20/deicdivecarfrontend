@@ -30,6 +30,13 @@ public class FiltroRouboCargaReceptacao implements Serializable{
 	private String flagFlagrante;
 	private String complemento;
 	private String natureza;
+	private String numBo;
+	private String anoBo;
+	private String idDelegacia;
+	
+	//-- limites para montagem e validacao do calendario (nao devem ser limpos)
+	private String limiteDataInicial;
+	private String limiteDataFinal;
 	
 	//-- filtros para pesquisa geo
 	private String latitude;
@@ -46,6 +53,9 @@ public class FiltroRouboCargaReceptacao implements Serializable{
 		setLatitude("");
 		setLongitude("");
 		setRaioEmMetros("");
+		setNumBo("");
+		setAnoBo("");
+		setIdDelegacia("");
 	}
 	
 	public String getDataInicialString(){
@@ -101,7 +111,20 @@ public class FiltroRouboCargaReceptacao implements Serializable{
 		{
 			map.put("raioEmMetros", getRaioEmMetros());
 		}
+		if (Verificador.isValorado(getNumBo()))
+		{
+			map.put("numBo", getNumBo());
+		}
+		if (Verificador.isValorado(getAnoBo()))
+		{
+			map.put("anoBo", getAnoBo());
+		}
+		if (Verificador.isValorado(getIdDelegacia()))
+		{
+			map.put("idDelegacia", getIdDelegacia());
+		}
 
+		
 		return map;
 	}
 
@@ -227,6 +250,46 @@ public class FiltroRouboCargaReceptacao implements Serializable{
 
 	public void setRaioEmMetros(String raioEmMetros) {
 		this.raioEmMetros = raioEmMetros;
+	}
+
+	public String getNumBo() {
+		return numBo;
+	}
+
+	public void setNumBo(String numBo) {
+		this.numBo = numBo;
+	}
+
+	public String getAnoBo() {
+		return anoBo;
+	}
+
+	public void setAnoBo(String anoBo) {
+		this.anoBo = anoBo;
+	}
+
+	public String getIdDelegacia() {
+		return idDelegacia;
+	}
+
+	public void setIdDelegacia(String idDelegacia) {
+		this.idDelegacia = idDelegacia;
+	}
+
+	public String getLimiteDataInicial() {
+		return limiteDataInicial;
+	}
+
+	public void setLimiteDataInicial(String limiteDataInicial) {
+		this.limiteDataInicial = limiteDataInicial;
+	}
+
+	public String getLimiteDataFinal() {
+		return limiteDataFinal;
+	}
+
+	public void setLimiteDataFinal(String limiteDataFinal) {
+		this.limiteDataFinal = limiteDataFinal;
 	}
 
 

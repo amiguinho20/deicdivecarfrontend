@@ -14,8 +14,8 @@
 			janelaFilhaTitulo = "mapaSozinho";
 		</script>
 
-		<h:form id="form">
-			<p:messages id="messages" showDetail="true" autoUpdate="true"
+		<h:form id="form" >
+			<p:messages id="messages" showDetail="false" autoUpdate="true"
 				closable="true" />
 
 			<div class="layout-portlets-box">
@@ -35,25 +35,151 @@
 			<div class="layout-portlets-box">
 				<div class="Container100">
 					<div class="ContainerIndent">
-						<h1 class="BigTopic TexAlLeft">Ocorrência</h1>
+						<h1 class="BigTopic">
+							<span class="TexAlLeft">Ocorrência</span>
+							<span class="Fright">
+								<p:commandLink 
+									actionListener="#{rdoRouboCargaReceptacaoMB.mudarInformativoFuncionalidade()}"
+									styleClass="fa fa-question #{themeView.cor}" 
+									update="panelInformativoContainer"
+									style="text-decoration: none" />
+								
+							</span>
+						</h1>
+						<h:panelGroup layout="block" id="panelInformativoContainer" >
+							<h:panelGroup layout="block" rendered="#{rdoRouboCargaReceptacaoMB.informativoFuncionalidade}" styleClass="BorderedBox Container100 FontGray">
+							<div class="ContainerIndent">
+							<h:outputText value="Informativo da funcionalidade" styleClass="Fs24 red" />
+							<div class="EmptyBox10"></div>
+							<h:outputText value="Esta funcionalidade consiste no conjunto de boletins de ocorrências dos últimos 5 anos com naturezas de roubo
+								   de carga e receptação, junto com seus respectivos boletins de ocorrências complementares."/>
+
+							<div class="EmptyBox30"></div>	
+							<h:outputText value="Painel de filtros" styleClass="FontBold red" />   
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="As ações desse painel controlam a funcionalidade como um todo, no qual a ação de "/>
+							<h:outputText value="Limpar " styleClass="FontBold"/>
+							<h:outputText value="é a limpeza geral e a ação de "/>
+							<h:outputText value="Pesquisar " styleClass="FontBold"/>
+							<h:outputText value="é a pesquisa principal."/>
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="O filtro "/>
+							<h:outputText value="Data de registro " styleClass="FontBold"/>
+							<h:outputText value="possui três funcionalidades distintas: ao informar apenas a "/>
+							<h:outputText value="De / maior que " styleClass="FontBold"/>
+							<h:outputText value="o sistema pesquisará apenas boletins de ocorrência com data de registro maior/igual que a data informada; "/>
+							<h:outputText value="ao informar apenas a "/>
+							<h:outputText value="Até / menor que " styleClass="FontBold"/>
+							<h:outputText value="o sistema pesquisará apenas boletins de ocorrência com data de registro menor/igual que a data informada; "/>
+							<h:outputText value="e ao informar ambas o sistema pesquisará os boletins de ocorrência com data de registro dentro do período informado "/>
+							<h:outputText value="'maior/igual e menor/igual'. "/>
+							
+							<div class="EmptyBox30"></div>	
+							<h:outputText value="Ocorrências (lista de resultados da pesquisa)" styleClass="FontBold red" />   
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="O comportamento padrão da lista é exibir os últimos registros, ordenado por data de registro decrescente, "/>
+							<h:outputText value="e o total de registros contidos no conjunto da funcionalidade. Além disso, também é exibido a página atual "/>
+							<h:outputText value="e o total de páginas para navegação. "/>
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="Em cada registro possui uma lista de opções, sendo que atualmente há apenas a opção "/>
+							<h:outputText value="Boletim de ocorrência " styleClass="FontBold"/>
+							<h:outputText value="no qual exibirá as informação detalhada do respectivo boletim de ocorrência. "/>
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="Além disso, a lista permite a seleção de um ou mais registros, contido em uma ou mais páginas da lista, "/>
+							<h:outputText value="formando assim um subconjunto para o uso das ações "/>
+							<h:outputText value="Listar indiciados " styleClass="FontBold"/>
+							<h:outputText value="e  "/>
+							<h:outputText value="Expor no mapa. " styleClass="FontBold"/>
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="A ação "/>
+							<h:outputText value="Listar indiciados " styleClass="FontBold"/>
+							<h:outputText value="listará todos os indiciados dos boletins ocorrências selecionados na lista de ocorrências. Caso não exista "/>
+							<h:outputText value="registros selecionados, a ação listará os indiciados de todos os boletins de ocorrências contidos "/>
+							<h:outputText value="no cadastro. "/>
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="A ação "/>
+							<h:outputText value="Expor no mapa " styleClass="FontBold"/>
+							<h:outputText value="plotará uma marca/ponto no mapa utilizando o endereço do local do fato dos boletins de ocorrência selecionados. "/>
+							<h:outputText value="Caso não exista registros selecionados, a ação exibirá o mapa sem marcas/pontos. "/>
+							
+							<div class="EmptyBox30"></div>	
+							<h:outputText value="Mapa" styleClass="FontBold red" />   
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="Cada ponto no mapa é referente a um boletim de ocorrência, onde o ponto de cor "/>
+							<h:outputText value="vermelho " styleClass="red" />  
+							<h:outputText value="corresponde à natureza de roubo de carga, o "/>
+							<h:outputText value="azul " styleClass="blue" /> 
+							<h:outputText value="à receptação e o "/>
+							<h:outputText value="verde " styleClass="green" /> 
+							<h:outputText value="trata-se de um boletim de ocorrência complementar."/>
+							<div class="EmptyBox10"></div>
+							<h:outputText value="Além disso, caso o boletim de ocorrência selecionado possua um complemento com a natureza de recuperação, o sistema "/>
+							<h:outputText value="exibirá as ocorrências (pontos) com suas respectivas cores, ligados por uma linha/reta, "/>
+							<h:outputText value="indicando um relacionamento entre ambos. "/>
+							<div class="EmptyBox10"></div>
+							<h:outputText value="A seção de controles possui um conjunto de ações que visam omitir ou visualizar determinados pontos "/>
+							<h:outputText value="no mapa, sendo que o controle "/>
+							<h:outputText value="Exibir em janela separada " styleClass="FontBold" /> 
+							<h:outputText value="serve para abrir o mapa em uma janela separada, afim de facilitar a visualização quando há uso de "/>
+							<h:outputText value="um monitor adicional. Excepcionalmente para essa funcionalidade, é necessário uma atenção ao bloqueador "/>
+							<h:outputText value="de janelas pop-up do navegador/browser em uso. "/>
+							<div class="EmptyBox10"></div>
+							<h:outputText value="Os controles referente a subseção Endereço avulso são ações para visualizar ou omitir "/>
+							<h:outputText value="pontos de endereços contidos no cadastro de endereço avulso. "/>
+
+							<div class="EmptyBox10"></div>
+							<h:outputText value="Para cada ponto ponto no mapa, ao ser acionado/clicado o sistema exibirá a uma janela "/>
+							<h:outputText value="informativa com o identificador do boletim de ocorrência e o local do fato. Ainda, "/>
+							<h:outputText value="exibirá uma lista de opções: "/>
+							<h:outputText value="Boletim de ocorrência " styleClass="FontBold"/>
+							<h:outputText value="no qual exibirá as informação detalhada do respectivo boletim de ocorrência; e "/>
+							
+							<h:outputText value="Listar ocorrências no raio de (5/10/15/50/100)km " styleClass="FontBold"/>
+							<h:outputText value="no qual o sistema listará, a partir do ponto de localização (local do fato) "/>
+							<h:outputText value="da ocorrência acionada e junto com os demais filtros da seção Painel de filtros, as "/>
+							<h:outputText value="ocorrências dentro do raio escolhido, selecionando-as na lista de resultados da pesquisa e "/>
+							<h:outputText value="exibindo-as dentro do raio delimitado. Para essa funcionalidade há um limite, experimental, de exibição de 100 "/>
+							<h:outputText value="ocorrências ordenadas decrescentemente pela data de registro no mapa. "/>
+							
+							<div class="EmptyBox10"></div>
+							<h:outputText value="A ação "/>
+							<h:outputText value="Limpar mapa " styleClass="FontBold" />
+							<h:outputText value="efetua a limpeza do mapa e retorna os controles para as posições padrões. "/>
+							
+							<div class="EmptyBox30"></div>	
+							<h:outputText value="Observações gerais" styleClass="FontBold red" />   
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="A cada acionamento de opção, o sistema exibe na parte inferior direita da janela um ícone animado que "/>
+							<h:outputText value="indica que o sistema está processando a ação solicitada. É recomendado que aguarde o desaparecimento "/>
+							<h:outputText value="do ícone para continuar com o uso. Por motivos da funcionalidade estar em fase de protótipo e de melhoria "/>
+							<h:outputText value="contínua, instabilidades e problemas podem ocorrer. Caso o ícone exceda o tempo de aproximado de 30 segundos, "/>
+							<h:outputText value="acione a tecla de atualizar do navegador para que o sistema retorne a normalidade. "/>
+							<h:outputText value="Essa é a solução de contorno recomendada enquanto o sistema estiver nessa fase. "/>
+							</div>
+							</h:panelGroup>
+						</h:panelGroup>
 						<div class="EmptyBox10"></div>
 						<p:panel id="panelPesquisa" header="Filtros"
 							styleClass="leaden-back">
 
 							<h:panelGrid columns="2">
-								<h:outputText value="Data de registro: " />
+								<p:outputLabel for="dataInicial" value="Data de registro: " />
 								<h:panelGroup>
 									<p:calendar id="dataInicial"
 										value="#{rdoRouboCargaReceptacaoMB.filtro.dataInicial}"
 										showOn="button" popupIconOnly="false" pattern="dd/MM/yyyy"
 										locale="pt" navigator="true" label="Data de registro inicial"
+										mindate="#{rdoRouboCargaReceptacaoMB.filtro.limiteDataInicial}"
+										maxdate="#{rdoRouboCargaReceptacaoMB.filtro.limiteDataFinal}"
 										placeholder="De / maior que">
 										<p:ajax event="dateSelect" update="dataFinal" />
+										<p:ajax event="blur" update="dataFinal" />
 									</p:calendar>
 									<p:calendar id="dataFinal"
 										value="#{rdoRouboCargaReceptacaoMB.filtro.dataFinal}"
 										showOn="button"
-										mindate="#{rdoRouboCargaReceptacaoMB.filtro.dataInicial}"
+										mindate="#{not empty rdoRouboCargaReceptacaoMB.filtro.dataInicial ? rdoRouboCargaReceptacaoMB.filtro.dataInicial : rdoRouboCargaReceptacaoMB.filtro.limiteDataInicial}"
+										maxdate="#{rdoRouboCargaReceptacaoMB.filtro.limiteDataFinal}"
 										popupIconOnly="false" pattern="dd/MM/yyyy" navigator="true"
 										locale="pt" label="Data de registro final"
 										style="margin-left: 15px;" placeholder="Até / menor que">
@@ -64,7 +190,7 @@
 									</p:calendar>
 								</h:panelGroup>
 
-								<h:outputText value="Flagrante:" />
+								<p:outputLabel for="flagrante" value="Flagrante:" />
 								<p:selectOneMenu id="flagrante"
 									value="#{rdoRouboCargaReceptacaoMB.filtro.flagFlagrante}"
 									style="width:150px">
@@ -73,7 +199,7 @@
 									<f:selectItem itemLabel="Não" itemValue="N" />
 								</p:selectOneMenu>
 
-								<h:outputText value="Natureza:" />
+								<p:outputLabel for="natureza" value="Natureza:" />
 								<p:selectOneMenu id="natureza"
 									value="#{rdoRouboCargaReceptacaoMB.filtro.natureza}"
 									style="width:150px">
@@ -82,7 +208,7 @@
 									<f:selectItem itemLabel="Receptação" itemValue="R" />
 								</p:selectOneMenu>
 
-								<h:outputText value="Complementares:" />
+								<p:outputLabel for="complemento" value="Complementares:" />
 								<p:selectOneMenu id="complemento"
 									value="#{rdoRouboCargaReceptacaoMB.filtro.complemento}">
 									<f:selectItem itemLabel="Todos" itemValue="" />
@@ -96,6 +222,20 @@
 										itemLabel="Apenas complementar (localização/devolução)"
 										itemValue="C" />
 								</p:selectOneMenu>
+								
+								<p:outputLabel for="numBo" value="Número"/>
+								<p:inputText id="numBo" value="#{rdoRouboCargaReceptacaoMB.filtro.numBo}" />
+								
+								<p:outputLabel for="anoBo" value="Ano"/>
+								<p:inputText id="anoBo" value="#{rdoRouboCargaReceptacaoMB.filtro.anoBo}" />
+								
+								<p:outputLabel for="idDelegacia" value="Delegacia"/>
+								<p:selectOneMenu id="idDelegacia" value="#{rdoRouboCargaReceptacaoMB.filtro.idDelegacia}" 
+										filter="true" filterMatchMode="contains">
+            						<f:selectItem itemLabel="Todas" itemValue="" />
+            						<f:selectItems value="#{rdoRouboCargaReceptacaoMB.delegacias}"  />
+        						</p:selectOneMenu>
+								
 							</h:panelGrid>
 
 							<f:facet name="footer">
@@ -166,8 +306,21 @@
 							</p:column>
 							<p:column style="width:120px;text-align:center">
 								<p:menuButton value="Opções">
-									<p:menuitem value="Boletim de ocorrência" icon="fa fa-file" action="ocorrenciadetalhe.xhtml">
-										<f:setPropertyActionListener value="#{ocorrencia}" target="#{rdoRouboCargaReceptacaoMB.ocorrenciaDetalhe}" />
+									<p:menuitem value="Boletim de ocorrência" icon="fa fa-file"
+										action="ocorrenciadetalhe.xhtml"
+										rendered="#{not usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}">
+										<f:setPropertyActionListener value="#{ocorrencia}"
+											target="#{rdoRouboCargaReceptacaoMB.ocorrenciaDetalhe}" />
+										<f:setPropertyActionListener value="ocorrencia.xhtml"
+											target="#{rdoRouboCargaReceptacaoMB.origemDetalhe}" />
+									</p:menuitem>
+									<p:menuitem value="Boletim de ocorrência" icon="fa fa-file"
+										onsuccess="window.open('#{baseURL}modulo/roubocarga/ocorrenciadetalhe.xhtml', 'ocorrencia.xhtml', '', true);"
+										rendered="#{usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}">
+										<f:setPropertyActionListener value="#{ocorrencia}"
+											target="#{rdoRouboCargaReceptacaoMB.ocorrenciaDetalhe}" />
+										<f:setPropertyActionListener value="ocorrencia.xhtml"
+											target="#{rdoRouboCargaReceptacaoMB.origemDetalhe}" />
 									</p:menuitem>
 								</p:menuButton>
 							</p:column>
@@ -179,6 +332,12 @@
 						</p:dataTable>
 						<div class="EmptyBox5"></div>
 						<h:panelGroup layout="block" style="text-align:right;">
+							<p:commandButton 
+								actionListener="#{indiciadoMB.pesquisar(rdoRouboCargaReceptacaoMB.ocorrenciasSelecionadas)}"
+								icon="fa fa-list Fs16 white" value="Listar indiciados"
+								action="indiciado/indiciado.xhtml" >
+								<f:setPropertyActionListener value="ocorrencia.xhtml" target="#{indiciadoMB.origem}"/>
+							</p:commandButton>
 							<p:commandButton update="@widgetVar(mapaWidget)"
 								actionListener="#{rdoRouboCargaReceptacaoMB.exibirRegistrosSelecionadosNoMapa}"
 								icon="fa fa-search Fs16 white" value="Expor no mapa"

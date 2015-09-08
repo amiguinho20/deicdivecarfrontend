@@ -14,13 +14,13 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.model.SelectItem;
 //import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.log4j.Logger;
 import org.omnifaces.util.Faces;
-import org.omnifaces.util.Messages;
 import org.primefaces.event.map.OverlaySelectEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.LazyDataModel;
@@ -69,7 +69,6 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 
 	@Inject
 	private EnderecoAvulsoBO enderecoAvulsoBO;
-
 	
 	@Inject
 	private FiltroMapa filtroMapa;
@@ -77,16 +76,21 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 	@Inject
 	private MontarGrafico montarGrafico;
 	
+	
+	private List<SelectItem> delegacias = new ArrayList<>();
+	
 	private Integer contagem;
 	private LazyDataModel<Ocorrencia> ocorrenciasResultadoLazy;
 	private List<Ocorrencia> ocorrenciasSelecionadas;
 	private Ocorrencia ocorrenciaDetalhe;
+	private String origemDetalhe;
 
 	private String centroMapa = "-23.538419906917593, -46.63483794999996";
 	private MapModel geoModel;
 	private Marker marcaSelecionada;
 	
-
+	private boolean informativoFuncionalidade;
+	
 	private enum TipoMarcador { COMPLEMENTAR, RECEPTACAO, ROUBO_CARGA }
 	
 	//--graficos
@@ -94,11 +98,31 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 	private PieChartModel graficoPizzaAno;            
 	private PieChartModel graficoPizzaComplementar;   
 	
+	
+	private Integer listarRaioProgressBar;
+	
 	@PostConstruct
-	private void init() {	  
+	private void init() {
+		Map<String, String> mapDelegacias = rdoRouboCargaReceptacaoBO.listarDelegacias();
+		for (Map.Entry<String, String> entry : mapDelegacias.entrySet())
+		{
+			delegacias.add(new SelectItem(entry.getKey(), entry.getValue()));
+		}
+		String limiteDataInicial = rdoRouboCargaReceptacaoBO.pesquisarPrimeiraDataRegistro();
+		filtro.setLimiteDataInicial(limiteDataInicial);
+		String limiteDataFinal = rdoRouboCargaReceptacaoBO.pesquisarUltimaDataRegistro();
+		filtro.setLimiteDataFinal(limiteDataFinal);
+
+		
+		//
+		//setDelegacias(rdoRouboCargaReceptacaoBO.listarDelegacias());
 		pesquisar();
 	} 
 	 
+	public void mudarInformativoFuncionalidade(){
+		informativoFuncionalidade = !informativoFuncionalidade;
+	}
+	
 	/**
 	 * A pesquisa lazy de fato e' feita apos o termino da execucao desse metodo, pelo primefaces.
 	 * O filtro nao pode ser limpo aqui.
@@ -139,6 +163,15 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 		if (ocorrenciaDetalhe != null && Verificador.isValorado(ocorrenciaDetalhe.getId()))
 		{
 			ocorrenciaDetalhe = rdoRouboCargaReceptacaoBO.consultar(ocorrenciaDetalhe.getId());
+		}
+		return "ocorrenciadetalhe";      
+	} 
+	
+	public String atualizarOcorrenciaDetalheString(String id)
+	{
+		if (Verificador.isValorado(id))
+		{
+			ocorrenciaDetalhe = rdoRouboCargaReceptacaoBO.consultar(id);
 		}
 		return "ocorrenciadetalhe";      
 	}  
@@ -670,8 +703,11 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 						{
 							if (natureza.getIdOcorrencia().equals("40") && natureza.getIdEspecie().equals("40"))
 							{
-								exibir = true;
-								break;
+								if (complementar.getAuxiliar().getGeocoderStatus().equals("OK"))
+								{
+									exibir = true;
+									break;
+								}
 							}
 						}
 						if (exibir)
@@ -717,7 +753,7 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 			
 			for (EnderecoAvulso enderecoAvulso : enderecosAvulsos)
 			{
-				if (enderecoAvulso.getGeocoderStatus().equals("OK")) 
+				if (Verificador.isValorado(enderecoAvulso.getGeocoderStatus()) && enderecoAvulso.getGeocoderStatus().equals("OK")) 
 				{
 					String urlMarcador = "http://maps.google.com/mapfiles/ms/micons/yellow-dot.png";
 					
@@ -758,18 +794,22 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 		}
 	}
 	
-	public void listarRaio()
+	public void listarRaio(Integer raioEmMetros)
 	{
 		Double latitude = ocorrenciaDetalhe.getAuxiliar().getGeometry().getLatitude();
 		Double longitude = ocorrenciaDetalhe.getAuxiliar().getGeometry().getLongitude();
-		Integer raioEmMetros = 10000;
+		//Integer raioEmMetros = 10000;
+		
+		setListarRaioProgressBar(10);
 		
 		filtro.setLatitude(latitude.toString());
 		filtro.setLongitude(longitude.toString());
 		filtro.setRaioEmMetros(raioEmMetros.toString());  
 
-		//-- pesquisar tradicional (montar lista paginada e atualizar total)
+		//-- pesquisar tradicional (montar lista paginada e atualizar total) com os filtros latitude, longitude e raioEmMetros
 		pesquisar();
+		
+		setListarRaioProgressBar(40);
 		
 		//-- pesquisar no raio (limitado a 100 registros)
 		List<Ocorrencia> ocorrenciasRetornadas = rdoRouboCargaReceptacaoBO.pesquisarLazy(filtro, 0, 100);
@@ -777,8 +817,12 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 		//-- selecionar todos do resultado
 		ocorrenciasSelecionadas.addAll(ocorrenciasRetornadas);
 		
+		setListarRaioProgressBar(60);
+		
 		//-- montar mapa
 		exibirRegistrosSelecionadosNoMapa();
+		
+		setListarRaioProgressBar(90);
 		
 		//-- exibe circulo
 		LatLng latLng = new LatLng(latitude, longitude);
@@ -791,30 +835,42 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
         if (geoModel != null)
         {
         	geoModel.addOverlay(circulo);
-        	logger.info("imprimiu o circulo: " + circulo);
+        	//logger.info("imprimiu o circulo: " + circulo);
         }
+        
+        setListarRaioProgressBar(100);
  
 	}
 	
 	public void onMarkerSelect(OverlaySelectEvent event) 
 	{
-		marcaSelecionada = (Marker) event.getOverlay();
-		if (marcaSelecionada == null)
+		if (event != null && event.getOverlay() != null)
 		{
-			logger.debug("A marca selecionada esta nula.");
-		}
-		else if (marcaSelecionada.getTitle() == null)
-		{
-			logger.debug("O titulo da marca selecionada esta nulo.");
-		}
-		else if (marcaSelecionada.getData() == null)
-		{
-			logger.debug("A informacao da marca selecionada esta nula.");
-		}
-		else
-		{
-			Ocorrencia ocorrencia = (Ocorrencia) marcaSelecionada.getData();
-			logger.info("Marca selecionada: " + formatarOcorrencia(ocorrencia) + formatarEndereco(ocorrencia));
+			if (event.getOverlay() instanceof Circle)
+			{
+				logger.info("overlay do circulo");
+			}
+			if (event.getOverlay() instanceof Marker)
+			{
+				marcaSelecionada = (Marker) event.getOverlay();
+				if (marcaSelecionada == null)
+				{
+					logger.debug("A marca selecionada esta nula.");
+				}
+				else if (marcaSelecionada.getTitle() == null)
+				{
+					logger.debug("O titulo da marca selecionada esta nulo.");
+				}
+				else if (marcaSelecionada.getData() == null)
+				{
+					logger.debug("A informacao da marca selecionada esta nula.");
+				}
+				else
+				{
+					Ocorrencia ocorrencia = (Ocorrencia) marcaSelecionada.getData();
+					logger.info("Marca selecionada: " + formatarOcorrencia(ocorrencia) + formatarEndereco(ocorrencia));
+				}
+			}
 		}
 	}
 	
@@ -1155,6 +1211,39 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 	public void setMarcaSelecionada(Marker marcaSelecionada) {
 		this.marcaSelecionada = marcaSelecionada;
 	}
+
+	public String getOrigemDetalhe() {
+		return origemDetalhe;
+	}
+
+	public void setOrigemDetalhe(String origemDetalhe) {
+		this.origemDetalhe = origemDetalhe;
+	}
+
+	public boolean isInformativoFuncionalidade() {
+		return informativoFuncionalidade;
+	}
+
+	public void setInformativoFuncionalidade(boolean informativoFuncionalidade) {
+		this.informativoFuncionalidade = informativoFuncionalidade;
+	}
+
+	public List<SelectItem> getDelegacias() {
+		return delegacias;
+	}
+
+	public void setDelegacias(List<SelectItem> delegacias) {
+		this.delegacias = delegacias;
+	}
+
+	public Integer getListarRaioProgressBar() {
+		return listarRaioProgressBar;
+	}
+
+	public void setListarRaioProgressBar(Integer listarRaioProgressBar) {
+		this.listarRaioProgressBar = listarRaioProgressBar;
+	}
+
 
 	
 }
