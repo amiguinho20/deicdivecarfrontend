@@ -40,6 +40,12 @@ public class IndiciadoMB implements Serializable{
 	
 //	private List<Ocorrencia> ocorrencias;
 	private LazyDataModel<Indiciado> indiciadosResultadoLazy;
+	
+	private boolean informativoFuncionalidade;
+
+	public void mudarInformativoFuncionalidade(){
+		informativoFuncionalidade = !informativoFuncionalidade;
+	}
 
 	
 	@PostConstruct
@@ -103,6 +109,16 @@ public class IndiciadoMB implements Serializable{
 
 	public void setOrigem(String origem) {
 		this.origem = origem;
+	}
+
+
+	public boolean isInformativoFuncionalidade() {
+		return informativoFuncionalidade;
+	}
+
+
+	public void setInformativoFuncionalidade(boolean informativoFuncionalidade) {
+		this.informativoFuncionalidade = informativoFuncionalidade;
 	}
 	
 }
