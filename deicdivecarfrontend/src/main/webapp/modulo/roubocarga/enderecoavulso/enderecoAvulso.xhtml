@@ -10,7 +10,7 @@
 
 	<ui:define name="content">
 		<h:panelGroup layout="block" id="allPanel" styleClass="classAllPanel">
-
+			
 			<div class="layout-portlets-box">
 				<div class="Container100">
 					<div class="ContainerIndent">
@@ -29,12 +29,85 @@
 			</div>
 
 			<div class="layout-portlets-box">
-				<div class="Container100">
-					<div class="ContainerIndent">
-						<h1 class="BigTopic TexAlLeft">Endereço avulso</h1>
+				<div>
+					<div class="Container100">
+						<h:form id="formPanelInformativo">
+						<h1 class="BigTopic">
+							<span class="TexAlLeft">Endereço avulso</span>
+							<span class="Fright">
+								<p:commandLink 
+									actionListener="#{enderecoAvulsoMB.mudarInformativoFuncionalidade()}"
+									styleClass="fa fa-question #{themeView.cor}" 
+									update="panelInformativoContainer"
+									style="text-decoration: none" />
+								
+							</span>
+						</h1>
+						<h:panelGroup layout="block" id="panelInformativoContainer" >
+							<h:panelGroup layout="block" rendered="#{enderecoAvulsoMB.informativoFuncionalidade}" styleClass="BorderedBox Container100 FontGray">
+							<div class="ContainerIndent">
+								<h:outputText value="Informativo da funcionalidade" styleClass="Fs24 red" />
+								<div class="EmptyBox10"></div>
+								<h:outputText value="Esta funcionalidade consiste no conjunto endereços avulsos que podem "/>
+								<h:outputText value="ser utilizados complementarmente em outras funcionalidades que utilizam mapa e georeferenciamento. " />
+	
+								<div class="EmptyBox30"></div>	
+								<h:outputText value="Lista de endereços avulsos" styleClass="FontBold red" />   
+								<div class="EmptyBox10"></div>	
+								<h:outputText value="A lista exibe todos os endereços avulsos contidos no cadastro."/>
+								<div class="EmptyBox10"></div>	
+								<h:outputText value="Na linha de título, há campos que funcionam como filtros de pesquisa por fragmento de caracteres. "/>
+								<h:outputText value="A pesquisa é acionado após 1 segundo e meio do último caracter digitado. "/>
+								<div class="EmptyBox10"></div>	
+								<h:outputText value="Na segunda coluna, para cada linha, há uma opção para a exibição detalhada do registro."/>
+								<div class="EmptyBox10"></div>	
+								<h:outputText value="Na última coluna, para cada linha, há um menu de "/>
+								<h:outputText value="Opções " styleClass="FontBold"/>
+								<h:outputText value="referente ao registro da linha. Atualmente há apenas a opção de "/>
+								<h:outputText value="Alterar. " styleClass="FontBold"/>
+								<div class="EmptyBox10"></div>	
+								<h:outputText value="Na primeira linha da coluna, é possível selecionar um ou mais registros para ações conjuntas. "/>
+								<h:outputText value="Essas ações estão no menu de "/>
+								<h:outputText value="Opções " styleClass="FontBold"/>
+								<h:outputText value="abaixo da tabela. Atualmente há apenas as opções de:  "/>
+								<h:outputText value="Desativar " styleClass="FontBold"/>
+								<h:outputText value="para a desativação dos registros selecionados; "/>
+								<h:outputText value="Ativar " styleClass="FontBold"/>
+								<h:outputText value="para a ativação dos registros selecionados; e "/>
+								<h:outputText value="Excluir " styleClass="FontBold"/>
+								<h:outputText value="para a exclusão dos registros selecionados. "/>
+								
+								<div class="EmptyBox30"></div>	
+								<h:outputText value="Incluir endereço" styleClass="FontBold red" />   
+								<div class="EmptyBox10"></div>	
+								<h:outputText value="Esta é a ação para a inclusão de um novo endereço avulso. "/>
+	
+								<div class="EmptyBox30"></div>	
+								<h:outputText value="Carregar lote" styleClass="FontBold red" />   
+								<div class="EmptyBox10"></div>	
+								<h:outputText value="Esta é a ação permite a carga em lote de novos endereços avulsos, a partir de uma planilha "/>
+								<h:outputText value="proveniente do Excel (nos formatos XLS ou XLSX). "/>
+	
+								<div class="EmptyBox30"></div>	
+								<h:outputText value="Tipificação do endereço avulso" styleClass="FontBold red" />   
+								<div class="EmptyBox10"></div>	
+								<h:outputText value="O endereço avulso pode receber as seguinte tipificações: "/>
+								<h:outputText value="Mercado, Galpão, Depósito, Desmanche e Centro de distribuição. "/>
+								
+	
+								<div class="EmptyBox30"></div>	
+								<h:outputText value="Ativação e desativação do endereço avulso" styleClass="FontBold red" />   
+								<div class="EmptyBox10"></div>	
+								<h:outputText value="O endereço avulso desativado indica para o sistema que ele não "/>
+								<h:outputText value="será utilizado (considerado) pelas funcionalidades que fazem uso do "/>
+								<h:outputText value="cadastro de endereço avulso. Ou seja, por exemplo, na exibição de endereços avulsos "/>
+								<h:outputText value="no mapa, serão exibidos apenas os que estão ativos e NÃO serão exibidos os que estão desativados."/>
+							</div>
+							</h:panelGroup>
+						</h:panelGroup>
+						</h:form>
+
 						<div class="EmptyBox10"></div>
-
-
 
 						<h:form id="formLista"
 							rendered="#{enderecoAvulsoMB.formulario == 'formLista'}"
@@ -108,6 +181,12 @@
 
 											<h:outputText value="Situação do geocode:" />
 											<h:outputText value="#{enderecoAvulso.geocoderStatus}"/>
+
+											<h:outputText value="Latitude:" />
+											<h:outputText value="#{enderecoAvulso.geometry.coordinates[1]}"/>
+
+											<h:outputText value="Longitude:" />
+											<h:outputText value="#{enderecoAvulso.geometry.coordinates[0]}"/>
 											
 										</p:panelGrid>
 									</p:panel>
@@ -322,7 +401,7 @@
 										<f:selectItem itemLabel="SE" itemValue="SE" />
 										<f:selectItem itemLabel="TO" itemValue="TO" />
 									</p:selectOneMenu>
-									<h:outputLabel value="" />
+									<p:message for="uf" />
 
 									<p:outputLabel for="cep" value="CEP:" />
 									<p:inputText id="cep"
@@ -330,6 +409,21 @@
 										<f:validator validatorId="cepRegexValidator" />
 									</p:inputText>
 									<p:message for="cep" />
+									
+									<p:outputLabel for="latitude" value="Latitude:" />
+									<p:inputText id="latitude"
+										value="#{enderecoAvulsoMB.enderecoAvulso.geometry.coordinates[1]}" >
+										<f:validateDoubleRange minimum="-90.0" maximum="90.0" />
+									</p:inputText>
+									<p:message for="latitude" />
+									
+									<p:outputLabel for="longitude" value="Longitude:" />
+									<p:inputText id="longitude"
+										value="#{enderecoAvulsoMB.enderecoAvulso.geometry.coordinates[0]}" >
+										<f:validateDoubleRange minimum="-180.0" maximum="180.0" />
+									</p:inputText>
+									<p:message for="longitude" />
+									
 
 									<p:outputLabel for="tipo" value="Tipo:" />
 									<p:selectOneMenu id="tipo"
@@ -340,6 +434,7 @@
 										<f:selectItem itemLabel="Galpão" itemValue="Galpão" />
 										<f:selectItem itemLabel="Depósito" itemValue="Depósito" />
 										<f:selectItem itemLabel="Desmanche" itemValue="Desmanche" />
+										<f:selectItem itemLabel="Centro de distribuição" itemValue="Centro de distribuição" />
 									</p:selectOneMenu>
 									<p:message for="tipo" />
 
@@ -412,6 +507,7 @@
 										<f:selectItem itemLabel="Galpão" itemValue="Galpão" />
 										<f:selectItem itemLabel="Depósito" itemValue="Depósito" />
 										<f:selectItem itemLabel="Desmanche" itemValue="Desmanche" />
+										<f:selectItem itemLabel="Centro de distribuição" itemValue="Centro de distribuição" />
 									</p:selectOneMenu>
 									<p:message for="tipo" />
 
@@ -436,7 +532,7 @@
 
 								<p:panel header="Informar o arquivo para carga"
 									style="margin-top: 20px;">
-									<div style="font-size: 0.8em">
+									<div>
 										<p>O arquivo deve conter as seguintes colunas:</p>
 										<ol style="list-style-type: upper-alpha;">
 											<li>Razão social <i>(obrigatório, descrição do
@@ -444,7 +540,7 @@
 											</li>
 											<li>Logradouro <i>(obrigatório)</i>;
 											</li>
-											<li>Número <i>(obrigatório, entre 0 e 15000)</i>;
+											<li>Número <i>(obrigatório, entre 0 e 50000)</i>;
 											</li>
 											<li>Bairro <i>(obrigatório)</i>;
 											</li>
@@ -455,6 +551,10 @@
 											</li>
 											<li>Unidade Federativa <i>(obrigatório, sigla válida
 													em letra maúscula)</i>.
+											</li>
+											<li>Latitude <i>(opcional, entre -90.0 e 90.0)</i>.
+											</li>
+											<li>Longitude <i>(opcional, entre -180.0 e 180.0)</i>.
 											</li>
 										</ol>
 									</div>
