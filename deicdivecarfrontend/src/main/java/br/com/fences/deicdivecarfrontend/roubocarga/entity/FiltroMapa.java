@@ -22,6 +22,7 @@ public class FiltroMapa implements Serializable{
 	private boolean exibirAvulsoGalpao = false;
 	private boolean exibirAvulsoDeposito = false;
 	private boolean exibirAvulsoDesmanche = false;
+	private boolean exibirAvulsoCentroDeDistribuicao = false;
 	
 	public void limpar()
 	{
@@ -36,6 +37,7 @@ public class FiltroMapa implements Serializable{
 		exibirAvulsoGalpao = false;
 		exibirAvulsoDeposito = false;
 		exibirAvulsoDesmanche = false;
+		exibirAvulsoCentroDeDistribuicao = false;
 	}
 	
 	
@@ -92,6 +94,16 @@ public class FiltroMapa implements Serializable{
 	}
 	public void setExibirJanelaFilha(boolean exibirJanelaFilha) {
 		this.exibirJanelaFilha = exibirJanelaFilha;
+	}
+
+
+	public boolean isExibirAvulsoCentroDeDistribuicao() {
+		return exibirAvulsoCentroDeDistribuicao;
+	}
+
+
+	public void setExibirAvulsoCentroDeDistribuicao(boolean exibirAvulsoCentroDeDistribuicao) {
+		this.exibirAvulsoCentroDeDistribuicao = exibirAvulsoCentroDeDistribuicao;
 	}
 	
 	
