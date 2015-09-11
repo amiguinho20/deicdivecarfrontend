@@ -1,13 +1,10 @@
 package br.com.fences.deicdivecarfrontend.roubocarga.mb;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -22,9 +19,7 @@ import javax.inject.Named;
 import org.apache.log4j.Logger;
 import org.omnifaces.util.Faces;
 import org.primefaces.event.map.OverlaySelectEvent;
-import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.TreeNode;
 import org.primefaces.model.chart.PieChartModel;
 import org.primefaces.model.map.Circle;
 import org.primefaces.model.map.DefaultMapModel;
@@ -43,11 +38,7 @@ import br.com.fences.deicdivecarfrontend.roubocarga.util.RdoRouboCargaReceptacao
 import br.com.fences.fencesutils.formatar.FormatarData;
 import br.com.fences.fencesutils.verificador.Verificador;
 import br.com.fences.ocorrenciaentidade.ocorrencia.Ocorrencia;
-import br.com.fences.ocorrenciaentidade.ocorrencia.natureza.Circunstancia;
-import br.com.fences.ocorrenciaentidade.ocorrencia.natureza.Desdobramento;
-import br.com.fences.ocorrenciaentidade.ocorrencia.natureza.Modalidade;
 import br.com.fences.ocorrenciaentidade.ocorrencia.natureza.Natureza;
-import br.com.fences.ocorrenciaentidade.ocorrencia.pessoa.Pessoa;
 
 
 
@@ -82,8 +73,6 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 	private Integer contagem;
 	private LazyDataModel<Ocorrencia> ocorrenciasResultadoLazy;
 	private List<Ocorrencia> ocorrenciasSelecionadas;
-	private Ocorrencia ocorrenciaDetalhe;
-	private String origemDetalhe;
 
 	private String centroMapa = "-23.538419906917593, -46.63483794999996";
 	private MapModel geoModel;
@@ -97,9 +86,6 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 	private PieChartModel graficoPizzaFlagrante; 
 	private PieChartModel graficoPizzaAno;            
 	private PieChartModel graficoPizzaComplementar;   
-	
-	
-	private Integer listarRaioProgressBar;
 	
 	@PostConstruct
 	private void init() {
@@ -157,25 +143,6 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 	}
 
 	
-	public String atualizarOcorrenciaDetalhe(Ocorrencia ocorrenciaParaAtualizar)
-	{
-		ocorrenciaDetalhe = ocorrenciaParaAtualizar;
-		if (ocorrenciaDetalhe != null && Verificador.isValorado(ocorrenciaDetalhe.getId()))
-		{
-			ocorrenciaDetalhe = rdoRouboCargaReceptacaoBO.consultar(ocorrenciaDetalhe.getId());
-		}
-		return "ocorrenciadetalhe";      
-	} 
-	
-	public String atualizarOcorrenciaDetalheString(String id)
-	{
-		if (Verificador.isValorado(id))
-		{
-			ocorrenciaDetalhe = rdoRouboCargaReceptacaoBO.consultar(id);
-		}
-		return "ocorrenciadetalhe";      
-	}  
-	
 	@Deprecated
 	public String montarIdade(String dataNascimento, String dataRegistroBo)
 	{
@@ -200,391 +167,7 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 		}
 		return idade;
 	}
-	
-	public String formatarColecaoEmUmBox(String separadorInterno, String separadorExterno, Collection colecao, String arg1)
-	{
-		return formatarColecaoEmUmBox(true, separadorInterno, separadorExterno, colecao, arg1);
-	}
-	public String formatarColecaoEmUmBox(String separadorInterno, String separadorExterno, Collection colecao, String arg1, String arg2)
-	{
-		return formatarColecaoEmUmBox(true, separadorInterno, separadorExterno, colecao, arg1, arg2);
-	}
-	public String formatarColecaoEmUmBox(String separadorInterno, String separadorExterno, Collection colecao, String arg1, String arg2, String arg3)
-	{
-		return formatarColecaoEmUmBox(true, separadorInterno, separadorExterno, colecao, arg1, arg2, arg3);
-	}
-	
-	private String formatarColecaoEmUmBox(boolean x, String separadorInterno, String separadorExterno, Collection colecao, String... atributos)
-	{
-		StringBuilder retorno = new StringBuilder();
-		if (Verificador.isValorado(colecao))
-		{
-			for (Object obj : colecao)
-			{
-				StringBuilder registro = new StringBuilder();
-				for (String atributo : atributos)
-				{
-					String metodo = "get" + atributo.substring(0, 1).toUpperCase() + atributo.substring(1);
-					String valor = null;
-					try
-					{
-						Class<? extends Object> clazz = obj.getClass(); 
-						Method method = clazz.getMethod(metodo, new Class[] {});
-						valor = (String) method.invoke(obj, null);
-					} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-						e.printStackTrace();
-						logger.error("Erro na reflexao em formatarColecaoEmUmBox do atributo[" + atributo + "]:" + e.getMessage());
-						logger.error(e);
-						continue;
-					}
-					if (Verificador.isValorado(valor))
-					{
-						if (Verificador.isValorado(registro.toString()))
-						{
-							registro.append(separadorInterno);
-						}
-						registro.append(valor);
-					}
-				}
-				if (Verificador.isValorado(registro.toString()))
-				{
-					if (Verificador.isValorado(retorno.toString()))
-					{
-						retorno.append(separadorExterno);
-					}
-					retorno.append(registro.toString());
-				}
-			}
-		}
-		return retorno.toString();
-	}
-	
-	private String formatarNatureza(TreeNode superior, int nivel)
-	{
-		nivel++;
-		StringBuilder arvoreFormatada = new StringBuilder();
-		if (superior != null)
-		{
-			for (TreeNode inferior : superior.getChildren())
-			{	
-					if (nivel == 1)
-					{
-						arvoreFormatada.append("<ul style='margin-top:0px; margin-bottom:0px; padding-left:0px;'>");
-					}
-					else
-					{
-						arvoreFormatada.append("<ul>");
-					}
-	
-					String inferiorLabel = (String) inferior.getData();
-					arvoreFormatada.append("<li>" + inferiorLabel + "</li>");
-	
-					if (!inferior.getChildren().isEmpty())
-					{
-						String inferiorFormatado = formatarNatureza(inferior, nivel);
-						arvoreFormatada.append("<li>" + inferiorFormatado + "</li>");
-					}
-					arvoreFormatada.append("</ul>");
-			}
-		}
-		return arvoreFormatada.toString();
-	}
-
-	public String montarNatureza(Ocorrencia ocorrencia)
-	{
-		TreeNode treeNatureza = new DefaultTreeNode("Natureza", null);
-		treeNatureza.setExpanded(true);
-		TreeNode natOcorrencia = null;
-		TreeNode especie = null;
-		TreeNode subespecie = null;
-		TreeNode condutaNatureza = null;
-		TreeNode desdobramentoCircunstancia = null;
-		TreeNode modalidade = null;
 		
-		if (ocorrencia == null)
-		{
-			return null;
-		}
-		
-		for (Natureza natureza : ocorrencia.getNaturezas())
-		{
-			//-- ocorrencia
-			boolean possui = false;
-			for (TreeNode child : treeNatureza.getChildren())
-			{
-				if (child.getData().equals(natureza.getDescrOcorrencia()))
-				{
-					possui = true;
-					natOcorrencia = child;
-				}
-			}
-			if (!possui)
-			{
-				natOcorrencia = new DefaultTreeNode(natureza.getDescrOcorrencia(), treeNatureza);
-				natOcorrencia.setExpanded(true);
-			}
-			
-			//-- especie
-			possui = false;
-			for (TreeNode child : natOcorrencia.getChildren())
-			{
-				if (child.getData().equals(natureza.getDescrEspecie()))
-				{
-					possui = true;
-					especie = child;
-				}
-			}
-			if (!possui)
-			{
-				especie = new DefaultTreeNode(natureza.getDescrEspecie(), natOcorrencia);
-				especie.setExpanded(true);
-			}
-			
-			//-- subespecie
-			possui = false;
-			for (TreeNode child : especie.getChildren())
-			{
-				if (child.getData().equals(natureza.getDescrSubespecie()))
-				{
-					possui = true;
-					subespecie = child;
-				}
-			}
-			if (!possui)
-			{
-				subespecie = new DefaultTreeNode(natureza.getDescrSubespecie(), especie);
-				subespecie.setExpanded(true);
-			}
-
-			//-- conduta/natureza
-			possui = false;
-			String condutaRubrica = null;
-			if (Verificador.isValorado(natureza.getRubrica()))
-			{
-				condutaRubrica = natureza.getRubrica();
-			}
-			else
-			{
-				condutaRubrica = natureza.getDescrConduta();
-			}
-			if (condutaRubrica != null)
-			{
-				for (TreeNode child : subespecie.getChildren())
-				{
-					if (child.getData().equals(condutaRubrica))
-					{
-						possui = true;
-						condutaNatureza = child;
-					}
-				}
-				if (!possui)
-				{
-					condutaNatureza = new DefaultTreeNode(condutaRubrica, subespecie);
-					condutaNatureza.setExpanded(true);
-				}
-			}
-			
-			//-- desdobramentoCircunstancia
-			for (Desdobramento desdobramento : natureza.getDesdobramentos())
-			{
-				if (Verificador.isValorado(desdobramento.getDescrDesdobramento())){
-					possui = false;
-					for (TreeNode child : condutaNatureza.getChildren())
-					{
-						if (child.getData().equals(desdobramento.getDescrDesdobramento()))
-						{
-							possui = true;
-							desdobramentoCircunstancia = child;
-						}
-					}
-					if (!possui)
-					{
-						desdobramentoCircunstancia = new DefaultTreeNode(desdobramento.getDescrDesdobramento(), condutaNatureza);
-						desdobramentoCircunstancia.setExpanded(true);
-					}
-					//-- modalidade
-					for (Modalidade modalid : desdobramento.getModalidades())
-					{
-						possui = false;
-						for (TreeNode child : desdobramentoCircunstancia.getChildren())
-						{
-							if (child.getData().equals(modalid.getRubrica()))
-							{
-								possui = true;
-								modalidade = child;
-							}
-						}
-						if (!possui)
-						{
-							modalidade = new DefaultTreeNode(modalid.getRubrica(), desdobramentoCircunstancia);
-							modalidade.setExpanded(true);
-						}
-					}
-				}
-			}
-			for (Circunstancia circunstancia : natureza.getCircunstancias())
-			{
-				if (Verificador.isValorado(circunstancia.getDescrCircunstancia()))
-				{
-					possui = false;
-					for (TreeNode child : condutaNatureza.getChildren())
-					{
-						if (child.getData().equals(circunstancia.getDescrCircunstancia()))
-						{
-							possui = true;
-							desdobramentoCircunstancia = child;
-						}
-					}
-					if (!possui)
-					{
-						desdobramentoCircunstancia = new DefaultTreeNode(circunstancia.getDescrCircunstancia(), condutaNatureza);
-						desdobramentoCircunstancia.setExpanded(true);
-					}
-				}
-			}
-		}
-
-		String naturezaFormatada = formatarNatureza(treeNatureza, 0);
-		return naturezaFormatada;
-		
-	}
-
-	public String montarNaturezaPessoa(Pessoa pessoa)
-	{
-		TreeNode treeNatureza = new DefaultTreeNode("Natureza", null);
-		treeNatureza.setExpanded(true);
-		TreeNode natOcorrencia = null;
-		TreeNode especie = null;
-		TreeNode subespecie = null;
-		TreeNode condutaNatureza = null;
-		TreeNode desdobramentoCircunstancia = null;
-		TreeNode modalidade = null;
-		
-		if (pessoa == null)
-		{
-			return null;
-		}
-		
-		for (br.com.fences.ocorrenciaentidade.ocorrencia.pessoa.Natureza natureza : pessoa.getNaturezas())
-		{
-			//-- ocorrencia
-			boolean possui = false;
-			for (TreeNode child : treeNatureza.getChildren())
-			{
-				if (child.getData().equals(natureza.getDescrOcorrencia()))
-				{
-					possui = true;
-					natOcorrencia = child;
-				}
-			}
-			if (!possui)
-			{
-				natOcorrencia = new DefaultTreeNode(natureza.getDescrOcorrencia(), treeNatureza);
-				natOcorrencia.setExpanded(true);
-			}
-			
-			//-- especie
-			possui = false;
-			for (TreeNode child : natOcorrencia.getChildren())
-			{
-				if (child.getData().equals(natureza.getDescrEspecie()))
-				{
-					possui = true;
-					especie = child;
-				}
-			}
-			if (!possui)
-			{
-				especie = new DefaultTreeNode(natureza.getDescrEspecie(), natOcorrencia);
-				especie.setExpanded(true);
-			}
-			
-			//-- subespecie
-			if (!Verificador.isValorado(natureza.getDescrSubespecie()))
-			{
-				continue;
-			}
-			possui = false;
-			for (TreeNode child : especie.getChildren())
-			{
-				if (child.getData().equals(natureza.getDescrSubespecie()))
-				{
-					possui = true;
-					subespecie = child;
-				}
-			}
-			if (!possui)
-			{
-				subespecie = new DefaultTreeNode(natureza.getDescrSubespecie(), especie);
-				subespecie.setExpanded(true);
-			}
-
-			//-- natureza
-			if (!Verificador.isValorado(natureza.getRubrica()))
-			{
-				continue;
-			}
-			possui = false;
-			for (TreeNode child : subespecie.getChildren())
-			{
-				if (child.getData().equals(natureza.getRubrica()))
-				{
-					possui = true;
-					condutaNatureza = child;
-				}
-			}
-			if (!possui)
-			{
-				condutaNatureza = new DefaultTreeNode(natureza.getRubrica(), subespecie);
-				condutaNatureza.setExpanded(true);
-			}
-
-			//-- desdobramento
-			if (!Verificador.isValorado(natureza.getDescrDesdobramento()))
-			{
-				continue;
-			}
-			possui = false;
-			for (TreeNode child : condutaNatureza.getChildren())
-			{
-				if (child.getData().equals(natureza.getDescrDesdobramento()))
-				{
-					possui = true;
-					desdobramentoCircunstancia = child;
-				}
-			}
-			if (!possui)
-			{
-				desdobramentoCircunstancia = new DefaultTreeNode(natureza.getDescrDesdobramento(), condutaNatureza);
-				desdobramentoCircunstancia.setExpanded(true);
-			}
-
-			//-- modalidade
-			if (!Verificador.isValorado(natureza.getDescrModalidade()))
-			{
-				continue;
-			}
-			possui = false;
-			for (TreeNode child : desdobramentoCircunstancia.getChildren())
-			{
-				if (child.getData().equals(natureza.getDescrModalidade()))
-				{
-					possui = true;
-					modalidade = child;
-				}
-			}
-			if (!possui)
-			{
-				modalidade = new DefaultTreeNode(natureza.getDescrDesdobramento(), desdobramentoCircunstancia);
-				modalidade.setExpanded(true);
-			}			
-		}
-		String naturezaFormatada = formatarNatureza(treeNatureza, 0);
-		return naturezaFormatada;
-		
-	}
-	
-	
 	public void montarGraficoPizzaFlagrante()
 	{
 		Map<String, Integer> resultados = rdoRouboCargaReceptacaoBO.agregarPorFlagrante(filtro);
@@ -741,13 +324,15 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 		
 		//-- exibe endereco avulso previamente processado geocode
 		if (filtroMapa.isExibirAvulsoDeposito() || filtroMapa.isExibirAvulsoDesmanche() || 
-				filtroMapa.isExibirAvulsoGalpao() || filtroMapa.isExibirAvulsoMercado())
+				filtroMapa.isExibirAvulsoGalpao() || filtroMapa.isExibirAvulsoMercado() || 
+				filtroMapa.isExibirAvulsoCentroDeDistribuicao())
 		{
 			List<String> tipos = new ArrayList<>();
 			if (filtroMapa.isExibirAvulsoDeposito()) tipos.add("Depósito");
 			if (filtroMapa.isExibirAvulsoDesmanche()) tipos.add("Desmanche");
 			if (filtroMapa.isExibirAvulsoGalpao()) tipos.add("Galpão");
 			if (filtroMapa.isExibirAvulsoMercado()) tipos.add("Mercado");
+			if (filtroMapa.isExibirAvulsoCentroDeDistribuicao()) tipos.add("Centro de distribuição");
 			
 			List<EnderecoAvulso> enderecosAvulsos = enderecoAvulsoBO.pesquisarAtivoPorTipo(tipos);
 			
@@ -773,7 +358,12 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 					{
 						urlMarcador = Faces.getRequestContextPath() + "/resources/fences/images/iconeMapa/desmanche.png";
 					}
-	
+					if (enderecoAvulso.getTipo().equalsIgnoreCase("Centro de distribuição"))
+					{
+						urlMarcador = Faces.getRequestContextPath() + "/resources/fences/images/iconeMapa/centrodedistribuicao.png";
+					}
+
+					
 					String enderecoFormatado = concatenarEndereco(
 							enderecoAvulso.getLogradouro(),
 							enderecoAvulso.getNumero(),
@@ -796,11 +386,16 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 	
 	public void listarRaio(Integer raioEmMetros)
 	{
-		Double latitude = ocorrenciaDetalhe.getAuxiliar().getGeometry().getLatitude();
-		Double longitude = ocorrenciaDetalhe.getAuxiliar().getGeometry().getLongitude();
-		//Integer raioEmMetros = 10000;
+		if (marcaSelecionada == null || marcaSelecionada.getData() == null)
+		{
+			return;
+		}
 		
-		setListarRaioProgressBar(10);
+		Ocorrencia ocorrencia = (Ocorrencia) marcaSelecionada.getData();
+		
+		Double latitude = ocorrencia.getAuxiliar().getGeometry().getLatitude();
+		Double longitude = ocorrencia.getAuxiliar().getGeometry().getLongitude();
+		//Integer raioEmMetros = 10000;
 		
 		filtro.setLatitude(latitude.toString());
 		filtro.setLongitude(longitude.toString());
@@ -809,20 +404,14 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 		//-- pesquisar tradicional (montar lista paginada e atualizar total) com os filtros latitude, longitude e raioEmMetros
 		pesquisar();
 		
-		setListarRaioProgressBar(40);
-		
 		//-- pesquisar no raio (limitado a 100 registros)
 		List<Ocorrencia> ocorrenciasRetornadas = rdoRouboCargaReceptacaoBO.pesquisarLazy(filtro, 0, 100);
 		
 		//-- selecionar todos do resultado
 		ocorrenciasSelecionadas.addAll(ocorrenciasRetornadas);
-		
-		setListarRaioProgressBar(60);
-		
+
 		//-- montar mapa
 		exibirRegistrosSelecionadosNoMapa();
-		
-		setListarRaioProgressBar(90);
 		
 		//-- exibe circulo
 		LatLng latLng = new LatLng(latitude, longitude);
@@ -837,9 +426,6 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
         	geoModel.addOverlay(circulo);
         	//logger.info("imprimiu o circulo: " + circulo);
         }
-        
-        setListarRaioProgressBar(100);
- 
 	}
 	
 	public void onMarkerSelect(OverlaySelectEvent event) 
@@ -1077,44 +663,6 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 		return formatarOcorrencia(complementar) + " - " + formatarEndereco(complementar);
 	}
 	
-	public String formatarNatureza(Natureza natureza)
-	{
-		StringBuilder nat = new StringBuilder();
-		if (natureza != null)
-		{
-			List<String> naturezas = new ArrayList<>();
-			if (Verificador.isValorado(natureza.getDescrOcorrencia()))
-			{
-				naturezas.add(natureza.getDescrOcorrencia());
-			}
-			if (Verificador.isValorado(natureza.getDescrOcorrencia()))
-			{
-				naturezas.add(natureza.getDescrEspecie());
-			}
-			if (Verificador.isValorado(natureza.getDescrOcorrencia()))
-			{
-				naturezas.add(natureza.getDescrSubespecie());
-			}
-			if (Verificador.isValorado(natureza.getRubrica()))
-			{
-				naturezas.add(natureza.getRubrica());
-			}
-			if (Verificador.isValorado(natureza.getDescrConduta()))
-			{
-				naturezas.add(natureza.getDescrConduta());
-			}
-			for (String aux : naturezas)
-			{
-				if (!nat.toString().isEmpty())
-				{
-					nat.append("; ");
-				}
-				nat.append(aux);
-			}
-		}
-		return nat.toString();
-	}
-	
 	public Integer getContagem() {
 		return contagem;
 	}
@@ -1196,28 +744,12 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 		this.graficoPizzaComplementar = graficoPizzaComplementar;
 	}
 
-	public Ocorrencia getOcorrenciaDetalhe() {
-		return ocorrenciaDetalhe;
-	}
-
-	public void setOcorrenciaDetalhe(Ocorrencia ocorrenciaDetalhe) {
-		this.ocorrenciaDetalhe = ocorrenciaDetalhe;
-	}
-
 	public Marker getMarcaSelecionada() {
 		return marcaSelecionada;
 	}
 
 	public void setMarcaSelecionada(Marker marcaSelecionada) {
 		this.marcaSelecionada = marcaSelecionada;
-	}
-
-	public String getOrigemDetalhe() {
-		return origemDetalhe;
-	}
-
-	public void setOrigemDetalhe(String origemDetalhe) {
-		this.origemDetalhe = origemDetalhe;
 	}
 
 	public boolean isInformativoFuncionalidade() {
@@ -1236,14 +768,4 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 		this.delegacias = delegacias;
 	}
 
-	public Integer getListarRaioProgressBar() {
-		return listarRaioProgressBar;
-	}
-
-	public void setListarRaioProgressBar(Integer listarRaioProgressBar) {
-		this.listarRaioProgressBar = listarRaioProgressBar;
-	}
-
-
-	
 }
