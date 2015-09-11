@@ -218,7 +218,7 @@ public class EnderecoAvulsoBO {
 				.target(servico);
 		Response response = webTarget
 				.request(MediaType.APPLICATION_JSON)
-				.post(Entity.json(json));
+				.put(Entity.json(json));
 		json = response.readEntity(String.class);
 		if (verificarErro.contemErro(response, json))
 		{
@@ -263,12 +263,13 @@ public class EnderecoAvulsoBO {
 		
 		Client client = ClientBuilder.newClient();
 		String servico = "http://" + host + ":"+ port + "/deicdivecarbackend/rest/" + 
-				"enderecoAvulso/remover"; 
+				"enderecoAvulso/remover/{id}"; 
 		WebTarget webTarget = client
 				.target(servico);
 		Response response = webTarget
+				.resolveTemplate("id", enderecoAvulso.getId())
 				.request(MediaType.APPLICATION_JSON)
-				.post(Entity.json(json));
+				.delete();
 		json = response.readEntity(String.class);
 		if (verificarErro.contemErro(response, json))
 		{
