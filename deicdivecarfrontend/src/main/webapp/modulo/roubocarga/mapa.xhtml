@@ -30,69 +30,38 @@
 						action="ocorrenciadetalhe.xhtml"
 						rendered="#{not usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}">
 						<f:setPropertyActionListener value="#{rdoRouboCargaReceptacaoMB.marcaSelecionada.data}"
-							target="#{rdoRouboCargaReceptacaoMB.ocorrenciaDetalhe}" />
+							target="#{ocorrenciaDetalheMB.ocorrenciaDetalhe}" />
 						<f:setPropertyActionListener value="ocorrencia.xhtml"
-							target="#{rdoRouboCargaReceptacaoMB.origemDetalhe}" />
+							target="#{ocorrenciaDetalheMB.origemDetalhe}" />
 					</p:menuitem>
 					<p:menuitem value="Boletim de ocorrência" icon="fa fa-file"
 						onsuccess="window.open('#{baseURL}modulo/roubocarga/ocorrenciadetalhe.xhtml', 'ocorrencia.xhtml', '', true);"
-						onclick="PF('listarRaioProgressBar').start()"
 						rendered="#{usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}">
 						<f:setPropertyActionListener value="#{rdoRouboCargaReceptacaoMB.marcaSelecionada.data}"
-							target="#{rdoRouboCargaReceptacaoMB.ocorrenciaDetalhe}" />
+							target="#{ocorrenciaDetalheMB.ocorrenciaDetalhe}" />
 						<f:setPropertyActionListener value="ocorrencia.xhtml"
-							target="#{rdoRouboCargaReceptacaoMB.origemDetalhe}" />
+							target="#{ocorrenciaDetalheMB.origemDetalhe}" />
 					</p:menuitem>
 					<p:separator />
 					<p:menuitem value="Listar ocorrências no raio de 5km" icon="fa fa-search"
 						action="#{rdoRouboCargaReceptacaoMB.listarRaio(5000)}"
-						onclick="PF('listarRaioProgressBar').start()"
-						update="@widgetVar(mapaWidget) listaDeOcorrenciasLazy">
-						<f:setPropertyActionListener
-							value="#{rdoRouboCargaReceptacaoMB.marcaSelecionada.data}"
-							target="#{rdoRouboCargaReceptacaoMB.ocorrenciaDetalhe}" />
-						<f:setPropertyActionListener value="ocorrencia.xhtml" 
-							target="#{rdoRouboCargaReceptacaoMB.origemDetalhe}" />
+						update="@widgetVar(mapaWidget) listaDeOcorrenciasLazy panelPesquisa">
 					</p:menuitem>
 					<p:menuitem value="Listar ocorrências no raio de 10km" icon="fa fa-search"
 						action="#{rdoRouboCargaReceptacaoMB.listarRaio(10000)}"
-						onclick="PF('listarRaioProgressBar').start()"
-						update="@widgetVar(mapaWidget) listaDeOcorrenciasLazy">
-						<f:setPropertyActionListener
-							value="#{rdoRouboCargaReceptacaoMB.marcaSelecionada.data}"
-							target="#{rdoRouboCargaReceptacaoMB.ocorrenciaDetalhe}" />
-						<f:setPropertyActionListener value="ocorrencia.xhtml" 
-							target="#{rdoRouboCargaReceptacaoMB.origemDetalhe}" />
+						update="@widgetVar(mapaWidget) listaDeOcorrenciasLazy panelPesquisa">
 					</p:menuitem>
 					<p:menuitem value="Listar ocorrências no raio de 15km" icon="fa fa-search"
 						action="#{rdoRouboCargaReceptacaoMB.listarRaio(15000)}"
-						onclick="PF('listarRaioProgressBar').start()"
-						update="@widgetVar(mapaWidget) listaDeOcorrenciasLazy">
-						<f:setPropertyActionListener
-							value="#{rdoRouboCargaReceptacaoMB.marcaSelecionada.data}"
-							target="#{rdoRouboCargaReceptacaoMB.ocorrenciaDetalhe}" />
-						<f:setPropertyActionListener value="ocorrencia.xhtml" 
-							target="#{rdoRouboCargaReceptacaoMB.origemDetalhe}" />
+						update="@widgetVar(mapaWidget) listaDeOcorrenciasLazy panelPesquisa">
 					</p:menuitem>
 					<p:menuitem value="Listar ocorrências no raio de 50km" icon="fa fa-search"
 						action="#{rdoRouboCargaReceptacaoMB.listarRaio(50000)}"
-						onclick="PF('listarRaioProgressBar').start()"
-						update="@widgetVar(mapaWidget) listaDeOcorrenciasLazy">
-						<f:setPropertyActionListener
-							value="#{rdoRouboCargaReceptacaoMB.marcaSelecionada.data}"
-							target="#{rdoRouboCargaReceptacaoMB.ocorrenciaDetalhe}" />
-						<f:setPropertyActionListener value="ocorrencia.xhtml" 
-							target="#{rdoRouboCargaReceptacaoMB.origemDetalhe}" />
+						update="@widgetVar(mapaWidget) listaDeOcorrenciasLazy panelPesquisa">
 					</p:menuitem>
 					<p:menuitem value="Listar ocorrências no raio de 100km" icon="fa fa-search"
 						action="#{rdoRouboCargaReceptacaoMB.listarRaio(100000)}"
-						onclick="PF('listarRaioProgressBar').start()"
-						update="@widgetVar(mapaWidget) listaDeOcorrenciasLazy">
-						<f:setPropertyActionListener
-							value="#{rdoRouboCargaReceptacaoMB.marcaSelecionada.data}"
-							target="#{rdoRouboCargaReceptacaoMB.ocorrenciaDetalhe}" />
-						<f:setPropertyActionListener value="ocorrencia.xhtml" 
-							target="#{rdoRouboCargaReceptacaoMB.origemDetalhe}" />
+						update="@widgetVar(mapaWidget) listaDeOcorrenciasLazy panelPesquisa">
 					</p:menuitem>
 
 
@@ -108,13 +77,4 @@
 			</div>
 		</p:gmapInfoWindow>
 	</p:gmap>
-
-
-	<p:progressBar widgetVar="listarRaioProgressBar" ajax="true"
-		value="#{rdoRouboCargaReceptacaoMB.listarRaioProgressBar}"
-		labelTemplate="{value}%" styleClass="animated" global="false">
-		<p:ajax event="complete"
-			listener="#{rdoRouboCargaReceptacaoMB.setListarRaioProgressBar(0)}" />
-	</p:progressBar>
-
 </ui:composition>
