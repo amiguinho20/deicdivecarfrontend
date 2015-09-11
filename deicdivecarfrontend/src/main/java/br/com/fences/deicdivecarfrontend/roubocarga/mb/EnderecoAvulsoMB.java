@@ -26,6 +26,7 @@ import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.UploadedFile;
 
 import br.com.fences.deicdivecarentidade.enderecoavulso.EnderecoAvulso;
+import br.com.fences.deicdivecarentidade.enderecoavulso.geojson.Point;
 import br.com.fences.deicdivecarfrontend.roubocarga.bo.EnderecoAvulsoBO;
 import br.com.fences.deicdivecarfrontend.roubocarga.entity.FiltroEnderecoAvulso;
 import br.com.fences.deicdivecarfrontend.roubocarga.util.EnderecoAvulsoLazyDataModel;
@@ -52,7 +53,7 @@ public class EnderecoAvulsoMB implements Serializable{
 	private List<EnderecoAvulso> enderecosAvulsosFiltrados;
             
 	//-- inclusao/alteracao
-	private EnderecoAvulso enderecoAvulso = new EnderecoAvulso();
+	private EnderecoAvulso enderecoAvulso;
 	
 	//-- upload
 	private UploadedFile arquivo;
@@ -63,11 +64,25 @@ public class EnderecoAvulsoMB implements Serializable{
 	private String tipo;
 	
 	private String formulario = "formLista";
+	
+	private boolean informativoFuncionalidade;
+
 
 	@PostConstruct
 	private void init() {	
+		initEnderecoAvulso();
 		pesquisar();
 	} 
+	
+	public void mudarInformativoFuncionalidade(){
+		informativoFuncionalidade = !informativoFuncionalidade;
+	}
+	
+	private void initEnderecoAvulso()
+	{
+		enderecoAvulso = new EnderecoAvulso();
+		enderecoAvulso.setGeometry(new Point());
+	}
 	
 	public void pesquisar(){
 		setEnderecosAvulsosResultadoLazy(new EnderecoAvulsoLazyDataModel(enderecoAvulsoBO, filtro));
@@ -85,17 +100,21 @@ public class EnderecoAvulsoMB implements Serializable{
 	public String incluir(){        
 		if (enderecoAvulso != null && !Verificador.isValorado(enderecoAvulso.getId()))
 		{ 
-			try
+			if (latLngValido(enderecoAvulso))
 			{
-				enderecoAvulsoBO.adicionar(enderecoAvulso);
-				enderecoAvulso = new EnderecoAvulso();
-				setFormulario("formLista"); 
-				limpar();
-				Messages.addGlobalInfo("Inclusão realizada com sucesso.");
+				try
+				{
+					ajustarSituacaoGeocode(enderecoAvulso);
+					enderecoAvulsoBO.adicionar(enderecoAvulso);
+					initEnderecoAvulso();
+					setFormulario("formLista"); 
+					limpar();
+					Messages.addGlobalInfo("Inclusão realizada com sucesso.");
+				}
+				catch(Exception e)
+				{
+					Messages.addGlobalError("Ocorreu um erro na inclusão do registro. " + e.getMessage());
 			}
-			catch(Exception e)
-			{
-				Messages.addGlobalError("Ocorreu um erro na inclusão do registro. " + e.getMessage());
 			}
 		}
 		return "enderecoAvulso";
@@ -104,20 +123,73 @@ public class EnderecoAvulsoMB implements Serializable{
 	public String alterar(){
 		if (enderecoAvulso != null && Verificador.isValorado(enderecoAvulso.getId()))
 		{   
-			try
+			if (latLngValido(enderecoAvulso))
 			{
-				enderecoAvulsoBO.substituir(enderecoAvulso);
-				enderecoAvulso = new EnderecoAvulso();
-				setFormulario("formLista");
-				limpar();
-				Messages.addGlobalInfo("Alteração realizada com sucesso.");	
+				try
+				{
+					ajustarSituacaoGeocode(enderecoAvulso);
+					enderecoAvulsoBO.substituir(enderecoAvulso);
+					initEnderecoAvulso();
+					setFormulario("formLista");
+					limpar();
+					Messages.addGlobalInfo("Alteração realizada com sucesso.");	
+				}
+				catch(Exception e)
+				{
+					Messages.addGlobalError("Ocorreu um erro na alteração do registro. " + e.getMessage());
+				}
 			}
-			catch(Exception e)
-			{
-				Messages.addGlobalError("Ocorreu um erro na alteração do registro. " + e.getMessage());
-			}			
 		}
 		return "enderecoAvulso";
+	}
+	
+	private boolean latLngValido(EnderecoAvulso enderecoAvulso)
+	{
+		boolean valido = true;
+		if (enderecoAvulso != null)
+		{
+			if (enderecoAvulso.getGeometry() != null)
+			{
+				Point geometry = enderecoAvulso.getGeometry();
+				Double latitude = geometry.getLatitude();
+				Double longitude = geometry.getLongitude();
+				if ((latitude != null && latitude != 0) || (longitude != null && longitude != 0))
+				{
+					if ((latitude != null && latitude != 0) && (longitude == null || longitude == 0))
+					{	//-- latitude preenchida e longitude NAO preenchida
+						Messages.addWarn("formEnderecoAvulsoDetalhe:longitude", "A longitude não pode ser vazia ou zero quando a latitude for preenchida.");
+						valido = false;
+					}
+					if ((latitude == null || latitude == 0) && (longitude != null && longitude != 0))
+					{	//-- latitude NAO preenchida e longitude preenchida
+						Messages.addWarn("formEnderecoAvulsoDetalhe:latitude", "A latitude não pode ser vazia ou zero quando a longitude for preenchida.");
+						valido = false;
+					}
+				}
+			}
+		}
+		return valido;
+	}
+	
+	private void ajustarSituacaoGeocode(EnderecoAvulso enderecoAvulso)
+	{
+		if (enderecoAvulso != null)
+		{
+			if (enderecoAvulso.getGeometry() != null)
+			{
+				Point geometry = enderecoAvulso.getGeometry();
+				Double latitude = geometry.getLatitude();
+				Double longitude = geometry.getLongitude();
+				if (latitude != null && latitude != 0 && longitude != null && longitude != 0)
+				{
+					enderecoAvulso.setGeocoderStatus("OK");
+				}
+				else
+				{
+					enderecoAvulso.setGeocoderStatus(null);
+				}
+			}
+		}
 	}
 	
 	public void ativarRegistrosSelecionados()
@@ -246,6 +318,24 @@ public class EnderecoAvulsoMB implements Serializable{
 					endAvulso.setCep(recuperarValor(linha.getCell(4)));
 					endAvulso.setCidade(recuperarValor(linha.getCell(5)));
 					endAvulso.setUf(recuperarValor(linha.getCell(6)));
+					
+					String latitude = recuperarValor(linha.getCell(7));
+					String longitude = recuperarValor(linha.getCell(8));
+					
+					if (Verificador.isValorado(latitude) || Verificador.isValorado(longitude))
+					{
+						endAvulso.setGeometry(new Point());
+						if (Verificador.isValorado(latitude))
+						{
+							endAvulso.getGeometry().setLatitude(Double.parseDouble(latitude));
+						}
+						if (Verificador.isValorado(longitude))
+						{
+							endAvulso.getGeometry().setLongitude(Double.parseDouble(longitude));
+						}
+					}
+					
+					
 				}
 			} catch (Exception e) {
 				Messages.addGlobalError("Não foi possível ler o arquivo [" + arquivo.getFileName() + "]. Erro: " + e.getMessage() );
@@ -373,6 +463,36 @@ public class EnderecoAvulsoMB implements Serializable{
 					Messages.addGlobalWarn("Linha [" + linha + "] não contém uma UF válida em letra maiúscula.");
 					valido = false;
 				}
+				
+				if (endAvulso.getGeometry() != null)
+				{
+					Point geometry = endAvulso.getGeometry();
+					Double latitude = geometry.getLatitude();
+					Double longitude = geometry.getLongitude();
+					if ((latitude != null && latitude != 0) || (longitude != null && longitude != 0))
+					{
+						if ((latitude != null && latitude != 0) && (longitude == null || longitude == 0))
+						{	//-- latitude preenchida e longitude NAO preenchida
+							Messages.addGlobalWarn("Linha [" + linha + "] a longitude não pode ser vazia ou zero quando a latitude for preenchida.");
+							valido = false;
+						}
+						if ((latitude == null || latitude == 0) && (longitude != null && longitude != 0))
+						{	//-- latitude NAO preenchida e longitude preenchida
+							Messages.addGlobalWarn("Linha [" + linha + "] a latitude não pode ser vazia ou zero quando a longitude for preenchida.");
+							valido = false;
+						}
+						if (latitude != null && (latitude < -90.0 || latitude > 90.0))
+						{
+							Messages.addGlobalWarn("Linha [" + linha + "] a latitude não pode ser menor que -90.0 ou maior que 90.0.");
+							valido = false;
+						}
+						if (longitude != null && (longitude < -180.0 || longitude > 180.0))
+						{
+							Messages.addGlobalWarn("Linha [" + linha + "] a longitude não pode ser menor que -180.0 ou maior que 180.0.");
+							valido = false;
+						}
+					}
+				}
 			}
 						
 			if (valido)
@@ -381,6 +501,7 @@ public class EnderecoAvulsoMB implements Serializable{
 				{
 					endAvulso.setIndicadorAtivo(indicadorAtivo);
 					endAvulso.setTipo(tipo);
+					ajustarSituacaoGeocode(endAvulso);
 				}
 				try
 				{
@@ -541,6 +662,14 @@ public class EnderecoAvulsoMB implements Serializable{
 	public void setEnderecosAvulsosFiltrados(
 			List<EnderecoAvulso> enderecosAvulsosFiltrados) {
 		this.enderecosAvulsosFiltrados = enderecosAvulsosFiltrados;
+	}
+
+	public boolean isInformativoFuncionalidade() {
+		return informativoFuncionalidade;
+	}
+
+	public void setInformativoFuncionalidade(boolean informativoFuncionalidade) {
+		this.informativoFuncionalidade = informativoFuncionalidade;
 	}
 
 	
