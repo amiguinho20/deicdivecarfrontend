@@ -20,7 +20,7 @@
 								<p:menuitem value="DEIC" url="#" disabled="true" />
 								<p:menuitem value="DIVECAR" url="#" disabled="true" />
 								<p:menuitem value="Roubo de carga e receptação" disabled="true" url="#" />
-								<p:menuitem value="Ocorrência" action="/modulo/roubocarga/ocorrencia.xhtml" rendered="#{indiciadoMB.origem == 'ocorrencia.xhtml'}" />
+								<p:menuitem value="Ocorrência" url="/modulo/roubocarga/ocorrencia.xhtml" rendered="#{indiciadoMB.origem == 'ocorrencia.xhtml'}" />
 								<p:menuitem value="Indiciado" url="#" />
 							</p:breadCrumb>
 						</h:form>
@@ -31,11 +31,71 @@
 			<div class="layout-portlets-box">
 				<div class="Container100">
 					<div class="ContainerIndent">
-						<h1 class="BigTopic TexAlLeft">Indiciado</h1>
+						<h:form id="formInformativo">
+						<h1 class="BigTopic">
+							<span class="TexAlLeft">Indiciado</span>
+							<span class="Fright">
+								<p:commandLink 
+									actionListener="#{indiciadoMB.mudarInformativoFuncionalidade()}"
+									styleClass="fa fa-question #{themeView.cor}" 
+									update="panelInformativoContainer"
+									style="text-decoration: none" />
+								
+							</span>
+						</h1>
+						<h:panelGroup layout="block" id="panelInformativoContainer" >
+							<h:panelGroup layout="block" rendered="#{indiciadoMB.informativoFuncionalidade}" styleClass="BorderedBox Container100 FontGray">
+							<div class="ContainerIndent">
+							<h:outputText value="Informativo da funcionalidade" styleClass="Fs24 red" />
+							<div class="EmptyBox10"></div>
+							<h:outputText value="Esta funcionalidade consiste na exibição de uma lista com indiciados de roubo de carga e "/>
+							<h:outputText value="receptação."/>
+
+							<div class="EmptyBox30"></div>	
+							<h:outputText value="Comportamentos distintos" styleClass="FontBold red" />   
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="A lista de indiciados possui dois comportamentos distintos, sendo o primeiro comportamento "/>
+							<h:outputText value="a exibição de TODOS os indiciados contidos no cadastro, e o segundo a exibição dos indiciados "/>
+							<h:outputText value="relacionados às ocorrências selecionadas de uma lista/funcionalidade prévia. Com isso, caso "/>
+							<h:outputText value="a lista não exiba indiciados, pode ser que o conjunto de ocorrências selecionadas não possua "/>
+							<h:outputText value="indiciados. "/>
+
+							<div class="EmptyBox30"></div>	
+							<h:outputText value="Chave composta para agrupamento" styleClass="FontBold red" />   
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="O indiciado é composto pela chave única composta por:  "/>
+							<h:outputText value="Nome da pessoa, Nome da mãe e RG. " styleClass="FontBold"/>
+							<h:outputText value="Com isso, o sistema utilizará esse agrupamento como relacionamento entre os boletins  "/>
+							<h:outputText value="de ocorrência que possuem essa informação. "/>
+							<h:outputText value="Alem disso, a direcionalidade do relacionamento é de "/>
+							<h:outputText value="um indiciado para um ou mais boletins de ocorrência. " styleClass="FontBold"/>
+
+							<div class="EmptyBox30"></div>	
+							<h:outputText value="Filtro nome" styleClass="FontBold red" />   
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="No título da coluna "/>
+							<h:outputText value="Nome " styleClass="FontBold"/>
+							<h:outputText value="há um campo para filtro de indiciados por fragmento de nome. "/>
+							<h:outputText value="Esse filtro é acionado após 1 segundo e meio da digitação do último caracter. "/>
+
+							<div class="EmptyBox30"></div>	
+							<h:outputText value="Informações adicionais" styleClass="FontBold red" />   
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="Na primeira coluna da lista há uma ação para a exibição de informações adicionais do "/>
+							<h:outputText value="indiciado acionado. "/>
+
+							<div class="EmptyBox30"></div>	
+							<h:outputText value="Associação com o detalhe do boletim de ocorrência" styleClass="FontBold red" />   
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="O boletim de ocorrência, que pode ser um ou mais, exibido por indiciado possui uma "/>
+							<h:outputText value="ação de link para a visualização detalhada da ocorrencia acionada. Direcionando assim a  "/>
+							<h:outputText value="navegação para a funcionalidade de detalhe do boletim de ocorrência. "/>
+							</div>
+							</h:panelGroup>
+						</h:panelGroup>
+						</h:form>
+
 						<div class="EmptyBox10"></div>
-
-
-
 						<h:form id="formLista"
 							rendered="#{indiciadoMB.formulario == 'formLista'}"
 							styleClass="classFormLista">
@@ -91,10 +151,10 @@
 												<ui:repeat value="#{indiciado.ocorrencias.toArray()}"
 													var="ocorrencia">
 													<p:commandLink
-														actionListener="#{rdoRouboCargaReceptacaoMB.atualizarOcorrenciaDetalheString(ocorrencia.id)}"
+														actionListener="#{ocorrenciaDetalheMB.atualizarOcorrenciaDetalheString(ocorrencia.id)}"
 														action="/modulo/roubocarga/ocorrenciadetalhe.xhtml"
 														value="#{ocorrencia.numBo}/#{ocorrencia.anoBo} - #{ocorrencia.nomeDelegacia}">
-														<f:setPropertyActionListener value="indiciado.xhtml" target="#{rdoRouboCargaReceptacaoMB.origemDetalhe}"/>
+														<f:setPropertyActionListener value="indiciado.xhtml" target="#{ocorrenciaDetalheMB.origemDetalhe}"/>
 													</p:commandLink>
 												</ui:repeat>
 											</h:panelGroup>
@@ -115,10 +175,10 @@
 									<h:panelGroup>
 										<ui:repeat value="#{indiciado.ocorrencias.toArray()}" var="ocorrencia">
 										<p:commandLink
-											actionListener="#{rdoRouboCargaReceptacaoMB.atualizarOcorrenciaDetalheString(ocorrencia.id)}"
+											actionListener="#{ocorrenciaDetalheMB.atualizarOcorrenciaDetalheString(ocorrencia.id)}"
 											action="/modulo/roubocarga/ocorrenciadetalhe.xhtml"
 											value="#{ocorrencia.numBo}/#{ocorrencia.anoBo} - #{ocorrencia.nomeDelegacia}">
-											<f:setPropertyActionListener value="indiciado.xhtml" target="#{rdoRouboCargaReceptacaoMB.origemDetalhe}"/>
+											<f:setPropertyActionListener value="indiciado.xhtml" target="#{ocorrenciaDetalheMB.origemDetalhe}"/>
 										</p:commandLink>
 										</ui:repeat>
 									</h:panelGroup>
