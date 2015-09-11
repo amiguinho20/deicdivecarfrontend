@@ -29,7 +29,7 @@
 
 		<h:form>
 			<c:set var="ocorrencia"
-				value="#{rdoRouboCargaReceptacaoMB.ocorrenciaDetalhe}" />
+				value="#{ocorrenciaDetalheMB.ocorrenciaDetalhe}" />
 			<p:messages id="messages" showDetail="true" autoUpdate="true"
 				closable="true" />
 
@@ -44,7 +44,7 @@
 							<p:menuitem value="Roubo de carga e receptação" disabled="true"
 								url="#" />
 							<p:menuitem value="Ocorrência" url="/modulo/roubocarga/ocorrencia.xhtml" />
-							<p:menuitem value="Indiciado" url="/modulo/roubocarga/indiciado/indiciado.xhtml" rendered="#{rdoRouboCargaReceptacaoMB.origemDetalhe == 'indiciado.xhtml'}" />
+							<p:menuitem value="Indiciado" url="/modulo/roubocarga/indiciado/indiciado.xhtml" rendered="#{ocorrenciaDetalheMB.origemDetalhe == 'indiciado.xhtml'}" />
 							<p:menuitem value="Boletim de ocorrência" />
 						</p:breadCrumb>
 					</div>
@@ -55,7 +55,44 @@
 			<div class="layout-portlets-box">
 				<div class="Container100">
 					<div class="ContainerIndent">
-						<h1 class="BigTopic TexAlLeft">Boletim de ocorrência</h1>
+						<h1 class="BigTopic">
+							<span class="TexAlLeft">Boletim de ocorrência</span>
+							<span class="Fright">
+								<p:commandLink 
+									actionListener="#{ocorrenciaDetalheMB.mudarInformativoFuncionalidade()}"
+									styleClass="fa fa-question #{themeView.cor}" 
+									update="panelInformativoContainer"
+									style="text-decoration: none" />
+								
+							</span>
+						</h1>
+						<h:panelGroup layout="block" id="panelInformativoContainer" >
+							<h:panelGroup layout="block" rendered="#{ocorrenciaDetalheMB.informativoFuncionalidade}" styleClass="BorderedBox Container100 FontGray">
+							<div class="ContainerIndent">
+							<h:outputText value="Informativo da funcionalidade" styleClass="Fs24 red" />
+							<div class="EmptyBox10"></div>
+							<h:outputText value="Esta funcionalidade consiste na exibição detalhada das informações do boletim de ocorrência."/>
+
+							<div class="EmptyBox30"></div>	
+							<h:outputText value="Associação entre complementares e complementados" styleClass="FontBold red" />   
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="No caso do boletim de ocorrência atual ser complementar ou complementado, um link de navegação para "/>
+							<h:outputText value="esses será disponibilidado."/>
+
+							<div class="EmptyBox30"></div>	
+							<h:outputText value="Observações gerais" styleClass="FontBold red" />   
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="A exibição das informações está em aproximadamente 70% de compleitude, ou seja, do possível conteúdo que um boletim de ocorrência pode "/>
+							<h:outputText value="possuir. Por exemplo: as informações de um autor, seu modos operandi, e outros detalhes ainda não estão "/>
+							<h:outputText value="sendo contemplados por essa funcionalidade. Por esse motivo, no caso da necessidade de uma análise "/>
+							<h:outputText value="minuciosa das informações do boletim de ocorrência, recomenda-se a sua consulta diretamente no seu "/>
+							<h:outputText value="cadastro de origem (RDO). "/>
+							</div>
+							</h:panelGroup>
+						</h:panelGroup>
+						
+						
+						
 						<div class="EmptyBox10"></div>
 
 						<fe:exibir label="Dependência" text="#{ocorrencia.nomeDelegacia}" />
@@ -76,11 +113,11 @@
 									<p:outputLabel value="Complementar ao(s) R.D.O.(s) No.(s)" />
 									<p:commandLink
 										value="#{pai.numBo}/#{pai.anoBo} - #{pai.nomeDelegacia}"
-										actionListener="#{rdoRouboCargaReceptacaoMB.atualizarOcorrenciaDetalhe(pai)}"
+										actionListener="#{ocorrenciaDetalheMB.atualizarOcorrenciaDetalhe(pai)}"
 										update="@form">
 										<ui:remove>
 										<f:setPropertyActionListener value="#{pai}"
-											target="#{rdoRouboCargaReceptacaoMB.ocorrenciaDetalhe}" />
+											target="#{ocorrenciaDetalheMB.ocorrenciaDetalhe}" />
 										</ui:remove>
 									</p:commandLink>
 								</h:panelGrid>
@@ -96,7 +133,7 @@
 										<ui:repeat value="#{ocorrencia.auxiliar.filhos.toArray()}" var="filho">
 											<p:commandLink
 												value="#{filho.numBo}/#{filho.anoBo} - #{filho.nomeDelegacia}"
-												actionListener="#{rdoRouboCargaReceptacaoMB.atualizarOcorrenciaDetalhe(filho)}"
+												actionListener="#{ocorrenciaDetalheMB.atualizarOcorrenciaDetalhe(filho)}"
 												update="@form">
 											</p:commandLink>
 										</ui:repeat>
@@ -109,7 +146,7 @@
 							<div class="Fs18">Natureza</div>
 						</div>
 						<h:outputText
-							value="#{rdoRouboCargaReceptacaoMB.montarNatureza(ocorrencia)}"
+							value="#{ocorrenciaDetalheMB.montarNatureza(ocorrencia)}"
 							styleClass="Container100 black" escape="false" />
 
 
@@ -345,11 +382,11 @@
 										</h:panelGroup>
 
 										<fe:exibir label="Natureza"
-											text="#{rdoRouboCargaReceptacaoMB.montarNaturezaPessoa(pessoa)}"
+											text="#{ocorrenciaDetalheMB.montarNaturezaPessoa(pessoa)}"
 											styleClassDiv="Container100 black" escape="false" />
 
 										<fe:exibir label="Telefone"
-											text="#{rdoRouboCargaReceptacaoMB.formatarColecaoEmUmBox('-', '; ', pessoa.telefones, 'dddTelefone', 'numeroTelefone')}" />
+											text="#{ocorrenciaDetalheMB.formatarColecaoEmUmBox('-', '; ', pessoa.telefones, 'dddTelefone', 'numeroTelefone')}" />
 									</div>
 								</p:panel>
 								<div class="EmptyBox10" />
