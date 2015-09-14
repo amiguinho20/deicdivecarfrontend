@@ -11,6 +11,7 @@ import org.primefaces.model.SortOrder;
 import br.com.fences.deicdivecarentidade.indiciado.Indiciado;
 import br.com.fences.deicdivecarfrontend.roubocarga.bo.IndiciadoBO;
 import br.com.fences.deicdivecarfrontend.roubocarga.entity.FiltroIndiciado;
+import br.com.fences.fencesutils.verificador.Verificador;
 
 public class IndiciadoLazyDataModel extends LazyDataModel<Indiciado> {
 
@@ -45,7 +46,18 @@ public class IndiciadoLazyDataModel extends LazyDataModel<Indiciado> {
 	
 		filtro.setPrimeMapFiltro(filters);
 		
-		indiciados = indiciadoBO.pesquisarLazy(filtro, first, pageSize);
+		if (!Verificador.isValorado(sortField))
+		{
+			sortField = "nome";
+		}
+		
+		int ordem = 1; //-- ascendente [ou nao ordenado (unsorted)]
+		if (sortOrder.equals(SortOrder.DESCENDING))
+		{
+			ordem = -1;
+		}
+		
+		indiciados = indiciadoBO.pesquisarLazy(filtro, first, pageSize, sortField, ordem);
 
 		int count = indiciadoBO.contar(filtro);
 		setRowCount(count);
