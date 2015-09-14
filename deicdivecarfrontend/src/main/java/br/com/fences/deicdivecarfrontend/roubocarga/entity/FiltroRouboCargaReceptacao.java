@@ -33,6 +33,7 @@ public class FiltroRouboCargaReceptacao implements Serializable{
 	private String numBo;
 	private String anoBo;
 	private String idDelegacia;
+	private String tipoObjetoComposto;
 	
 	//-- limites para montagem e validacao do calendario (nao devem ser limpos)
 	private String limiteDataInicial;
@@ -56,6 +57,7 @@ public class FiltroRouboCargaReceptacao implements Serializable{
 		setNumBo("");
 		setAnoBo("");
 		setIdDelegacia("");
+		setTipoObjetoComposto("");
 	}
 	
 	public String getDataInicialString(){
@@ -123,11 +125,17 @@ public class FiltroRouboCargaReceptacao implements Serializable{
 		{
 			map.put("idDelegacia", getIdDelegacia());
 		}
-
+		if (Verificador.isValorado(getTipoObjetoComposto()))
+		{
+			String codigoTipos[] = getTipoObjetoComposto().split("\\|");
+			map.put("idTipoObjeto", codigoTipos[0]);
+			map.put("idSubtipoObjeto", codigoTipos[1]);
+		}
 		
 		return map;
 	}
 
+	@Deprecated
 	public BasicDBObject montarPesquisa()
 	{
 		BasicDBObject pesquisa = new BasicDBObject();
@@ -290,6 +298,14 @@ public class FiltroRouboCargaReceptacao implements Serializable{
 
 	public void setLimiteDataFinal(String limiteDataFinal) {
 		this.limiteDataFinal = limiteDataFinal;
+	}
+
+	public String getTipoObjetoComposto() {
+		return tipoObjetoComposto;
+	}
+
+	public void setTipoObjetoComposto(String tipoObjetoComposto) {
+		this.tipoObjetoComposto = tipoObjetoComposto;
 	}
 
 
