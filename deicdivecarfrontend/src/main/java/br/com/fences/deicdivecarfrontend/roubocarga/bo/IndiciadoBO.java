@@ -149,6 +149,47 @@ public class IndiciadoBO {
 	    return indiciados;
 	}	
 
+	/**
+	 * Pesquisa com <b>PAGINACAO</b> e <b>ORDENACAO</b>
+	 * @param pesquisa
+	 * @param primeiroRegistro
+	 * @param registrosPorPagina
+	 * @return List<Ocorrencia> paginado
+	 */
+	@Log
+	public List<Indiciado> pesquisarLazy(final FiltroIndiciado filtro, final int primeiroRegistro, final int registrosPorPagina, 
+			final String campoOrdenacao, final int ordem)
+	{
+		List<Indiciado> indiciados = new ArrayList<>();
+		
+		host = appConfig.getServerBackendHost();
+		port = appConfig.getServerBackendPort();
+		
+		String json = gson.toJson(filtro.montarPesquisaMap(), Map.class);
+		
+		Client client = ClientBuilder.newClient();
+		String servico = "http://" + host + ":"+ port + "/deicdivecarbackend/rest/" + 
+				"indiciado/pesquisarLazy/{primeiroRegistro}/{registrosPorPagina}/{campoOrdenacao}/{ordem}"; 
+		WebTarget webTarget = client
+				.target(servico);
+		Response response = webTarget
+				.resolveTemplate("primeiroRegistro", primeiroRegistro)
+				.resolveTemplate("registrosPorPagina", registrosPorPagina)
+				.resolveTemplate("campoOrdenacao", campoOrdenacao)
+				.resolveTemplate("ordem", ordem)
+				.request(MediaType.APPLICATION_JSON)
+				.post(Entity.json(json));
+		json = response.readEntity(String.class);
+		if (verificarErro.contemErro(response, json))
+		{
+			String msg = verificarErro.criarMensagem(response, json, servico);
+			logger.error(msg);
+			throw new RuntimeException(msg);
+		}	
+		Type collectionType = new TypeToken<List<Indiciado>>(){}.getType();
+		indiciados = (List<Indiciado>) indiciadoConverter.paraObjeto(json, collectionType); 
+	    return indiciados;
+	}	
 	
 //	@Log
 //	public List<EnderecoAvulso> pesquisarAtivoPorTipo(List<String> tipos)
