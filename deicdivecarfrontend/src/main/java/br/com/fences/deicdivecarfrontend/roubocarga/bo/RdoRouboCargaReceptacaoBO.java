@@ -181,7 +181,35 @@ public class RdoRouboCargaReceptacaoBO {
 		Type collectionType = new TypeToken<Map<String, String>>(){}.getType();
 		delegacias = (Map<String, String>) gson.fromJson(json, collectionType);
 	    return delegacias;
-	}   
+	}  
+	
+	public Map<String, String> listarTipoObjetos()
+	{
+		Map<String, String> tipoObjetos = new HashMap<>();
+		
+		host = appConfig.getServerBackendHost(); 
+		port = appConfig.getServerBackendPort();
+		
+		
+		Client client = ClientBuilder.newClient();
+		String servico = "http://" + host + ":"+ port + "/deicdivecarbackend/rest/" + 
+				"rouboCarga/listarTipoObjetos"; 
+		WebTarget webTarget = client
+				.target(servico);
+		Response response = webTarget
+				.request(MediaType.APPLICATION_JSON)
+				.get();
+		String json = response.readEntity(String.class);
+		if (verificarErro.contemErro(response, json))
+		{
+			String msg = verificarErro.criarMensagem(response, json, servico);
+			logger.error(msg);
+			throw new RuntimeException(msg);
+		}	
+		Type collectionType = new TypeToken<Map<String, String>>(){}.getType();
+		tipoObjetos = (Map<String, String>) gson.fromJson(json, collectionType);
+	    return tipoObjetos;
+	}
 	
 	public String pesquisarPrimeiraDataRegistro()
 	{
