@@ -235,6 +235,14 @@
             						<f:selectItem itemLabel="Todas" itemValue="" />
             						<f:selectItems value="#{rdoRouboCargaReceptacaoMB.delegacias}"  />
         						</p:selectOneMenu>
+        						
+        						<p:outputLabel for="tipoObjeto" value="Tipo de objeto"/>
+								<p:selectOneMenu id="tipoObjeto" value="#{rdoRouboCargaReceptacaoMB.filtro.tipoObjetoComposto}" 
+										filter="true" filterMatchMode="contains">
+            						<f:selectItem itemLabel="Todos" itemValue="" />
+            						<f:selectItems value="#{rdoRouboCargaReceptacaoMB.tipoObjetos}"  />
+        						</p:selectOneMenu>
+        						
 							</h:panelGrid>
 
 							<p:fieldset legend="Busca no raio (informativo)" rendered="#{not empty rdoRouboCargaReceptacaoMB.filtro.raioEmMetros}">
