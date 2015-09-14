@@ -70,6 +70,8 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 	
 	private List<SelectItem> delegacias = new ArrayList<>();
 	
+	private List<SelectItem> tipoObjetos = new ArrayList<>();
+	
 	private Integer contagem;
 	private LazyDataModel<Ocorrencia> ocorrenciasResultadoLazy;
 	private List<Ocorrencia> ocorrenciasSelecionadas;
@@ -90,10 +92,11 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 	@PostConstruct
 	private void init() {
 		Map<String, String> mapDelegacias = rdoRouboCargaReceptacaoBO.listarDelegacias();
-		for (Map.Entry<String, String> entry : mapDelegacias.entrySet())
-		{
-			delegacias.add(new SelectItem(entry.getKey(), entry.getValue()));
-		}
+		mapParaSelectItem(mapDelegacias, delegacias);
+
+		Map<String, String> mapTipoObjetos = rdoRouboCargaReceptacaoBO.listarTipoObjetos();
+		mapParaSelectItem(mapTipoObjetos, tipoObjetos);
+		
 		String limiteDataInicial = rdoRouboCargaReceptacaoBO.pesquisarPrimeiraDataRegistro();
 		filtro.setLimiteDataInicial(limiteDataInicial);
 		String limiteDataFinal = rdoRouboCargaReceptacaoBO.pesquisarUltimaDataRegistro();
@@ -104,6 +107,21 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 		//setDelegacias(rdoRouboCargaReceptacaoBO.listarDelegacias());
 		pesquisar();
 	} 
+	
+	private void mapParaSelectItem(Map<String, String> mapOrigem, List<SelectItem> listSelectItemDestino)
+	{
+		if (Verificador.isValorado(mapOrigem))
+		{
+			if (listSelectItemDestino == null)
+			{
+				listSelectItemDestino = new ArrayList<SelectItem>();
+			}
+			for (Map.Entry<String, String> entry : mapOrigem.entrySet())
+			{
+				listSelectItemDestino.add(new SelectItem(entry.getKey(), entry.getValue()));
+			}
+		}
+	}
 	 
 	public void mudarInformativoFuncionalidade(){
 		informativoFuncionalidade = !informativoFuncionalidade;
@@ -766,6 +784,14 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 
 	public void setDelegacias(List<SelectItem> delegacias) {
 		this.delegacias = delegacias;
+	}
+
+	public List<SelectItem> getTipoObjetos() {
+		return tipoObjetos;
+	}
+
+	public void setTipoObjetos(List<SelectItem> tipoObjetos) {
+		this.tipoObjetos = tipoObjetos;
 	}
 
 }
