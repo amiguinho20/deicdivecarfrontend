@@ -21,7 +21,8 @@
 								<p:menuitem value="DIVECAR" url="#" disabled="true" />
 								<p:menuitem value="Roubo de carga e receptação" disabled="true" url="#" />
 								<p:menuitem value="Ocorrência" url="/modulo/roubocarga/ocorrencia.xhtml" rendered="#{indiciadoMB.origem == 'ocorrencia.xhtml'}" />
-								<p:menuitem value="Indiciado" url="#" />
+								<p:menuitem value="Pesquisa de ocorrência" url="/modulo/roubocarga/pesquisa.xhtml" rendered="#{indiciadoMB.origem == 'pesquisa.xhtml'}" />
+								<p:menuitem value="Indiciado" url="#" disabled="true"/>
 							</p:breadCrumb>
 						</h:form>
 					</div>
@@ -67,7 +68,7 @@
 							<h:outputText value="Nome da pessoa, Nome da mãe e RG. " styleClass="FontBold"/>
 							<h:outputText value="Com isso, o sistema utilizará esse agrupamento como relacionamento entre os boletins  "/>
 							<h:outputText value="de ocorrência que possuem essa informação. "/>
-							<h:outputText value="Alem disso, a direcionalidade do relacionamento é de "/>
+							<h:outputText value="Além disso, a direcionalidade do relacionamento é de "/>
 							<h:outputText value="um indiciado para um ou mais boletins de ocorrência. " styleClass="FontBold"/>
 
 							<div class="EmptyBox30"></div>	
@@ -102,6 +103,19 @@
 
 							<p:messages id="messages" showDetail="false" autoUpdate="true"
 								closable="true" />
+								
+							<c:set var="quantidadeOcorrencia" value="#{fn:length(filtroIndiciado.ocorrencias)}" />
+							<h:panelGroup layout="block"
+								rendered="#{quantidadeOcorrencia > 0}">
+								<div class="EmptyBox05"></div>
+								<h:outputText
+									value="Foi selecionada previamente uma ocorrência."
+									rendered="#{quantidadeOcorrencia == 1}" />
+								<h:outputText
+									value="Foram selecionadas previamente #{quantidadeOcorrencia} ocorrências."
+									rendered="#{quantidadeOcorrencia > 1}" />
+								<div class="EmptyBox05"></div>
+							</h:panelGroup>
 
 							<p:remoteCommand name="atualizarFooter" update="formLista:listaIndiciadosLazy:footerTotalReg"/>
 							<p:dataTable id="listaIndiciadosLazy" var="indiciado"
@@ -109,6 +123,7 @@
 								value="#{indiciadoMB.indiciadosResultadoLazy}" lazy="true"
 								reflow="true" dataLocale="pt" rowSelectMode="checkbox"
 								rowKey="#{indiciado.id}" filterDelay="1500" paginator="true"
+								emptyMessage="Não há indiciados para filtro informado ou para as ocorrências previamente selecionadas."
 								currentPageReportTemplate="Página {currentPage} de {totalPages}"
 								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 								
