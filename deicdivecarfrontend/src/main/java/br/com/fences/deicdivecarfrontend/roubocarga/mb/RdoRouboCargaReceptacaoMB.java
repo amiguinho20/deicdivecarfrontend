@@ -1,8 +1,6 @@
 package br.com.fences.deicdivecarfrontend.roubocarga.mb;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -18,7 +16,6 @@ import javax.inject.Named;
 
 import org.apache.log4j.Logger;
 import org.omnifaces.util.Faces;
-import org.primefaces.event.map.OverlaySelectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.chart.PieChartModel;
 import org.primefaces.model.map.Circle;
@@ -67,6 +64,9 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 	@Inject
 	private MontarGrafico montarGrafico;
 	
+	@Inject
+	private FormatadorOcorrenciaMB formatadorOcorrenciaMB;
+	
 	
 	private List<SelectItem> delegacias = new ArrayList<>();
 	
@@ -78,7 +78,7 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 
 	private String centroMapa = "-23.538419906917593, -46.63483794999996";
 	private MapModel geoModel;
-	private Marker marcaSelecionada;
+//	private Marker marcaSelecionada;
 	
 	private boolean informativoFuncionalidade;
 	
@@ -91,6 +91,7 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 	
 	@PostConstruct
 	private void init() {
+		
 		Map<String, String> mapDelegacias = rdoRouboCargaReceptacaoBO.listarDelegacias();
 		mapParaSelectItem(mapDelegacias, delegacias);
 
@@ -102,7 +103,6 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 		String limiteDataFinal = rdoRouboCargaReceptacaoBO.pesquisarUltimaDataRegistro();
 		filtro.setLimiteDataFinal(limiteDataFinal);
 
-		
 		//
 		//setDelegacias(rdoRouboCargaReceptacaoBO.listarDelegacias());
 		pesquisar();
@@ -382,7 +382,7 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 					}
 
 					
-					String enderecoFormatado = concatenarEndereco(
+					String enderecoFormatado = formatadorOcorrenciaMB.concatenarEndereco(
 							enderecoAvulso.getLogradouro(),
 							enderecoAvulso.getNumero(),
 							enderecoAvulso.getBairro(),
@@ -402,81 +402,77 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 		}
 	}
 	
-	public void listarRaio(Integer raioEmMetros)
+	public void listarRaio(Integer raioEmMetros, Ocorrencia ocorrencia)
 	{
-		if (marcaSelecionada == null || marcaSelecionada.getData() == null)
+		if (ocorrencia != null)
 		{
-			return;
+			Double latitude = ocorrencia.getAuxiliar().getGeometry().getLatitude();
+			Double longitude = ocorrencia.getAuxiliar().getGeometry().getLongitude();
+			//Integer raioEmMetros = 10000;
+			
+			filtro.setLatitude(latitude.toString());
+			filtro.setLongitude(longitude.toString());
+			filtro.setRaioEmMetros(raioEmMetros.toString());  
+	
+			//-- pesquisar tradicional (montar lista paginada e atualizar total) com os filtros latitude, longitude e raioEmMetros
+			pesquisar();
+			
+			//-- pesquisar no raio (limitado a 100 registros)
+			List<Ocorrencia> ocorrenciasRetornadas = rdoRouboCargaReceptacaoBO.pesquisarLazy(filtro, 0, 100);
+			
+			//-- selecionar todos do resultado
+			ocorrenciasSelecionadas.addAll(ocorrenciasRetornadas);
+	
+			//-- montar mapa
+			exibirRegistrosSelecionadosNoMapa();
+			
+			//-- exibe circulo
+			LatLng latLng = new LatLng(latitude, longitude);
+			
+	        Circle circulo = new Circle(latLng, raioEmMetros);
+	        circulo.setStrokeColor("#d93c3c");
+	        circulo.setFillColor("#d93c3c");
+	        circulo.setFillOpacity(0.5);
+	        
+	        if (geoModel != null)
+	        {
+	        	geoModel.addOverlay(circulo);
+	        	//logger.info("imprimiu o circulo: " + circulo);
+	        }
 		}
-		
-		Ocorrencia ocorrencia = (Ocorrencia) marcaSelecionada.getData();
-		
-		Double latitude = ocorrencia.getAuxiliar().getGeometry().getLatitude();
-		Double longitude = ocorrencia.getAuxiliar().getGeometry().getLongitude();
-		//Integer raioEmMetros = 10000;
-		
-		filtro.setLatitude(latitude.toString());
-		filtro.setLongitude(longitude.toString());
-		filtro.setRaioEmMetros(raioEmMetros.toString());  
-
-		//-- pesquisar tradicional (montar lista paginada e atualizar total) com os filtros latitude, longitude e raioEmMetros
-		pesquisar();
-		
-		//-- pesquisar no raio (limitado a 100 registros)
-		List<Ocorrencia> ocorrenciasRetornadas = rdoRouboCargaReceptacaoBO.pesquisarLazy(filtro, 0, 100);
-		
-		//-- selecionar todos do resultado
-		ocorrenciasSelecionadas.addAll(ocorrenciasRetornadas);
-
-		//-- montar mapa
-		exibirRegistrosSelecionadosNoMapa();
-		
-		//-- exibe circulo
-		LatLng latLng = new LatLng(latitude, longitude);
-		
-        Circle circulo = new Circle(latLng, raioEmMetros);
-        circulo.setStrokeColor("#d93c3c");
-        circulo.setFillColor("#d93c3c");
-        circulo.setFillOpacity(0.5);
-        
-        if (geoModel != null)
-        {
-        	geoModel.addOverlay(circulo);
-        	//logger.info("imprimiu o circulo: " + circulo);
-        }
 	}
 	
-	public void onMarkerSelect(OverlaySelectEvent event) 
-	{
-		if (event != null && event.getOverlay() != null)
-		{
-			if (event.getOverlay() instanceof Circle)
-			{
-				logger.info("overlay do circulo");
-			}
-			if (event.getOverlay() instanceof Marker)
-			{
-				marcaSelecionada = (Marker) event.getOverlay();
-				if (marcaSelecionada == null)
-				{
-					logger.debug("A marca selecionada esta nula.");
-				}
-				else if (marcaSelecionada.getTitle() == null)
-				{
-					logger.debug("O titulo da marca selecionada esta nulo.");
-				}
-				else if (marcaSelecionada.getData() == null)
-				{
-					logger.debug("A informacao da marca selecionada esta nula.");
-				}
-				else
-				{
-					Ocorrencia ocorrencia = (Ocorrencia) marcaSelecionada.getData();
-					logger.info("Marca selecionada: " + formatarOcorrencia(ocorrencia) + formatarEndereco(ocorrencia));
-				}
-			}
-		}
-	}
+//	public void onMarkerSelect(OverlaySelectEvent event) 
+//	{
+//		if (event != null && event.getOverlay() != null)
+//		{
+//			if (event.getOverlay() instanceof Circle)
+//			{
+//				logger.info("overlay do circulo");
+//			}
+//			if (event.getOverlay() instanceof Marker)
+//			{
+//				marcaSelecionada = (Marker) event.getOverlay();
+//				if (marcaSelecionada == null)
+//				{
+//					logger.debug("A marca selecionada esta nula.");
+//				}
+//				else if (marcaSelecionada.getTitle() == null)
+//				{
+//					logger.debug("O titulo da marca selecionada esta nulo.");
+//				}
+//				else if (marcaSelecionada.getData() == null)
+//				{
+//					logger.debug("A informacao da marca selecionada esta nula.");
+//				}
+//				else
+//				{
+//					Ocorrencia ocorrencia = (Ocorrencia) marcaSelecionada.getData();
+//					logger.info("Marca selecionada: " + formatarOcorrencia(ocorrencia) + formatarEndereco(ocorrencia));
+//				}
+//			}
+//		}
+//	}
 	
 	private boolean verificarExibicaoDeLinha(Ocorrencia ocorrencia)
 	{
@@ -514,8 +510,8 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 		LatLng latLng = new LatLng(ocorrencia.getAuxiliar().getGeometry().getLatitude(), ocorrencia.getAuxiliar().getGeometry().getLongitude());
 		if (latLng != null)
 		{
-			String ocorrenciaFormatada = formatarOcorrencia(ocorrencia);
-			String enderecoFormatado = formatarEndereco(ocorrencia);
+			String ocorrenciaFormatada = formatadorOcorrenciaMB.formatarOcorrencia(ocorrencia);
+			String enderecoFormatado = formatadorOcorrenciaMB.formatarEndereco(ocorrencia);
 			
 			Enum<TipoMarcador> tipoMarcador = identificarMarcador(ocorrencia);
 			String iconeMarcador = recuperarMarcador(tipoMarcador);
@@ -576,111 +572,111 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 	}  
 	
 
-	public String formatarOcorrencia(Ocorrencia ocorrencia)
-	{
-		StringBuilder ocorrenciaFormatada = new StringBuilder();
-		if (ocorrencia != null)
-		{
-			ocorrenciaFormatada.append(ocorrencia.getNumBo()); 
-			ocorrenciaFormatada.append("/");
-			ocorrenciaFormatada.append(ocorrencia.getAnoBo());
-			ocorrenciaFormatada.append("/");
-			ocorrenciaFormatada.append(ocorrencia.getNomeDelegacia());
-		}
-		return ocorrenciaFormatada.toString();
-	}
+//	public String formatarOcorrencia(Ocorrencia ocorrencia)
+//	{
+//		StringBuilder ocorrenciaFormatada = new StringBuilder();
+//		if (ocorrencia != null)
+//		{
+//			ocorrenciaFormatada.append(ocorrencia.getNumBo()); 
+//			ocorrenciaFormatada.append("/");
+//			ocorrenciaFormatada.append(ocorrencia.getAnoBo());
+//			ocorrenciaFormatada.append("/");
+//			ocorrenciaFormatada.append(ocorrencia.getNomeDelegacia());
+//		}
+//		return ocorrenciaFormatada.toString();
+//	}
+//	
+//	public String formatarReferencia(Ocorrencia ocorrencia)
+//	{
+//		StringBuilder ocorrenciaFormatada = new StringBuilder();
+//		if (ocorrencia != null)
+//		{
+//			ocorrenciaFormatada.append(ocorrencia.getNumReferenciaBo());
+//			ocorrenciaFormatada.append("/");
+//			ocorrenciaFormatada.append(ocorrencia.getAnoReferenciaBo());
+//			ocorrenciaFormatada.append("/");
+//			ocorrenciaFormatada.append(ocorrencia.getDelegaciaReferencia());
+//		}
+//		return ocorrenciaFormatada.toString();
+//	}
+//	
+//	public String formatarEndereco(Ocorrencia ocorrencia)
+//	{
+//		String endereco = concatenarEndereco(ocorrencia.getLogradouro(),
+//				ocorrencia.getNumeroLogradouro(),
+//				ocorrencia.getBairro(), ocorrencia.getCidade(),
+//				ocorrencia.getIdUf());
+//		return endereco;
+//	}
+//	
+//	private String concatenarEndereco(String... campos) 
+//	{
+//		String resultado = "";
+//		for (String campo : campos) 
+//		{
+//			if (campo != null && !campo.trim().isEmpty() && !campo.trim().equals("0"))
+//			{
+//				campo = campo.replaceAll(",", ""); //-- retirar virgulas adicionais
+//				if (!resultado.isEmpty())
+//				{
+//					resultado += ", ";
+//				} 
+//				resultado += campo.trim(); 					
+//			}
+//		}
+//		return resultado;
+//	}
+//	
+//	public String formatarData(String original){
+//		String formatacao = "";
+//		if (Verificador.isValorado(original))
+//		{
+//			try
+//			{
+//				if (original.length() > 10)
+//				{
+//					DateFormat dfOrigem = FormatarData.getAnoMesDiaHoraMinutoSegundoConcatenados();
+//					DateFormat dfDestino = FormatarData.getDiaMesAnoComBarrasEHoraMinutoSegundoComDoisPontos();
+//					Date data = dfOrigem.parse(original);
+//					formatacao = dfDestino.format(data);
+//				}
+//				else
+//				{
+//					DateFormat dfOrigem = FormatarData.getAnoMesDiaContatenado();
+//					DateFormat dfDestino = FormatarData.getDiaMesAnoComBarras();
+//					Date data = dfOrigem.parse(original);
+//					formatacao = dfDestino.format(data);
+//				}
+//			}
+//			catch (ParseException e)
+//			{
+//				//@TODO nao tratar - temporario
+//				e.printStackTrace();
+//			}
+//				
+//		}
+//		return formatacao;
+//	}
 	
-	public String formatarReferencia(Ocorrencia ocorrencia)
-	{
-		StringBuilder ocorrenciaFormatada = new StringBuilder();
-		if (ocorrencia != null)
-		{
-			ocorrenciaFormatada.append(ocorrencia.getNumReferenciaBo());
-			ocorrenciaFormatada.append("/");
-			ocorrenciaFormatada.append(ocorrencia.getAnoReferenciaBo());
-			ocorrenciaFormatada.append("/");
-			ocorrenciaFormatada.append(ocorrencia.getDelegaciaReferencia());
-		}
-		return ocorrenciaFormatada.toString();
-	}
+//	public String formatarGeocode(Ocorrencia ocorrencia)
+//	{
+//		String formatado = "";
+//		//logger.warn("INIBIDO formatarGeocode");
+//		/*
+//		LatLng latLng = EnderecoGeocodeUtil.converter(ocorrencia);
+//		if (latLng != null)
+//		{
+//			formatado = latLng.getLat() + ", " + latLng.getLng();
+//		}
+//		*/
+//		return formatado;
+//	}
 	
-	public String formatarEndereco(Ocorrencia ocorrencia)
-	{
-		String endereco = concatenarEndereco(ocorrencia.getLogradouro(),
-				ocorrencia.getNumeroLogradouro(),
-				ocorrencia.getBairro(), ocorrencia.getCidade(),
-				ocorrencia.getIdUf());
-		return endereco;
-	}
-	
-	private String concatenarEndereco(String... campos) 
-	{
-		String resultado = "";
-		for (String campo : campos) 
-		{
-			if (campo != null && !campo.trim().isEmpty() && !campo.trim().equals("0"))
-			{
-				campo = campo.replaceAll(",", ""); //-- retirar virgulas adicionais
-				if (!resultado.isEmpty())
-				{
-					resultado += ", ";
-				} 
-				resultado += campo.trim(); 					
-			}
-		}
-		return resultado;
-	}
-	
-	public String formatarData(String original){
-		String formatacao = "";
-		if (Verificador.isValorado(original))
-		{
-			try
-			{
-				if (original.length() > 10)
-				{
-					DateFormat dfOrigem = FormatarData.getAnoMesDiaHoraMinutoSegundoConcatenados();
-					DateFormat dfDestino = FormatarData.getDiaMesAnoComBarrasEHoraMinutoSegundoComDoisPontos();
-					Date data = dfOrigem.parse(original);
-					formatacao = dfDestino.format(data);
-				}
-				else
-				{
-					DateFormat dfOrigem = FormatarData.getAnoMesDiaContatenado();
-					DateFormat dfDestino = FormatarData.getDiaMesAnoComBarras();
-					Date data = dfOrigem.parse(original);
-					formatacao = dfDestino.format(data);
-				}
-			}
-			catch (ParseException e)
-			{
-				//@TODO nao tratar - temporario
-				e.printStackTrace();
-			}
-				
-		}
-		return formatacao;
-	}
-	
-	public String formatarGeocode(Ocorrencia ocorrencia)
-	{
-		String formatado = "";
-		//logger.warn("INIBIDO formatarGeocode");
-		/*
-		LatLng latLng = EnderecoGeocodeUtil.converter(ocorrencia);
-		if (latLng != null)
-		{
-			formatado = latLng.getLat() + ", " + latLng.getLng();
-		}
-		*/
-		return formatado;
-	}
-	
-	public String formatarComplementar(Ocorrencia complementar)
-	{
-		return formatarOcorrencia(complementar) + " - " + formatarEndereco(complementar);
-	}
-	
+//	public String formatarComplementar(Ocorrencia complementar)
+//	{
+//		return formatarOcorrencia(complementar) + " - " + formatarEndereco(complementar);
+//	}
+//	
 	public Integer getContagem() {
 		return contagem;
 	}
@@ -762,13 +758,13 @@ public class RdoRouboCargaReceptacaoMB implements Serializable{
 		this.graficoPizzaComplementar = graficoPizzaComplementar;
 	}
 
-	public Marker getMarcaSelecionada() {
-		return marcaSelecionada;
-	}
-
-	public void setMarcaSelecionada(Marker marcaSelecionada) {
-		this.marcaSelecionada = marcaSelecionada;
-	}
+//	public Marker getMarcaSelecionada() {
+//		return marcaSelecionada;
+//	}
+//
+//	public void setMarcaSelecionada(Marker marcaSelecionada) {
+//		this.marcaSelecionada = marcaSelecionada;
+//	}
 
 	public boolean isInformativoFuncionalidade() {
 		return informativoFuncionalidade;
