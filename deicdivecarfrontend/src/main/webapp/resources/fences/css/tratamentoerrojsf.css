@@ -1,0 +1,17 @@
+@CHARSET "UTF-8";
+
+.collapsemessage {
+	display: block;
+}
+
+.collapsemessage+input {
+	display: none;
+}
+
+.collapsemessage+input+* {
+	display: none;
+}
+
+.collapsemessage+input:checked+* {
+	display: block;
+}
