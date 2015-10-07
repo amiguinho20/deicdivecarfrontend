@@ -58,9 +58,12 @@ public class IndiciadoMB implements Serializable{
 	 * O filtro nao pode ser limpo aqui.
 	 */
 	public void pesquisar(){ 
-		if (Verificador.isValorado(origem) && !origem.equals("ocorrencia.xhtml"))
+		if (Verificador.isValorado(origem))
 		{
-			filtroIndiciado.limpar();
+			if (!origem.equals("ocorrencia.xhtml") && !origem.equals("pesquisa.xhtml"))
+			{
+				filtroIndiciado.limpar();
+			}
 		}
 		setIndiciadosResultadoLazy(new IndiciadoLazyDataModel(indiciadoBO, filtroIndiciado));
 	}
