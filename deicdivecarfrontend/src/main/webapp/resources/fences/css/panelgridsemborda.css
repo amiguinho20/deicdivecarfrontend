@@ -1,0 +1,10 @@
+@CHARSET "UTF-8";
+
+
+
+.ui-panelgrid, 
+.ui-panelgrid tbody tr td
+{
+    border-style: none !important;
+}
+
