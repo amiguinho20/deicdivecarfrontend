@@ -1,0 +1,694 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+	template="/WEB-INF/template.xhtml">
+
+	<ui:define name="css">
+		 <h:outputStylesheet name="css/panelgridsemborda.css" library="fences" />
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="js/janelafilha.js" library="fences" />
+		<script>
+			janelaFilhaURL = "#{baseURL}modulo/roubocarga/mapaSozinho.xhtml";
+			janelaFilhaTitulo = "mapaSozinho";
+		</script>
+
+		<h:form id="form">
+			<p:messages id="messages" showDetail="false" autoUpdate="true"
+				closable="true" escape="false"/>
+
+			<div class="layout-portlets-box">
+				<div class="Container100">
+					<div class="ContainerIndent">
+						<p:breadCrumb>
+							<p:menuitem value="Home" url="#" disabled="true" />
+							<p:menuitem value="DEIC" url="#" disabled="true" />
+							<p:menuitem value="DIVECAR" url="#" disabled="true" />
+							<p:menuitem value="Roubo de carga e receptação" disabled="true"
+								url="#" />
+							<p:menuitem value="Pesquisa de ocorrência" url="#" disable="true"/>
+						</p:breadCrumb>
+					</div>
+				</div>
+			</div>
+			<div class="layout-portlets-box">
+				<div class="Container100">
+					<div class="ContainerIndent">
+						<h1 class="BigTopic">
+							<span class="TexAlLeft">Pesquisa de ocorrência</span> <span
+								class="Fright"> <p:commandLink
+									actionListener="#{pesquisaMB.mudarInformativoFuncionalidade()}"
+									styleClass="fa fa-question #{themeView.cor}" process="@this"
+									update="panelInformativoContainer"
+									style="text-decoration: none" />
+
+							</span>
+						</h1>
+						<h:panelGroup layout="block" id="panelInformativoContainer" >
+							<h:panelGroup layout="block" rendered="#{pesquisaMB.informativoFuncionalidade}" styleClass="BorderedBox Container100 FontGray">
+							<div class="ContainerIndent">
+							<h:outputText value="Informativo da funcionalidade" styleClass="Fs24 red" />
+							<div class="EmptyBox10"></div>
+							<h:outputText value="Esta funcionalidade consiste no conjunto de boletins de ocorrências dos últimos 5 anos com naturezas de roubo
+								   de carga e receptação, junto com seus respectivos boletins de ocorrências complementares."/>
+
+							<div class="EmptyBox30"></div>	
+							<h:outputText value="Painel de filtros" styleClass="FontBold red" />   
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="As ações desse painel controlam a funcionalidade como um todo. "/>
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="O campo "/>
+							<h:outputText value="Filtro " styleClass="FontBold"/>
+							<h:outputText value="exibe uma lista (combobox) com todos os filtros disponíveis até o momento, para seleção. "/>
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="Ao selecionar um filtro, o sistema exibirá o campo "/>
+							<h:outputText value="Valor " styleClass="FontBold"/>
+							<h:outputText value="que exibirá a entrada de valores para o filtro selecionado, de acordo com tipo do filtro selecionado. "/>
+							<h:outputText value="Por exemplo, ao selecionar o filtro "/>
+							<h:outputText value="Data de registro " styleClass="FontBold"/>
+							<h:outputText value="o sistema exibirá dois campos no formato de data para que seja informado o período a ser filtrado; "/>
+							<h:outputText value="ao selecionar o filtro "/>
+							<h:outputText value="Flagrante " styleClass="FontBold"/>
+							<h:outputText value="o sistema exibirá a lista de valores cabíveis para esse filtro; "/>
+							<h:outputText value="ao selecionar o filtro "/>
+							<h:outputText value="Objeto > Tipo " styleClass="FontBold"/>
+							<h:outputText value="o sistema exibirá a hierarquia de tipos de objetos para que sejam escolhidos os tipos a serem filtrados, "/>
+							<h:outputText value="além disso, há um campo 'pesquisa na hierarquia' para que seja informado um fragmento de texto a ser "/>
+							<h:outputText value="destacado na hierarquia, facilitando assim a visualização da opção desejada para filtro; entre outros. "/>
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="Dessa forma, ao selecionar um filtro, o sistema exibirá a forma mais adequada para que seja informado "/>
+							<h:outputText value="o valor do filtro selecionado. "/>
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="Contudo, novos campos e tipos de filtros serão disponibilizados na lista de filtros conforme forem construídos. "/>
+
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="Na adição de um filtro pelo ação "/>
+							<h:outputText value="Adicionar filtro " styleClass="FontBold"/>
+							<h:outputText value="o sistema validará o filtro, e caso sucesso, o filtro será exibido na seção Lista de filtros e o sistema "/>
+							<h:outputText value="aplicará o filtro na lista de resultados, que é a seção Ocorrências. Com isso, conforme os filtros são adicionados, "/>
+							<h:outputText value="o sistema filtrará a lista de resultados. "/>
+							
+							<div class="EmptyBox30"></div>	
+							<h:outputText value="Lista de filtros" styleClass="FontBold red" />   
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="Essa seção exibirá a lista de filtros informados, e para cada filtro é disponibilizado a opção "/>
+							<h:outputText value="Excluir " styleClass="FontBold"/>
+							<h:outputText value="para a exclusão do filtro escolhido. Ao acionar essa opção, o sistema excluirá o filtro e reprocessará "/>
+							<h:outputText value="a lista de resultados com os filtros restantes. "/>
+							
+							<div class="EmptyBox30"></div>	
+							<h:outputText value="Ocorrências (lista de resultados)" styleClass="FontBold red" />   
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="O comportamento padrão da lista é exibir os últimos registros, ordenado por data de registro decrescente, "/>
+							<h:outputText value="e o total de registros contidos no conjunto da funcionalidade. Além disso, também é exibido a página atual "/>
+							<h:outputText value="e o total de páginas para navegação. "/>
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="Em cada registro possui uma lista de opções, sendo que atualmente há apenas a opção "/>
+							<h:outputText value="Boletim de ocorrência " styleClass="FontBold"/>
+							<h:outputText value="no qual exibirá as informação detalhada do respectivo boletim de ocorrência. "/>
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="Além disso, a lista permite a seleção de um ou mais registros, contido em uma ou mais páginas da lista, "/>
+							<h:outputText value="formando assim um subconjunto para o uso das ações "/>
+							<h:outputText value="Listar indiciados " styleClass="FontBold"/>
+							<h:outputText value="e  "/>
+							<h:outputText value="Expor no mapa. " styleClass="FontBold"/>
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="A ação "/>
+							<h:outputText value="Listar indiciados " styleClass="FontBold"/>
+							<h:outputText value="listará todos os indiciados dos boletins ocorrências selecionados na lista de ocorrências. Caso não exista "/>
+							<h:outputText value="registros selecionados, a ação listará os indiciados de todos os boletins de ocorrências contidos "/>
+							<h:outputText value="no cadastro. "/>
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="A ação "/>
+							<h:outputText value="Expor no mapa " styleClass="FontBold"/>
+							<h:outputText value="plotará uma marca/ponto no mapa utilizando o endereço do local do fato dos boletins de ocorrência selecionados. "/>
+							<h:outputText value="Caso não exista registros selecionados, a ação exibirá o mapa sem marcas/pontos. "/>
+							
+							<div class="EmptyBox30"></div>	
+							<h:outputText value="Mapa" styleClass="FontBold red" />   
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="Cada ponto no mapa é referente a um boletim de ocorrência, onde o ponto de cor "/>
+							<h:outputText value="vermelho " styleClass="red" />  
+							<h:outputText value="corresponde à natureza de roubo de carga, o "/>
+							<h:outputText value="azul " styleClass="blue" /> 
+							<h:outputText value="à receptação e o "/>
+							<h:outputText value="verde " styleClass="green" /> 
+							<h:outputText value="trata-se de um boletim de ocorrência complementar."/>
+							<div class="EmptyBox10"></div>
+							<h:outputText value="Além disso, caso o boletim de ocorrência selecionado possua um complemento com a natureza de recuperação, o sistema "/>
+							<h:outputText value="exibirá as ocorrências (pontos) com suas respectivas cores, ligados por uma linha/reta, "/>
+							<h:outputText value="indicando um relacionamento entre ambos. "/>
+							<div class="EmptyBox10"></div>
+							<h:outputText value="A seção de controles possui um conjunto de ações que visam omitir ou visualizar determinados pontos "/>
+							<h:outputText value="no mapa, sendo que o controle "/>
+							<h:outputText value="Exibir em janela separada " styleClass="FontBold" /> 
+							<h:outputText value="serve para abrir o mapa em uma janela separada, afim de facilitar a visualização quando há uso de "/>
+							<h:outputText value="um monitor adicional. Excepcionalmente para essa funcionalidade, é necessário uma atenção ao bloqueador "/>
+							<h:outputText value="de janelas pop-up do navegador/browser em uso. "/>
+							<div class="EmptyBox10"></div>
+							<h:outputText value="Os controles referente a subseção Endereço avulso são ações para visualizar ou omitir "/>
+							<h:outputText value="pontos de endereços contidos no cadastro de endereço avulso. "/>
+
+							<div class="EmptyBox10"></div>
+							<h:outputText value="Para cada ponto no mapa, ao ser acionado/clicado o sistema exibirá a uma janela "/>
+							<h:outputText value="informativa com o identificador do boletim de ocorrência e o local do fato. Ainda, "/>
+							<h:outputText value="exibirá uma lista de opções: "/>
+							<h:outputText value="Boletim de ocorrência " styleClass="FontBold"/>
+							<h:outputText value="no qual exibirá as informação detalhada do respectivo boletim de ocorrência; e "/>
+							
+							<h:outputText value="Listar ocorrências no raio de (5/10/15/50/100)km " styleClass="FontBold"/>
+							<h:outputText value="no qual o sistema listará, a partir do ponto de localização (local do fato) "/>
+							<h:outputText value="da ocorrência acionada e junto com os demais filtros da seção Painel de filtros, as "/>
+							<h:outputText value="ocorrências dentro do raio escolhido, selecionando-as na lista de resultados da pesquisa e "/>
+							<h:outputText value="exibindo-as dentro do raio delimitado. Para essa funcionalidade há um limite, experimental, de exibição de 100 "/>
+							<h:outputText value="ocorrências ordenadas decrescentemente pela data de registro no mapa. "/>
+							
+							<div class="EmptyBox10"></div>
+							<h:outputText value="A ação "/>
+							<h:outputText value="Limpar mapa " styleClass="FontBold" />
+							<h:outputText value="efetua a limpeza do mapa e retorna os controles para as posições padrões. "/>
+							
+							<div class="EmptyBox30"></div>	
+							<h:outputText value="Observações gerais" styleClass="FontBold red" />   
+							<div class="EmptyBox10"></div>	
+							<h:outputText value="A cada acionamento de opção, o sistema exibe na parte inferior direita da janela um ícone animado que "/>
+							<h:outputText value="indica que o sistema está processando a ação solicitada. É recomendado que aguarde o desaparecimento "/>
+							<h:outputText value="do ícone para continuar com o uso. Por motivos da funcionalidade estar em fase de protótipo e de melhoria "/>
+							<h:outputText value="contínua, instabilidades e problemas podem ocorrer. Caso o ícone exceda o tempo de aproximado de 30 segundos, "/>
+							<h:outputText value="acione a tecla de atualizar do navegador para que o sistema retorne a normalidade. "/>
+							<h:outputText value="Essa é a solução de contorno recomendada enquanto o sistema estiver nessa fase. "/>
+							</div>
+							</h:panelGroup>
+						</h:panelGroup>
+						<div class="EmptyBox10"></div>
+						<p:panel id="panelPesquisa" header="Filtros"
+							styleClass="leaden-back">
+							<p:panelGrid id="panelFiltros">
+								<p:row>
+									<p:column>
+										<p:outputLabel for="filtroModelo" value="Filtro" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="filtroModelo"
+											value="#{pesquisaMB.filtroModelo}" filter="true"
+											filterMatchMode="contains">
+											<p:ajax process="filtroModelo" update="panelFiltros" />
+											<f:selectItem itemLabel="" itemValue=""
+												noSelectionOption="true" />
+											<f:selectItems value="#{pesquisaMB.filtroLista}"
+												var="filtroModelo" itemValue="#{filtroModelo}"
+												itemLabel="#{filtroModelo.rotulo}"
+												itemDisabled="#{not filtroModelo.habilitado}" />
+										</p:selectOneMenu>
+									</p:column>
+									<p:column>
+										<p:message for="filtroModelo" />
+									</p:column>
+								</p:row>
+								<p:row id="valorDoFiltro">
+									<p:column rendered="#{pesquisaMB.filtroModelo.tipo == 'TEXTO'}">
+										<p:outputLabel for="idTexto" value="Valor" />
+									</p:column>
+									<p:column rendered="#{pesquisaMB.filtroModelo.tipo == 'TEXTO'}">
+										<p:inputText id="idTexto"
+											value="#{pesquisaMB.filtroModelo.valorTexto}" required="true"
+											requiredMessage="O valor é necessário"
+											process="panelMessage labelDoFiltro">
+											<f:validator validatorId="textoRegexValidator" />
+										</p:inputText>
+									</p:column>
+									<p:column rendered="#{pesquisaMB.filtroModelo.tipo == 'TEXTO'}">
+										<p:message for="idTexto" />
+									</p:column>
+
+									<p:column
+										rendered="#{pesquisaMB.filtroModelo.tipo == 'LISTA_SELECAO_UNICA'}">
+										<p:outputLabel for="idListaSelecaoUnica" value="Valor" />
+									</p:column>
+									<p:column
+										rendered="#{pesquisaMB.filtroModelo.tipo == 'LISTA_SELECAO_UNICA'}">
+										<p:selectOneMenu id="idListaSelecaoUnica"
+											value="#{pesquisaMB.filtroModelo.listaSelecaoUnicaIdSelecionado}"
+											filter="true" filterMatchMode="contains" required="true"
+											requiredMessage="É necessário selecionar uma opção.">
+											<f:selectItem itemLabel="Todos" noSelectionOption="true" />
+											<f:selectItems
+												value="#{pesquisaMB.filtroModelo.listaSelecaoUnica.entrySet()}"
+												var="entry" itemValue="#{entry.key}"
+												itemLabel="#{entry.value}" />
+										</p:selectOneMenu>
+									</p:column>
+									<p:column
+										rendered="#{pesquisaMB.filtroModelo.tipo == 'LISTA_SELECAO_UNICA'}">
+										<p:message for="idListaSelecaoUnica" />
+									</p:column>
+
+									<p:column
+										rendered="#{pesquisaMB.filtroModelo.tipo == 'INTERVALO_DATA'}">
+										<p:outputLabel for="idIntervaloData" value="Valor" />
+									</p:column>
+									<p:column
+										rendered="#{pesquisaMB.filtroModelo.tipo == 'INTERVALO_DATA'}">
+										<h:panelGroup>
+											<p:calendar id="dataInicial" binding="#{dataInicial}"
+												value="#{pesquisaMB.filtroModelo.intervaloDataInicial}"
+												showOn="button" popupIconOnly="false" pattern="dd/MM/yyyy"
+												locale="pt" navigator="true" label="Data inicial"
+												mindate="#{pesquisaMB.filtroModelo.intervaloDataInicialMinimo}"
+												maxdate="#{pesquisaMB.filtroModelo.intervaloDataFinalMaximo}"
+												placeholder="De / maior que">
+												<p:ajax event="change" update="idIntervaloData" />
+												<p:ajax event="dateSelect" update="idIntervaloData" />
+											</p:calendar>
+											<p:calendar id="idIntervaloData"
+												value="#{pesquisaMB.filtroModelo.intervaloDataFinal}"
+												showOn="button"
+												mindate="#{not empty pesquisaMB.filtroModelo.intervaloDataInicial ? pesquisaMB.filtroModelo.intervaloDataInicial : pesquisaMB.filtroModelo.intervaloDataInicialMinimo}"
+												maxdate="#{pesquisaMB.filtroModelo.intervaloDataFinalMaximo}"
+												popupIconOnly="false" pattern="dd/MM/yyyy" navigator="true"
+												locale="pt" label="Data final" style="margin-left: 15px;"
+												placeholder="Até / menor que">
+												<f:attribute name="dataInicial" value="#{dataInicial}" />
+												<f:validator validatorId="primeDataInicialRangeValidator" />
+											</p:calendar>
+										</h:panelGroup>
+									</p:column>
+									<p:column
+										rendered="#{pesquisaMB.filtroModelo.tipo == 'INTERVALO_DATA'}">
+										<p:message for="idIntervaloData" />
+									</p:column>
+
+									<p:column
+										rendered="#{pesquisaMB.filtroModelo.tipo == 'ARVORE'}">
+										<p:outputLabel for="idArvore" value="Valor" />
+									</p:column>
+									<p:column
+										rendered="#{pesquisaMB.filtroModelo.tipo == 'ARVORE'}">
+										<p:inputText id="idArvoreTextoPesquisa"
+											value="#{pesquisaMB.filtroModelo.arvoreTextoPesquisa}"
+											placeholder="Pesquisar na hierarquia" />
+										<p:commandButton
+											actionListener="#{pesquisaMB.filtroModelo.pesquisarTermoNaArvore}"
+											process="idArvoreTextoPesquisa idArvore @this"
+											update="idArvore" style="margin-left: 5px"
+											icon="Fs16 fa fa-search white" />
+										<p:tree id="idArvore" 
+											value="#{pesquisaMB.filtroModelo.arvoreRaiz}" var="arvore"
+											selectionMode="checkbox" style="width:100%"
+											propagateSelectionDown="#{pesquisaMB.filtroModelo.arvoreSelecionaFilhos}"
+											selection="#{pesquisaMB.filtroModelo.arvoreRaizSelecao}">
+											<p:treeNode type="ORIGINAL">
+												<h:outputText value="#{arvore.valor}" />
+											</p:treeNode>
+											<p:treeNode type="PESQUISADO">
+												<h:outputText value=" "
+													styleClass="fa fa-hand-o-right #{themeView.cor}" />
+												<h:outputText value="#{arvore.valor}" styleClass="FontBold" />
+											</p:treeNode>
+										</p:tree>
+									</p:column>
+									<p:column
+										rendered="#{pesquisaMB.filtroModelo.tipo == 'ARVORE'}">
+										<p:message for="idArvore" />
+									</p:column>
+
+								</p:row>
+							</p:panelGrid>
+
+							<f:facet name="footer">
+								<h:panelGroup layout="block" style="text-align:right;">
+									<p:commandButton id="btnLimpar" value="Limpar"
+										actionListener="#{pesquisaMB.limpar}"
+										icon="fa fa-eraser Fs16 white" rendered="false" />
+
+									<p:commandButton id="btnAdicionarFiltro"
+										value="Adicionar filtro"
+										actionListener="#{pesquisaMB.adicionarFiltro}"
+										icon="fa fa-filter Fs16 white"
+										update="panelListaDeFiltros panelPesquisa listaDeOcorrenciasLazy">
+
+										<ui:remove>
+											<p:resetInput target="panelPesquisa" />
+										</ui:remove>
+									</p:commandButton>
+								</h:panelGroup>
+							</f:facet>
+						</p:panel>
+						<div class="EmptyBox40"></div>
+
+						<p:panel id="panelListaDeFiltros" header="Lista de filtros"
+							styleClass="leaden-back">
+
+							<p:dataTable id="listaDeFiltros"
+								value="#{pesquisaMB.pilhaDeFiltros}" var="filtroCondicao"
+								emptyMessage="Não há filtros na lista.">
+								<p:column headerText="Filtro">
+									<h:outputText value="#{filtroCondicao.rotulo}" />
+								</p:column>
+								<p:column headerText="Valor">
+									<h:panelGroup layout="block"
+										rendered="#{filtroCondicao.tipo == 'LISTA_SELECAO_UNICA'}">
+										<h:outputText
+											value="#{filtroCondicao.valorListaSelecaoUnicaDescricaoSelecionado}" />
+									</h:panelGroup>
+									<h:panelGroup layout="block"
+										rendered="#{filtroCondicao.tipo == 'TEXTO'}">
+										<h:outputText value="#{filtroCondicao.valorTexto}" />
+									</h:panelGroup>
+									<h:panelGroup layout="block"
+										rendered="#{filtroCondicao.tipo == 'INTERVALO_DATA'}">
+										<h:outputText
+											value="De / maior que #{formatadorOcorrenciaMB.formatarData(filtroCondicao.valorIntervaloDataInicial)}"
+											rendered="#{not empty filtroCondicao.valorIntervaloDataInicial and empty filtroCondicao.valorIntervaloDataFinal}" />
+										<h:outputText
+											value="Até / menor que #{formatadorOcorrenciaMB.formatarData(filtroCondicao.valorIntervaloDataFinal)}"
+											rendered="#{not empty filtroCondicao.valorIntervaloDataFinal and empty filtroCondicao.valorIntervaloDataInicial}" />
+										<h:outputText
+											value="Entre #{formatadorOcorrenciaMB.formatarData(filtroCondicao.valorIntervaloDataInicial)} e #{formatadorOcorrenciaMB.formatarData(filtroCondicao.valorIntervaloDataFinal)}"
+											rendered="#{not empty filtroCondicao.valorIntervaloDataInicial and not empty filtroCondicao.valorIntervaloDataFinal}" />
+									</h:panelGroup>
+									<h:panelGroup layout="block"
+										rendered="#{filtroCondicao.tipo == 'ARVORE'}">
+										<p:tree
+											value="#{filtroArvoreConverter.converterArvoreSimplesParaArvorePrime(filtroCondicao.arvoreSelecao, null, true, true)}"
+											style="width:100%" var="elemento">
+											<p:treeNode>
+												<h:outputText value="#{elemento.valor}" />
+											</p:treeNode>
+										</p:tree>
+									</h:panelGroup>
+									<h:panelGroup layout="block"
+										rendered="#{filtroCondicao.tipo == 'GEO_RAIO'}">
+										<h:panelGrid columns="2">
+											<h:outputText value="Endereço:" />
+											<h:outputText value="#{filtroCondicao.valorGeoRaioEndereco}" />
+											
+											<h:outputText value="Latitude:" />
+											<h:outputText value="#{filtroCondicao.valorGeoRaioLatitude}" />
+											
+											<h:outputText value="Longitude:" />
+											<h:outputText value="#{filtroCondicao.valorGeoRaioLongitude}" />
+											
+											<h:outputText value="Raio" />
+											<h:outputText value="#{filtroCondicao.valorGeoRaioEmMetros / 1000}km" />
+										</h:panelGrid>
+									</h:panelGroup>
+								</p:column>
+								<p:column style="width:120px;text-align:center">
+									<p:menuButton value="Opções">
+										<p:menuitem value="Excluir" icon="fa fa-file"
+											process="@this"
+											actionListener="#{pesquisaMB.excluirFiltro(filtroCondicao)}"
+											update="form:panelPesquisa listaDeFiltros form:listaDeOcorrenciasLazy @widgetVar(mapaWidget)">
+										</p:menuitem>
+									</p:menuButton>
+								</p:column>
+							</p:dataTable>
+
+							<ui:remove>
+							<f:facet name="footer">
+								<h:panelGroup layout="block" style="text-align:right;">
+
+									<p:commandButton id="btnPesquisar" value="Pesquisar"
+										actionListener="#{pesquisaMB.pesquisar}"
+										icon="fa fa-search Fs16 white" update="listaDeOcorrenciasLazy"
+										disabled="true">
+									</p:commandButton>
+								</h:panelGroup>
+							</f:facet>
+							</ui:remove>
+
+						</p:panel>
+
+
+
+						<div class="EmptyBox40"></div>
+						<p:dataTable id="listaDeOcorrenciasLazy" var="ocorrencia"
+							value="#{pesquisaMB.ocorrenciasResultadoLazy}" lazy="true"
+							selection="#{pesquisaMB.ocorrenciasSelecionadas}"
+							disabledSelection="#{ocorrencia.auxiliar.geocoderStatus != 'OK'}"
+							rowSelectMode="checkbox" rowKey="#{ocorrencia.id}"
+							paginator="true" dataLocale="pt"						
+							currentPageReportTemplate="Página {currentPage} de {totalPages}"
+							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rows="5" rowsPerPageTemplate="5,10,15,50,100" reflow="true"
+							emptyMessage="Não há registros que satisfaçam as condições dos filtros">
+
+							<f:facet name="header">
+								<div class="TexAlLeft">Ocorrências</div>
+							</f:facet>
+							<p:column selectionMode="multiple"
+								style="width:20px;text-align:center" />
+
+							<p:column headerText="Ocorrência">
+								<h:outputText
+									value="#{formatadorOcorrenciaMB.formatarOcorrencia(ocorrencia)}" />
+							</p:column>
+							<p:column headerText="Data de registro">
+								<h:outputText
+									value="#{formatadorOcorrenciaMB.formatarData(ocorrencia.datahoraRegistroBo)}" />
+							</p:column>
+							<p:column headerText="Local do fato">
+								<h:outputText value="#{formatadorOcorrenciaMB.formatarEndereco(ocorrencia)}" />
+							</p:column>
+							<p:column headerText="Complementar" style="width:15%">
+								<h:outputText value="Sim"
+									rendered="#{not empty ocorrencia.anoReferenciaBo}" />
+								<h:outputText value="Não"
+									rendered="#{empty ocorrencia.anoReferenciaBo}" />
+							</p:column>
+							<p:column headerText="Complementos" style="width:15%">
+								<h:outputText value="#{fn:length(ocorrencia.auxiliar.filhos)}" />
+							</p:column>
+							<p:column style="width:120px;text-align:center">
+								<p:menuButton value="Opções">
+									<p:menuitem value="Boletim de ocorrência" icon="fa fa-file"
+										process="@this"
+										action="ocorrenciadetalhe.xhtml"
+										rendered="#{not usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}">
+										<f:setPropertyActionListener value="#{ocorrencia}"
+											target="#{ocorrenciaDetalheMB.ocorrenciaDetalhe}" />
+										<f:setPropertyActionListener value="pesquisa.xhtml"
+											target="#{ocorrenciaDetalheMB.origemDetalhe}" />
+									</p:menuitem>
+									<p:menuitem value="Boletim de ocorrência" icon="fa fa-file"
+										process="@this"
+										onsuccess="window.open('#{baseURL}modulo/roubocarga/ocorrenciadetalhe.xhtml', 'ocorrencia.xhtml', '', true);"
+										rendered="#{usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}">
+										<f:setPropertyActionListener value="#{ocorrencia}"
+											target="#{ocorrenciaDetalheMB.ocorrenciaDetalhe}" />
+										<f:setPropertyActionListener value="pesquisa.xhtml"
+											target="#{ocorrenciaDetalheMB.origemDetalhe}" />
+									</p:menuitem>
+								</p:menuButton>
+							</p:column>
+
+							<f:facet name="footer">
+								<h:outputText
+									value="Total reg. da Pesquisa: #{pesquisaMB.ocorrenciasResultadoLazy.rowCount}   " />
+							</f:facet>
+						</p:dataTable>
+						<div class="EmptyBox5"></div>
+						<h:panelGroup layout="block" style="text-align:right;">
+							<p:commandButton 
+								actionListener="#{indiciadoMB.pesquisar(pesquisaMB.ocorrenciasSelecionadas)}"
+								icon="fa fa-list Fs16 white" value="Listar indiciados"
+								process="listaDeOcorrenciasLazy @this"
+								action="indiciado/indiciado.xhtml">
+								<f:setPropertyActionListener value="pesquisa.xhtml" target="#{indiciadoMB.origem}"/>
+							</p:commandButton>
+							<p:commandButton update="@widgetVar(mapaWidget)"
+								process="listaDeOcorrenciasLazy @this"
+								actionListener="#{pesquisaMB.exibirRegistrosSelecionadosNoMapa}"
+								icon="fa fa-search Fs16 white" value="Expor no mapa"
+								onsuccess="recarregarJanelaFilha()" />
+						</h:panelGroup>
+
+
+					</div>
+				</div>
+			</div>
+
+			<div class="layout-portlets-box">
+				<div class="Container100">
+					<div class="ContainerIndent">
+						<h1 class="BigTopic TexAlLeft">Mapa</h1>
+						<div class="EmptyBox10"></div>
+
+						<h:panelGroup id="panelMapa" layout="block">
+							<p:remoteCommand name="janelaFechadaPeloUsuario"
+								update="panelMapa"
+								actionListener="#{pesquisaMB.filtroMapa.setExibirJanelaFilha(false)}" />
+
+							<h:panelGroup layout="block"
+								rendered="#{not pesquisaMB.filtroMapa.exibirJanelaFilha}">
+								<ui:include src="mapa.xhtml">
+									<ui:param name="style" value="width:100%;height:400px" />
+									<ui:param name="nomeWidget" value="mapaWidget" />
+									<ui:param name="centroMapa" value="#{pesquisaMB.centroMapa}" />
+									<ui:param name="mapaGeoModel" value="#{pesquisaMB.geoModel}" />
+									<ui:param name="paginaOrigem" value="pesquisa.xhtml" />
+									<ui:param name="listaDeOcorrencias" value="listaDeOcorrenciasLazy" />
+									<ui:param name="listaDeFiltros" value="listaDeFiltros" />
+								</ui:include>
+							</h:panelGroup>
+
+							<h:panelGroup layout="block"
+								rendered="#{pesquisaMB.filtroMapa.exibirJanelaFilha}">
+								<p>
+									<h:outputText styleClass="textoItalico" value="A opção " />
+									<h:outputText styleClass="textoNegrito"
+										value="Exibir em janela separada " />
+									<h:outputText styleClass="textoItalico" value="está acionada. " />
+								</p>
+								<p>
+									<h:outputText styleClass="textoItalico"
+										value="Atente-se ao bloqueador de janela pop-up do seu navegador, caso ela não apareça." />
+								</p>
+								<p>
+									<h:outputText styleClass="textoItalico"
+										value="Caso a janela separada deixe de ser atualizada, por favor, desligue e religue a opção " />
+									<h:outputText styleClass="textoNegrito"
+										value="Exibir em janela separada." />
+								</p>
+							</h:panelGroup>
+
+							<div class="EmptyBox10"></div>
+
+							<h2 class="BigTopic TexAlLeft">Controles</h2>
+							<div class="EmptyBox10"></div>
+
+							<div class="Responsive50 Container50">
+								<div class="ContainerIndent">
+									<h2 class="BigTopic TexAlLeft">Geral</h2>
+									<div class="EmptyBox10"></div>
+
+									<h:panelGrid columns="2">
+										<h:outputText value="Roubo de carga: " style="color: red;" />
+										<p:inputSwitch
+											value="#{pesquisaMB.filtroMapa.exibirRoubo}"
+											onchange="recarregarJanelaFilha()">
+											<p:ajax
+												listener="#{pesquisaMB.exibirRegistrosSelecionadosNoMapa}"
+												update="panelMapa" />
+										</p:inputSwitch>
+
+										<h:outputText value="Receptação: " style="color: blue;" />
+										<p:inputSwitch
+											value="#{pesquisaMB.filtroMapa.exibirReceptacao}"
+											onchange="recarregarJanelaFilha()">
+											<p:ajax
+												listener="#{pesquisaMB.exibirRegistrosSelecionadosNoMapa}"
+												update="panelMapa" />
+										</p:inputSwitch>
+
+										<h:outputText value="Complementar: " style="color: green;" />
+										<p:inputSwitch
+											value="#{pesquisaMB.filtroMapa.exibirComplementar}"
+											onchange="recarregarJanelaFilha()">
+											<p:ajax
+												listener="#{pesquisaMB.exibirRegistrosSelecionadosNoMapa}"
+												update="panelMapa" />
+										</p:inputSwitch>
+
+										<h:outputText value="Apenas linhas: " style="color: grey;" />
+										<p:inputSwitch
+											value="#{pesquisaMB.filtroMapa.exibirApenasLinhas}"
+											onchange="recarregarJanelaFilha()">
+											<p:ajax
+												listener="#{pesquisaMB.exibirRegistrosSelecionadosNoMapa}"
+												update="panelMapa" />
+										</p:inputSwitch>
+
+										<h:outputText value="Exibir em janela separada: "
+											style="color: grey;" />
+										<p:inputSwitch
+											value="#{pesquisaMB.filtroMapa.exibirJanelaFilha}"
+											onchange="#{not pesquisaMB.filtroMapa.exibirJanelaFilha ? 'abrirJanelaFilha()' : 'fecharJanelaFilha()'}">
+											<p:ajax
+												listener="#{pesquisaMB.exibirRegistrosSelecionadosNoMapa}"
+												update="panelMapa" />
+										</p:inputSwitch>
+									</h:panelGrid>
+								</div>
+							</div>
+
+							<div class="Responsive50 Container50">
+								<div class="ContainerIndent">
+									<h2 class="BigTopic TexAlLeft">Endereço avulso</h2>
+									<div class="EmptyBox10"></div>
+									<h:panelGrid columns="2">
+										<h:outputText value="Mercado: " />
+										<p:inputSwitch
+											value="#{pesquisaMB.filtroMapa.exibirAvulsoMercado}"
+											onchange="recarregarJanelaFilha()">
+											<p:ajax
+												listener="#{pesquisaMB.exibirRegistrosSelecionadosNoMapa}"
+												update="panelMapa" />
+										</p:inputSwitch>
+
+										<h:outputText value="Galpão: " />
+										<p:inputSwitch
+											value="#{pesquisaMB.filtroMapa.exibirAvulsoGalpao}"
+											onchange="recarregarJanelaFilha()">
+											<p:ajax
+												listener="#{pesquisaMB.exibirRegistrosSelecionadosNoMapa}"
+												update="panelMapa" />
+										</p:inputSwitch>
+
+										<h:outputText value="Depósito: " />
+										<p:inputSwitch
+											value="#{pesquisaMB.filtroMapa.exibirAvulsoDeposito}"
+											onchange="recarregarJanelaFilha()">
+											<p:ajax
+												listener="#{pesquisaMB.exibirRegistrosSelecionadosNoMapa}"
+												update="panelMapa" />
+										</p:inputSwitch>
+
+										<h:outputText value="Desmanche: " />
+										<p:inputSwitch
+											value="#{pesquisaMB.filtroMapa.exibirAvulsoDesmanche}"
+											onchange="recarregarJanelaFilha()">
+											<p:ajax
+												listener="#{pesquisaMB.exibirRegistrosSelecionadosNoMapa}"
+												update="panelMapa" />
+										</p:inputSwitch>
+
+										<h:outputText value="Centro de distribuição: " />
+										<p:inputSwitch
+											value="#{pesquisaMB.filtroMapa.exibirAvulsoCentroDeDistribuicao}"
+											onchange="recarregarJanelaFilha()">
+											<p:ajax
+												listener="#{pesquisaMB.exibirRegistrosSelecionadosNoMapa}"
+												update="panelMapa" />
+										</p:inputSwitch>
+
+
+									</h:panelGrid>
+								</div>
+							</div>
+							<h:panelGroup layout="block" style="text-align:right;">
+								<p:commandButton id="btnLimparMapa" value="Limpar mapa"
+									icon="fa fa-eraser Fs16 white"
+									actionListener="#{pesquisaMB.limparMapa}"
+									oncomplete="recarregarJanelaFilha()"
+									update="panelMapa" />
+							</h:panelGroup>
+
+
+						</h:panelGroup>
+
+					</div>
+				</div>
+			</div>
+
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>
