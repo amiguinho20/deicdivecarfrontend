@@ -19,7 +19,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
 import com.google.gson.Gson;
@@ -29,12 +28,12 @@ import com.google.gson.reflect.TypeToken;
 import br.com.fences.deicdivecarfrontend.config.AppConfig;
 import br.com.fences.fencesutils.conversor.converter.Converter;
 import br.com.fences.fencesutils.filtrocustom.ArvoreSimples;
-import br.com.fences.fencesutils.filtrocustom.ChaveValor;
 import br.com.fences.fencesutils.filtrocustom.FiltroCondicao;
 import br.com.fences.fencesutils.filtrocustom.TipoFiltro;
 import br.com.fences.fencesutils.filtrocustom.TipoPesquisaTexto;
 import br.com.fences.fencesutils.formatar.FormatarData;
 import br.com.fences.fencesutils.rest.tratamentoerro.util.VerificarErro;
+import br.com.fences.fencesutils.verificador.Verificador;
 import br.com.fences.ocorrenciaentidade.ocorrencia.Ocorrencia;
 
 @SessionScoped 
@@ -56,6 +55,9 @@ public class FiltroBO implements Serializable{
 	
 	@Inject
 	private FiltroArvoreConverter filtroArvoreConverter;
+	
+	@Inject
+	private FiltroFonteCache filtroFonteCache;
 
 	private List<FiltroModelo> filtros;
 	
@@ -445,23 +447,30 @@ public class FiltroBO implements Serializable{
 	
 	private String chamarServicoFonte(String servicoFonte)
 	{
-		host = appConfig.getServerBackendHost();
-		port = appConfig.getServerBackendPort();
-		
-		Client client = ClientBuilder.newClient();
-		String servico = "http://" + host + ":"+ port + servicoFonte;
-		WebTarget webTarget = client.target(servico);
-		
-		Response response = webTarget
-				.request(MediaType.APPLICATION_JSON)
-				.get();
-		String json = response.readEntity(String.class);
-		if (verificarErro.contemErro(response, json))
+		String json = null;
+		json = filtroFonteCache.getCache(servicoFonte);
+		if (!Verificador.isValorado(json))
 		{
-			String msg = verificarErro.criarMensagem(response, json, servico);
-			logger.error(msg);
-			throw new RuntimeException(msg);
-		}	
+			host = appConfig.getServerBackendHost();
+			port = appConfig.getServerBackendPort();
+			
+			Client client = ClientBuilder.newClient();
+			String servico = "http://" + host + ":"+ port + servicoFonte;
+			WebTarget webTarget = client.target(servico);
+			
+			Response response = webTarget
+					.request(MediaType.APPLICATION_JSON)
+					.get();
+			json = response.readEntity(String.class);
+			if (verificarErro.contemErro(response, json))
+			{
+				String msg = verificarErro.criarMensagem(response, json, servico);
+				logger.error(msg);
+				throw new RuntimeException(msg);
+			}
+			
+			filtroFonteCache.addCache(servicoFonte, json);
+		}
 		return json;
 	}
 			
