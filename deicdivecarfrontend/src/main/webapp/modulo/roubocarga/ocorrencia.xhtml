@@ -22,7 +22,7 @@
 				<div class="Container100">
 					<div class="ContainerIndent">
 						<p:breadCrumb>
-							<p:menuitem value="A..." url="#" disabled="true" />
+							<p:menuitem value="Home" url="#" disabled="true" />
 							<p:menuitem value="DEIC" url="#" disabled="true" />
 							<p:menuitem value="DIVECAR" url="#" disabled="true" />
 							<p:menuitem value="Roubo de carga e receptação" disabled="true"
@@ -46,6 +46,11 @@
 								
 							</span>
 						</h1>
+						<div class="Fs12 red">
+							<i class="fa fa-exclamation-triangle Fs20 red"></i>
+							Esta funcionalidade será desabilitada em breve, em seu lugar favor utilizar a funcionalidade <span class="FontBold">Pesquisa de ocorrência.</span>
+							<i class="fa fa-exclamation-triangle Fs20 red"></i>
+						</div>
 						<h:panelGroup layout="block" id="panelInformativoContainer" >
 							<h:panelGroup layout="block" rendered="#{rdoRouboCargaReceptacaoMB.informativoFuncionalidade}" styleClass="BorderedBox Container100 FontGray">
 							<div class="ContainerIndent">
@@ -185,8 +190,6 @@
 										style="margin-left: 15px;" placeholder="Até / menor que">
 										<f:attribute name="dataInicial"
 											value="#{rdoRouboCargaReceptacaoMB.filtro.dataInicial}" />
-										<f:validator validatorId="primeDataInicialRangeValidator"
-											disabled="true" />
 									</p:calendar>
 								</h:panelGroup>
 
@@ -306,15 +309,15 @@
 
 							<p:column headerText="Ocorrência">
 								<h:outputText
-									value="#{rdoRouboCargaReceptacaoMB.formatarOcorrencia(ocorrencia)}" />
+									value="#{formatadorOcorrenciaMB.formatarOcorrencia(ocorrencia)}" />
 							</p:column>
 							<p:column headerText="Data de registro">
 								<h:outputText
-									value="#{rdoRouboCargaReceptacaoMB.formatarData(ocorrencia.datahoraRegistroBo)}" />
+									value="#{formatadorOcorrenciaMB.formatarData(ocorrencia.datahoraRegistroBo)}" />
 							</p:column>
 							<p:column headerText="Local do fato">
 								<h:outputText
-									value="#{rdoRouboCargaReceptacaoMB.formatarEndereco(ocorrencia)}" />
+									value="#{formatadorOcorrenciaMB.formatarEndereco(ocorrencia)}" />
 							</p:column>
 							<p:column headerText="Complementar" style="width:15%">
 								<h:outputText value="Sim"
@@ -385,6 +388,12 @@
 								rendered="#{not rdoRouboCargaReceptacaoMB.filtroMapa.exibirJanelaFilha}">
 								<ui:include src="mapa.xhtml">
 									<ui:param name="style" value="width:100%;height:400px" />
+									<ui:param name="nomeWidget" value="mapaWidget" />
+									<ui:param name="centroMapa" value="#{rdoRouboCargaReceptacaoMB.centroMapa}" />
+									<ui:param name="mapaGeoModel" value="#{rdoRouboCargaReceptacaoMB.geoModel}" />
+									<ui:param name="paginaOrigem" value="ocorrencia.xhtml" />
+									<ui:param name="listaDeOcorrencias" value="listaDeOcorrenciasLazy" />
+									<ui:param name="listaDeFiltros" value="panelPesquisa" />									
 								</ui:include>
 							</h:panelGroup>
 

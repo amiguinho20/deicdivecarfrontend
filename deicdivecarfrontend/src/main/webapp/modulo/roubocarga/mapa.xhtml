@@ -5,76 +5,162 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 
+	<f:view contentType="text/html">
 
-	<ui:remove>
-		<!-- recebe o 'style' por parametro -->
-	</ui:remove>
-	<p:gmap id="mapa" widgetVar="mapaWidget"
-		center="#{rdoRouboCargaReceptacaoMB.centroMapa}" zoom="9"
-		type="ROADMAP" model="#{rdoRouboCargaReceptacaoMB.geoModel}"
-		style="#{style}">
-		<p:ajax event="overlaySelect"
-			listener="#{rdoRouboCargaReceptacaoMB.onMarkerSelect}" />
-		<p:gmapInfoWindow>
-			<p>
-				<h:outputText
-					value="#{rdoRouboCargaReceptacaoMB.formatarOcorrencia(rdoRouboCargaReceptacaoMB.marcaSelecionada.data)}" />
-			</p>
-			<p>
-				<h:outputText
-					value="#{rdoRouboCargaReceptacaoMB.formatarEndereco(rdoRouboCargaReceptacaoMB.marcaSelecionada.data)}" />
-			</p>
-			<div class="TexAlRight">
-				<p:menuButton value="Opções" rendered="#{not rdoRouboCargaReceptacaoMB.filtroMapa.exibirJanelaFilha}">
-					<p:menuitem value="Boletim de ocorrência" icon="fa fa-file"
-						action="ocorrenciadetalhe.xhtml"
-						rendered="#{not usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}">
-						<f:setPropertyActionListener value="#{rdoRouboCargaReceptacaoMB.marcaSelecionada.data}"
-							target="#{ocorrenciaDetalheMB.ocorrenciaDetalhe}" />
-						<f:setPropertyActionListener value="ocorrencia.xhtml"
-							target="#{ocorrenciaDetalheMB.origemDetalhe}" />
-					</p:menuitem>
-					<p:menuitem value="Boletim de ocorrência" icon="fa fa-file"
-						onsuccess="window.open('#{baseURL}modulo/roubocarga/ocorrenciadetalhe.xhtml', 'ocorrencia.xhtml', '', true);"
-						rendered="#{usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}">
-						<f:setPropertyActionListener value="#{rdoRouboCargaReceptacaoMB.marcaSelecionada.data}"
-							target="#{ocorrenciaDetalheMB.ocorrenciaDetalhe}" />
-						<f:setPropertyActionListener value="ocorrencia.xhtml"
-							target="#{ocorrenciaDetalheMB.origemDetalhe}" />
-					</p:menuitem>
-					<p:separator />
-					<p:menuitem value="Listar ocorrências no raio de 5km" icon="fa fa-search"
-						action="#{rdoRouboCargaReceptacaoMB.listarRaio(5000)}"
-						update="@widgetVar(mapaWidget) listaDeOcorrenciasLazy panelPesquisa">
-					</p:menuitem>
-					<p:menuitem value="Listar ocorrências no raio de 10km" icon="fa fa-search"
-						action="#{rdoRouboCargaReceptacaoMB.listarRaio(10000)}"
-						update="@widgetVar(mapaWidget) listaDeOcorrenciasLazy panelPesquisa">
-					</p:menuitem>
-					<p:menuitem value="Listar ocorrências no raio de 15km" icon="fa fa-search"
-						action="#{rdoRouboCargaReceptacaoMB.listarRaio(15000)}"
-						update="@widgetVar(mapaWidget) listaDeOcorrenciasLazy panelPesquisa">
-					</p:menuitem>
-					<p:menuitem value="Listar ocorrências no raio de 50km" icon="fa fa-search"
-						action="#{rdoRouboCargaReceptacaoMB.listarRaio(50000)}"
-						update="@widgetVar(mapaWidget) listaDeOcorrenciasLazy panelPesquisa">
-					</p:menuitem>
-					<p:menuitem value="Listar ocorrências no raio de 100km" icon="fa fa-search"
-						action="#{rdoRouboCargaReceptacaoMB.listarRaio(100000)}"
-						update="@widgetVar(mapaWidget) listaDeOcorrenciasLazy panelPesquisa">
-					</p:menuitem>
+		<ui:remove>
+			<!-- recebe os parametros: style, nomeWidget, centroMapa, mapaGeoModel, paginaOrigem, listaDeOcorrencias, listaDeFiltros -->
+		</ui:remove>
+		<script>
+			function geocodeReverso(latitude, longitude)
+			{
+				PF('#{nomeWidget}').reverseGeocode(latitude, longitude);
+			}
+		</script>
+		<p:gmap id="mapa" widgetVar="#{nomeWidget}" center="#{centroMapa}"
+			zoom="9" type="ROADMAP" model="#{mapaGeoModel}"
+			disableDoubleClickZoom="true" fitBounds="true" style="#{style}">
+			<p:ajax event="overlaySelect"
+				listener="#{listenerEventMapaUtil.onMarkerSelect}" />
+			<ui:remove>
+				<p:ajax event="pointSelect"
+					listener="#{listenerEventMapaUtil.onPointSelect}" />
+				<p:ajax event="reverseGeocode"
+					listener="#{listenerEventMapaUtil.onReverseGeocode}"
+					update="selecaoDePonto" onsuccess="PF('dlgSelecaoDePonto').show();" />
+			</ui:remove>
+			<p:gmapInfoWindow>
+
+				<h:panelGroup layout="block"
+					rendered="#{not empty listenerEventMapaUtil.marcaSelecionada.data}">
+					<p>
+						<h:outputText
+							value="#{formatadorOcorrenciaMB.formatarOcorrencia(listenerEventMapaUtil.marcaSelecionada.data)}" />
+					</p>
+					<p>
+						<h:outputText
+							value="#{formatadorOcorrenciaMB.formatarEndereco(listenerEventMapaUtil.marcaSelecionada.data)}" />
+					</p>
+					<div class="TexAlRight">
+						<p:menuButton value="Opções"
+							rendered="#{not filtroMapa.exibirJanelaFilha}">
+							<p:menuitem value="Boletim de ocorrência" icon="fa fa-file"
+								action="ocorrenciadetalhe.xhtml"
+								rendered="#{not usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}">
+								<f:setPropertyActionListener
+									value="#{listenerEventMapaUtil.marcaSelecionada.data}"
+									target="#{ocorrenciaDetalheMB.ocorrenciaDetalhe}" />
+								<f:setPropertyActionListener value="#{paginaOrigem}"
+									target="#{ocorrenciaDetalheMB.origemDetalhe}" />
+							</p:menuitem>
+							<p:menuitem value="Boletim de ocorrência" icon="fa fa-file"
+								onsuccess="window.open('#{baseURL}modulo/roubocarga/ocorrenciadetalhe.xhtml', 'ocorrencia.xhtml', '', true);"
+								rendered="#{usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}">
+								<f:setPropertyActionListener
+									value="#{listenerEventMapaUtil.marcaSelecionada.data}"
+									target="#{ocorrenciaDetalheMB.ocorrenciaDetalhe}" />
+								<f:setPropertyActionListener value="#{paginaOrigem}"
+									target="#{ocorrenciaDetalheMB.origemDetalhe}" />
+							</p:menuitem>
+							<p:separator />
+
+							<p:menuitem value="Listar ocorrências no raio de 5km"
+								icon="fa fa-search"
+								rendered="#{paginaOrigem == 'pesquisa.xhtml'}"
+								action="#{pesquisaMB.listarRaio(5000, listenerEventMapaUtil.marcaSelecionada.data)}"
+								update="@widgetVar(#{nomeWidget}) #{listaDeOcorrencias} #{listaDeFiltros}">
+							</p:menuitem>
+							<p:menuitem value="Listar ocorrências no raio de 10km"
+								icon="fa fa-search"
+								rendered="#{paginaOrigem == 'pesquisa.xhtml'}"
+								action="#{pesquisaMB.listarRaio(10000, listenerEventMapaUtil.marcaSelecionada.data)}"
+								update="@widgetVar(#{nomeWidget}) #{listaDeOcorrencias} #{listaDeFiltros}">
+							</p:menuitem>
+							<p:menuitem value="Listar ocorrências no raio de 15km"
+								icon="fa fa-search"
+								rendered="#{paginaOrigem == 'pesquisa.xhtml'}"
+								action="#{pesquisaMB.listarRaio(15000, listenerEventMapaUtil.marcaSelecionada.data)}"
+								update="@widgetVar(#{nomeWidget}) #{listaDeOcorrencias} #{listaDeFiltros}">
+							</p:menuitem>
+							<p:menuitem value="Listar ocorrências no raio de 50km"
+								icon="fa fa-search"
+								rendered="#{paginaOrigem == 'pesquisa.xhtml'}"
+								action="#{pesquisaMB.listarRaio(50000, listenerEventMapaUtil.marcaSelecionada.data)}"
+								update="@widgetVar(#{nomeWidget}) #{listaDeOcorrencias} #{listaDeFiltros}">
+							</p:menuitem>
+							<p:menuitem value="Listar ocorrências no raio de 100km"
+								icon="fa fa-search"
+								rendered="#{paginaOrigem == 'pesquisa.xhtml'}"
+								action="#{pesquisaMB.listarRaio(100000, listenerEventMapaUtil.marcaSelecionada.data)}"
+								update="@widgetVar(#{nomeWidget}) #{listaDeOcorrencias} #{listaDeFiltros}">
+							</p:menuitem>
 
 
+							<p:menuitem value="Listar ocorrências no raio de 5km"
+								icon="fa fa-search"
+								rendered="#{paginaOrigem == 'ocorrencia.xhtml'}"
+								action="#{rdoRouboCargaReceptacaoMB.listarRaio(5000, listenerEventMapaUtil.marcaSelecionada.data)}"
+								update="@widgetVar(#{nomeWidget}) #{listaDeOcorrencias} #{listaDeFiltros}">
+							</p:menuitem>
+							<p:menuitem value="Listar ocorrências no raio de 10km"
+								icon="fa fa-search"
+								rendered="#{paginaOrigem == 'ocorrencia.xhtml'}"
+								action="#{rdoRouboCargaReceptacaoMB.listarRaio(10000, listenerEventMapaUtil.marcaSelecionada.data)}"
+								update="@widgetVar(#{nomeWidget}) #{listaDeOcorrencias} #{listaDeFiltros}">
+							</p:menuitem>
+							<p:menuitem value="Listar ocorrências no raio de 15km"
+								icon="fa fa-search"
+								rendered="#{paginaOrigem == 'ocorrencia.xhtml'}"
+								action="#{rdoRouboCargaReceptacaoMB.listarRaio(15000, listenerEventMapaUtil.marcaSelecionada.data)}"
+								update="@widgetVar(#{nomeWidget}) #{listaDeOcorrencias} #{listaDeFiltros}">
+							</p:menuitem>
+							<p:menuitem value="Listar ocorrências no raio de 50km"
+								icon="fa fa-search"
+								rendered="#{paginaOrigem == 'ocorrencia.xhtml'}"
+								action="#{rdoRouboCargaReceptacaoMB.listarRaio(50000, listenerEventMapaUtil.marcaSelecionada.data)}"
+								update="@widgetVar(#{nomeWidget}) #{listaDeOcorrencias} #{listaDeFiltros}">
+							</p:menuitem>
+							<p:menuitem value="Listar ocorrências no raio de 100km"
+								icon="fa fa-search"
+								rendered="#{paginaOrigem == 'ocorrencia.xhtml'}"
+								action="#{rdoRouboCargaReceptacaoMB.listarRaio(100000, listenerEventMapaUtil.marcaSelecionada.data)}"
+								update="@widgetVar(#{nomeWidget}) #{listaDeOcorrencias} #{listaDeFiltros}">
+							</p:menuitem>
 
-					<p:menuitem value="Save" icon="ui-icon-disk" rendered="false" />
-					<p:menuitem value="Update" icon="ui-icon-arrowrefresh-1-w"
-						rendered="false" />
-					<p:menuitem value="Delete" icon="ui-icon-close" rendered="false" />
-					<p:separator rendered="false" />
-					<p:menuitem value="Homepage" icon="ui-icon-extlink"
-						rendered="false" />
-				</p:menuButton>
-			</div>
-		</p:gmapInfoWindow>
-	</p:gmap>
+
+							<p:menuitem value="Save" icon="ui-icon-disk" rendered="false" />
+							<p:menuitem value="Update" icon="ui-icon-arrowrefresh-1-w"
+								rendered="false" />
+							<p:menuitem value="Delete" icon="ui-icon-close" rendered="false" />
+							<p:separator rendered="false" />
+							<p:menuitem value="Homepage" icon="ui-icon-extlink"
+								rendered="false" />
+						</p:menuButton>
+					</div>
+				</h:panelGroup>
+			</p:gmapInfoWindow>
+		</p:gmap>
+		<ui:remove>
+			<p:dialog header="Seleção de ponto no mapa"
+				widgetVar="dlgSelecaoDePonto" modal="true" height="100"
+				position="center">
+				<h:panelGroup id="selecaoDePonto" layout="block">
+					<h:panelGroup layout="block"
+						rendered="#{not empty listenerEventMapaUtil.pontoSelecionado}">
+						<p>
+							<h:outputText
+								value="Latitude: #{listenerEventMapaUtil.pontoSelecionado.lat}" />
+						</p>
+						<p>
+							<h:outputText
+								value="Longitude: #{listenerEventMapaUtil.pontoSelecionado.lng}" />
+						</p>
+						<p>
+							<h:outputText
+								value="Endereço: #{listenerEventMapaUtil.pontoSelecionadoEndereco}" />
+						</p>
+					</h:panelGroup>
+				</h:panelGroup>
+			</p:dialog>
+		</ui:remove>
+	</f:view>
 </ui:composition>

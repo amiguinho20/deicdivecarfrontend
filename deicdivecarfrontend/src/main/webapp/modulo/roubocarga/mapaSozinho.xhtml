@@ -14,9 +14,10 @@
 			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 	</f:facet>
-	<title>Fences | Plataforma</title>
-	<link rel="icon" type="image/png"
-		href="resources/fences/images/FaviconFences.ico" />
+	<c:set var="baseURL" value="#{request.requestURL.substring(0, request.requestURL.length() - request.requestURI.length())}#{request.contextPath}/" />
+	
+	<title>Σ Sigma | Plataforma</title>
+	<link rel="icon" type="image/png" href="#{baseURL}resources/fences/images/favicon.ico" />
 	<script
 		src="http://maps.google.com/maps/api/js?sensor=false&amp;language=pt_BR"
 		type="text/javascript"></script>
@@ -32,6 +33,12 @@
 	<h:form>
 		<ui:include src="mapa.xhtml">
 			<ui:param name="style" value="width:100%;height:100%;position:absolute" />
+			<ui:param name="nomeWidget" value="mapaWidget" />
+			<ui:param name="centroMapa" value="#{pesquisaMB.centroMapa}" />
+			<ui:param name="mapaGeoModel" value="#{pesquisaMB.geoModel}" />
+			<ui:param name="paginaOrigem" value="pesquisa.xhtml" />
+			<ui:param name="listaDeOcorrencias" value="listaDeOcorrenciasLazy" />
+			<ui:param name="listaDeFiltros" value="listaDeFiltros" />
 		</ui:include>
 	</h:form>
 	<p:ajaxStatus
