@@ -193,7 +193,8 @@ public class OcorrenciaDetalheMB implements Serializable{
 		TreeNode natOcorrencia = null;
 		TreeNode especie = null;
 		TreeNode subespecie = null;
-		TreeNode condutaNatureza = null;
+		TreeNode natNatureza = null;
+		TreeNode conduta = null;
 		TreeNode desdobramentoCircunstancia = null;
 		TreeNode modalidade = null;
 		
@@ -252,52 +253,92 @@ public class OcorrenciaDetalheMB implements Serializable{
 				subespecie.setExpanded(true);
 			}
 
-			//-- conduta/natureza
+			
+			//-- natureza
 			possui = false;
-			String condutaRubrica = null;
-			if (Verificador.isValorado(natureza.getRubrica()))
+			for (TreeNode child : subespecie.getChildren())
 			{
-				condutaRubrica = natureza.getRubrica();
-			}
-			else
-			{
-				condutaRubrica = natureza.getDescrConduta();
-			}
-			if (condutaRubrica != null)
-			{
-				for (TreeNode child : subespecie.getChildren())
+				if (Verificador.isValorado(natureza.getRubrica()))
 				{
-					if (child.getData().equals(condutaRubrica))
+					if (child.getData().equals(natureza.getRubrica()))
 					{
 						possui = true;
-						condutaNatureza = child;
+						natNatureza = child;
 					}
 				}
-				if (!possui)
+			}
+			if (!possui)
+			{
+				String descrRubrica = "";
+				if (Verificador.isValorado(natureza.getRubrica()))
 				{
-					condutaNatureza = new DefaultTreeNode(condutaRubrica, subespecie);
-					condutaNatureza.setExpanded(true);
+					descrRubrica = natureza.getRubrica();
 				}
+				natNatureza = new DefaultTreeNode(descrRubrica, subespecie);
+				subespecie.setExpanded(true);
 			}
 			
+			//-- conduta
+			possui = false;
+			for (TreeNode child : natNatureza.getChildren())
+			{
+				if (child.getData().equals(natureza.getDescrConduta()))
+				{
+					possui = true;
+					conduta = child;
+				}
+			}
+			if (!possui)
+			{
+				if (Verificador.isValorado(natureza.getDescrConduta()))
+				{
+					conduta = new DefaultTreeNode(natureza.getDescrConduta(), natNatureza);
+					conduta.setExpanded(true);
+				}
+			}
+
 			//-- desdobramentoCircunstancia
 			for (Desdobramento desdobramento : natureza.getDesdobramentos())
 			{
 				if (Verificador.isValorado(desdobramento.getDescrDesdobramento())){
+					
 					possui = false;
-					for (TreeNode child : condutaNatureza.getChildren())
+					if (Verificador.isValorado(natureza.getDescrConduta()))
 					{
-						if (child.getData().equals(desdobramento.getDescrDesdobramento()))
+						//-- se existir conduta, coloca abaixo de conduta
+						for (TreeNode child : conduta.getChildren())
 						{
-							possui = true;
-							desdobramentoCircunstancia = child;
+							if (child.getData().equals(desdobramento.getDescrDesdobramento()))
+							{
+								possui = true;
+								desdobramentoCircunstancia = child;
+							}
+						}
+						if (!possui)
+						{
+							desdobramentoCircunstancia = new DefaultTreeNode(desdobramento.getDescrDesdobramento(), conduta);
+							desdobramentoCircunstancia.setExpanded(true);
 						}
 					}
-					if (!possui)
+					else
 					{
-						desdobramentoCircunstancia = new DefaultTreeNode(desdobramento.getDescrDesdobramento(), condutaNatureza);
-						desdobramentoCircunstancia.setExpanded(true);
+						//-- senao, colocar abaixo da natNatureza
+						for (TreeNode child : natNatureza.getChildren())
+						{
+							if (child.getData().equals(desdobramento.getDescrDesdobramento()))
+							{
+								possui = true;
+								desdobramentoCircunstancia = child;
+							}
+						}
+						if (!possui)
+						{
+							desdobramentoCircunstancia = new DefaultTreeNode(desdobramento.getDescrDesdobramento(), natNatureza);
+							desdobramentoCircunstancia.setExpanded(true);
+						}						
 					}
+					
+
 					//-- modalidade
 					for (Modalidade modalid : desdobramento.getModalidades())
 					{
@@ -322,19 +363,41 @@ public class OcorrenciaDetalheMB implements Serializable{
 			{
 				if (Verificador.isValorado(circunstancia.getDescrCircunstancia()))
 				{
-					possui = false;
-					for (TreeNode child : condutaNatureza.getChildren())
+					if (Verificador.isValorado(natureza.getDescrConduta()))
 					{
-						if (child.getData().equals(circunstancia.getDescrCircunstancia()))
+						possui = false;
+						
+						//-- se existir conduta, coloca abaixo de conduta
+						for (TreeNode child : conduta.getChildren())
 						{
-							possui = true;
-							desdobramentoCircunstancia = child;
+							if (child.getData().equals(circunstancia.getDescrCircunstancia()))
+							{
+								possui = true;
+								desdobramentoCircunstancia = child;
+							}
+						}
+						if (!possui)
+						{
+							desdobramentoCircunstancia = new DefaultTreeNode(circunstancia.getDescrCircunstancia(), conduta);
+							desdobramentoCircunstancia.setExpanded(true);
 						}
 					}
-					if (!possui)
+					else
 					{
-						desdobramentoCircunstancia = new DefaultTreeNode(circunstancia.getDescrCircunstancia(), condutaNatureza);
-						desdobramentoCircunstancia.setExpanded(true);
+						//-- senao, colocar abaixo da natNatureza
+						for (TreeNode child : natNatureza.getChildren())
+						{
+							if (child.getData().equals(circunstancia.getDescrCircunstancia()))
+							{
+								possui = true;
+								desdobramentoCircunstancia = child;
+							}
+						}
+						if (!possui)
+						{
+							desdobramentoCircunstancia = new DefaultTreeNode(circunstancia.getDescrCircunstancia(), natNatureza);
+							desdobramentoCircunstancia.setExpanded(true);
+						}						
 					}
 				}
 			}
