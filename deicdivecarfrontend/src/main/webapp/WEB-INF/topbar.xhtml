@@ -9,9 +9,16 @@
     	<div id="layout-topbar-indent">
         	<h:graphicImage name="images/LogoSigma40.png" styleClass="Fleft" library="fences" id="logo" style="margin-top:12px" />
         	<a href="#" class="Fleft" style="margin-top:24px">
- 	        	<h:outputText styleClass="fa fa-exclamation-triangle Fs16 softgray" style="padding-left: 10px"/>
-	        	<h:outputText styleClass="Fs16 softgray" value="Protótipo funcional" style="padding-left: 5px"/>
-	        	<h:outputText styleClass="fa fa-exclamation-triangle Fs16 softgray" style="padding-left: 5px"/>
+        		<span class="ShowOnDesktop">
+	 	        	<h:outputText styleClass="fa fa-exclamation-triangle Fs16 softgray" style="padding-left: 10px"/>
+		        	<h:outputText styleClass="Fs16 softgray" value="Protótipo funcional" style="padding-left: 5px" />
+		        	<h:outputText styleClass="fa fa-exclamation-triangle Fs16 softgray" style="padding-left: 5px" />
+	        	</span>
+	        	<span class="ShowOnMobile">
+		        	<h:outputText styleClass="fa fa-exclamation-triangle Fs10 gray" style="padding-left: 10px" />
+		        	<h:outputText styleClass="Fs10 gray" value="Protótipo funcional" style="padding-left: 5px" />
+		        	<h:outputText styleClass="fa fa-exclamation-triangle Fs10 gray" style="padding-left: 5px" />
+	        	</span>
         	</a>
             <a href="#" id="mobile-menu-button" class="BordRad3 white ShowOnMobile"><i class="fa fa-bars"></i> Menu</a>
             <a href="#" id="mobile-menu-button-gray" class="BordRad3 white ShowOnMobile"><i class="fa fa-caret-down"></i> Menu Superior</a>
