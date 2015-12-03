@@ -173,11 +173,28 @@ public class FiltroBO implements Serializable{
 				filtros.add(dataRegistro);
 			}
 			
+			//--- LISTA_SELECAO_UNICA - NATUREZA
+			{
+				FiltroModelo natureza = new FiltroModelo();
+				natureza.setRotulo("Natureza (resumida)");
+				natureza.setTipo(TipoFiltro.LISTA_SELECAO_UNICA);
+				natureza.setInformativo("Natureza resumida");
+				natureza.setAtributoDePesquisa("NATUREZA");
+				
+				Map<String, String> mapNatureza = new LinkedHashMap<>();
+				mapNatureza.put("CARGA", "Carga");
+				mapNatureza.put("RECEPTACAO", "Receptação");
+				natureza.setListaSelecaoUnicaFonteFixa(mapNatureza);
+	
+				natureza.setListaSelecaoUnica(natureza.getListaSelecaoUnicaFonteFixa());
+				filtros.add(natureza);
+			}
+			
 			//--- ARVORE NATUREZA
 			{
 				FiltroModelo arvore = new FiltroModelo();
 				arvore.setAtivo(false);
-				arvore.setRotulo("Natureza");
+				arvore.setRotulo("Natureza (hierarquia)");
 				arvore.setTipo(TipoFiltro.ARVORE);
 				arvore.setInformativo("Hierarquia de naturezas");
 				arvore.setAtributoDePesquisa("NATUREZA");
@@ -194,22 +211,18 @@ public class FiltroBO implements Serializable{
 				filtros.add(arvore);
 			}
 			
-			//--- LISTA_SELECAO_UNICA - NATUREZA
+			//--- TEXTO - historico
 			{
-				FiltroModelo natureza = new FiltroModelo();
-				natureza.setRotulo("Natureza");
-				natureza.setTipo(TipoFiltro.LISTA_SELECAO_UNICA);
-				natureza.setInformativo("Natureza resumida");
-				natureza.setAtributoDePesquisa("NATUREZA");
-				
-				Map<String, String> mapNatureza = new LinkedHashMap<>();
-				mapNatureza.put("CARGA", "Carga");
-				mapNatureza.put("RECEPTACAO", "Receptação");
-				natureza.setListaSelecaoUnicaFonteFixa(mapNatureza);
-	
-				natureza.setListaSelecaoUnica(natureza.getListaSelecaoUnicaFonteFixa());
-				filtros.add(natureza);
-			}
+				FiltroModelo historico = new FiltroModelo();
+				historico.setRotulo("Histórico");
+				historico.setTipo(TipoFiltro.TEXTO);
+				historico.setInformativo("Histórico da ocorrência");
+				historico.setAtributoDePesquisa("HISTORICO_BO");
+				historico.setValorTextoTipo(TipoPesquisaTexto.REGEX);
+				filtros.add(historico);
+			}			
+			
+			
 
 			//--- ARVORE
 			{
@@ -230,6 +243,7 @@ public class FiltroBO implements Serializable{
 				filtros.add(arvore);
 			}			
 			
+
 			//--- TEXTO - objeto > imei
 			{
 				FiltroModelo imei = new FiltroModelo();
