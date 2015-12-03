@@ -8,27 +8,32 @@
 	<f:view contentType="text/html">
 
 		<ui:remove>
-			<!-- recebe os parametros: style, nomeWidget, centroMapa, mapaGeoModel, paginaOrigem, listaDeOcorrencias, listaDeFiltros -->
+			<!-- recebe os parametros: style, nomeWidget, centroMapa, mapaGeoModel, paginaOrigem, listaDeOcorrencias, listaDeFiltros, selecaoDePonto, idEndereco -->
 		</ui:remove>
 		<script>
 			function geocodeReverso(latitude, longitude)
 			{
 				PF('#{nomeWidget}').reverseGeocode(latitude, longitude);
 			}
+
 		</script>
 		<p:gmap id="mapa" widgetVar="#{nomeWidget}" center="#{centroMapa}"
 			zoom="9" type="ROADMAP" model="#{mapaGeoModel}"
+			
 			disableDoubleClickZoom="true" fitBounds="true" style="#{style}">
 			<p:ajax event="overlaySelect"
 				listener="#{listenerEventMapaUtil.onMarkerSelect}" />
-			<ui:remove>
-				<p:ajax event="pointSelect"
-					listener="#{listenerEventMapaUtil.onPointSelect}" />
-				<p:ajax event="reverseGeocode"
-					listener="#{listenerEventMapaUtil.onReverseGeocode}"
-					update="selecaoDePonto" onsuccess="PF('dlgSelecaoDePonto').show();" />
-			</ui:remove>
-			<p:gmapInfoWindow>
+			<p:ajax event="pointSelect"
+				listener="#{listenerEventMapaUtil.onPointSelect}" disabled="#{filtroMapa.exibirJanelaFilha}"/>
+			<p:ajax event="reverseGeocode"
+				listener="#{listenerEventMapaUtil.onReverseGeocode}"
+				disabled="#{filtroMapa.exibirJanelaFilha}"
+				update="#{selecaoDePonto}" />
+			<p:ajax event="geocode" listener="#{listenerEventMapaUtil.onGeocode}" 
+				update="@this mapa" 
+				disabled="#{filtroMapa.exibirJanelaFilha}" >
+			</p:ajax>	
+			<p:gmapInfoWindow rendered="#{not empty listenerEventMapaUtil.marcaSelecionada.data}">
 
 				<h:panelGroup layout="block"
 					rendered="#{not empty listenerEventMapaUtil.marcaSelecionada.data}">
@@ -63,31 +68,36 @@
 							</p:menuitem>
 							<p:separator />
 
-							<p:menuitem value="Listar ocorrências no raio de 5km"
+							<p:menuitem
+								value="Adicionar filtro para listar ocorrências no raio de 5km"
 								icon="fa fa-search"
 								rendered="#{paginaOrigem == 'pesquisa.xhtml'}"
 								action="#{pesquisaMB.listarRaio(5000, listenerEventMapaUtil.marcaSelecionada.data)}"
 								update="@widgetVar(#{nomeWidget}) #{listaDeOcorrencias} #{listaDeFiltros}">
 							</p:menuitem>
-							<p:menuitem value="Listar ocorrências no raio de 10km"
+							<p:menuitem
+								value="Adicionar filtro para listar ocorrências no raio de 10km"
 								icon="fa fa-search"
 								rendered="#{paginaOrigem == 'pesquisa.xhtml'}"
 								action="#{pesquisaMB.listarRaio(10000, listenerEventMapaUtil.marcaSelecionada.data)}"
 								update="@widgetVar(#{nomeWidget}) #{listaDeOcorrencias} #{listaDeFiltros}">
 							</p:menuitem>
-							<p:menuitem value="Listar ocorrências no raio de 15km"
+							<p:menuitem
+								value="Adicionar filtro para listar ocorrências no raio de 15km"
 								icon="fa fa-search"
 								rendered="#{paginaOrigem == 'pesquisa.xhtml'}"
 								action="#{pesquisaMB.listarRaio(15000, listenerEventMapaUtil.marcaSelecionada.data)}"
 								update="@widgetVar(#{nomeWidget}) #{listaDeOcorrencias} #{listaDeFiltros}">
 							</p:menuitem>
-							<p:menuitem value="Listar ocorrências no raio de 50km"
+							<p:menuitem
+								value="Adicionar filtro para listar ocorrências no raio de 50km"
 								icon="fa fa-search"
 								rendered="#{paginaOrigem == 'pesquisa.xhtml'}"
 								action="#{pesquisaMB.listarRaio(50000, listenerEventMapaUtil.marcaSelecionada.data)}"
 								update="@widgetVar(#{nomeWidget}) #{listaDeOcorrencias} #{listaDeFiltros}">
 							</p:menuitem>
-							<p:menuitem value="Listar ocorrências no raio de 100km"
+							<p:menuitem
+								value="Adicionar filtro para listar ocorrências no raio de 100km"
 								icon="fa fa-search"
 								rendered="#{paginaOrigem == 'pesquisa.xhtml'}"
 								action="#{pesquisaMB.listarRaio(100000, listenerEventMapaUtil.marcaSelecionada.data)}"
@@ -139,28 +149,6 @@
 				</h:panelGroup>
 			</p:gmapInfoWindow>
 		</p:gmap>
-		<ui:remove>
-			<p:dialog header="Seleção de ponto no mapa"
-				widgetVar="dlgSelecaoDePonto" modal="true" height="100"
-				position="center">
-				<h:panelGroup id="selecaoDePonto" layout="block">
-					<h:panelGroup layout="block"
-						rendered="#{not empty listenerEventMapaUtil.pontoSelecionado}">
-						<p>
-							<h:outputText
-								value="Latitude: #{listenerEventMapaUtil.pontoSelecionado.lat}" />
-						</p>
-						<p>
-							<h:outputText
-								value="Longitude: #{listenerEventMapaUtil.pontoSelecionado.lng}" />
-						</p>
-						<p>
-							<h:outputText
-								value="Endereço: #{listenerEventMapaUtil.pontoSelecionadoEndereco}" />
-						</p>
-					</h:panelGroup>
-				</h:panelGroup>
-			</p:dialog>
-		</ui:remove>
+
 	</f:view>
 </ui:composition>
