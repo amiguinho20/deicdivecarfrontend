@@ -9,14 +9,18 @@ import javax.inject.Named;
 
 import org.apache.log4j.Logger;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.map.GeocodeEvent;
 import org.primefaces.event.map.OverlaySelectEvent;
 import org.primefaces.event.map.PointSelectEvent;
 import org.primefaces.event.map.ReverseGeocodeEvent;
 import org.primefaces.model.map.Circle;
+import org.primefaces.model.map.DefaultMapModel;
+import org.primefaces.model.map.GeocodeResult;
 import org.primefaces.model.map.LatLng;
 import org.primefaces.model.map.Marker;
 
 import br.com.fences.deicdivecarfrontend.roubocarga.mb.FormatadorOcorrenciaMB;
+import br.com.fences.deicdivecarfrontend.roubocarga.mb.PesquisaMB;
 import br.com.fences.fencesutils.verificador.Verificador;
 import br.com.fences.ocorrenciaentidade.ocorrencia.Ocorrencia;
 
@@ -41,6 +45,11 @@ public class ListenerEventMapaUtil implements Serializable {
 
 	private LatLng pontoSelecionado;
 	private String pontoSelecionadoEndereco;
+	
+	//private MapModel geoModel;
+	
+	@Inject
+	private PesquisaMB pesquisaMB;
 
 	public void onMarkerSelect(OverlaySelectEvent event) {
 		if (event != null && event.getOverlay() != null) {
@@ -59,11 +68,12 @@ public class ListenerEventMapaUtil implements Serializable {
 				} else if (marcaSelecionada.getData() == null) {
 					// logger.debug("A informacao da marca selecionada esta
 					// nula.");
-				} else {
-					Ocorrencia ocorrencia = (Ocorrencia) marcaSelecionada.getData();
-					// logger.info("Marca selecionada: " +
-					// formatadorOcorrenciaMB.formatarOcorrencia(ocorrencia)
-					// + formatadorOcorrenciaMB.formatarEndereco(ocorrencia));
+				} else if (marcaSelecionada.getData() instanceof Ocorrencia) {
+						Ocorrencia ocorrencia = (Ocorrencia) marcaSelecionada.getData();
+						// logger.info("Marca selecionada: " +
+						// formatadorOcorrenciaMB.formatarOcorrencia(ocorrencia)
+						// + formatadorOcorrenciaMB.formatarEndereco(ocorrencia));
+					
 				}
 			}
 		}
@@ -95,6 +105,24 @@ public class ListenerEventMapaUtil implements Serializable {
 		}
 		logger.info("Endereco: " + getPontoSelecionadoEndereco());
 	}
+	
+	 public void onGeocode(GeocodeEvent event) {
+		 List<GeocodeResult> results = event.getResults();
+	         
+		 if (results != null && !results.isEmpty()) 
+		 {
+			 LatLng center = results.get(0).getLatLng();
+			 //centerGeoMap = center.getLat() + "," + center.getLng();
+	             
+			 for (int i = 0; i < results.size(); i++) {
+				 GeocodeResult result = results.get(i);
+				 pesquisaMB.setGeoModel(new DefaultMapModel());
+				 pesquisaMB.getGeoModel().addOverlay(new Marker(result.getLatLng(), result.getAddress(), "", "http://maps.google.com/mapfiles/ms/micons/yellow-dot.png"));
+				 pesquisaMB.setCentroMapa(center.getLat() + "," + center.getLng());
+				 break;
+			 }
+		 }
+	 }
 
 	public Marker getMarcaSelecionada() {
 		return marcaSelecionada;
@@ -119,5 +147,13 @@ public class ListenerEventMapaUtil implements Serializable {
 	public void setPontoSelecionadoEndereco(String pontoSelecionadoEndereco) {
 		this.pontoSelecionadoEndereco = pontoSelecionadoEndereco;
 	}
+
+//	public MapModel getGeoModel() {
+//		return geoModel;
+//	}
+//
+//	public void setGeoModel(MapModel geoModel) {
+//		this.geoModel = geoModel;
+//	}
 
 }
