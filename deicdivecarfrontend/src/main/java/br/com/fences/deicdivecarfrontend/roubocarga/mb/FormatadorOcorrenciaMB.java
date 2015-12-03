@@ -7,6 +7,7 @@ import java.util.Random;
 
 import javax.enterprise.inject.Model;
 
+import br.com.fences.fencesutils.conversor.ExcecaoParaMessageHtml;
 import br.com.fences.fencesutils.formatar.FormatarData;
 import br.com.fences.fencesutils.formatar.FormatarPrintStackTrace;
 import br.com.fences.fencesutils.verificador.Verificador;
@@ -116,17 +117,9 @@ public class FormatadorOcorrenciaMB {
 
 	public String formatarExcecaoParaMessage(Throwable e)
 	{
-		int idErro = new Random().nextInt(1000); 
+		String retorno = ExcecaoParaMessageHtml.converter(e);
 		
-		StringBuilder stackTrace = new StringBuilder();
-		//stackTrace.append("<br/>");
-		stackTrace.append("<label class=\"collapsemessage\" for=\"_" + idErro + "\">Exibir pilha de erro</label>");
-		stackTrace.append("<input id=\"_" + idErro + "\" type=\"checkbox\">");
-		stackTrace.append("<div>");
-		stackTrace.append(FormatarPrintStackTrace.formatar(e));
-		stackTrace.append("</div>");
-		
-		return stackTrace.toString();
+		return retorno;
 	}
 	
 }
