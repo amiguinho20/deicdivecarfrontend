@@ -7,8 +7,13 @@
 	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
 	template="/WEB-INF/template.xhtml">
 
+	<ui:define name="css">
+		<h:outputStylesheet name="css/panelgridsemborda.css" library="fences" />
+	</ui:define>
+
+
 	<ui:define name="content">
-		<h:form id="form" >
+		<h:form id="form">
 			<p:messages id="messages" showDetail="false" autoUpdate="true"
 				closable="true" />
 
@@ -16,65 +21,115 @@
 				<div class="Container100">
 					<div class="ContainerIndent">
 						<h1 class="BigTopic">
-							<span class="TexAlLeft">Minhas configurações</span>
-							<span class="Fright">
-								<p:commandLink 
+							<span class="TexAlLeft">Minhas configurações</span> <span
+								class="Fright"> <p:commandLink
 									actionListener="#{usuarioConfigMB.mudarInformativoFuncionalidade()}"
-									styleClass="fa fa-question #{themeView.cor}" 
+									styleClass="fa fa-question #{themeView.cor}"
 									update="panelInformativoContainer"
 									style="text-decoration: none" />
-								
+
 							</span>
 						</h1>
-						<h:panelGroup layout="block" id="panelInformativoContainer" >
-							<h:panelGroup layout="block" rendered="#{usuarioConfigMB.informativoFuncionalidade}" styleClass="BorderedBox Container100 FontGray">
-							<div class="ContainerIndent">
-							<h:outputText value="Informativo da funcionalidade" styleClass="Fs24 red" />
-							<div class="EmptyBox10"></div>
-							<h:outputText value="Esta funcionalidade consiste no conjunto de opções personalisáveis por usuário para a sessão de navegação vigente."/>
+						<h:panelGroup layout="block" id="panelInformativoContainer">
+							<h:panelGroup layout="block"
+								rendered="#{usuarioConfigMB.informativoFuncionalidade}"
+								styleClass="BorderedBox Container100 FontGray">
+								<div class="ContainerIndent">
+									<h:outputText value="Informativo da funcionalidade"
+										styleClass="Fs24 red" />
+									<div class="EmptyBox10"></div>
+									<h:outputText
+										value="Esta funcionalidade consiste no conjunto de opções personalisáveis por usuário para a sessão de navegação vigente." />
 
-							<div class="EmptyBox30"></div>	
-							<h:outputText value="Opções" styleClass="FontBold red" />   
-							<div class="EmptyBox10"></div>	
-							<h:outputText value="Por enquanto há apenas a opção de  "/>
-							<h:outputText value="Abrir o detalhe do boletim de ocorrência em janela separada. " styleClass="FontBold"/>
-							<h:outputText value="Para essa opção atente-se ao bloqueador de janelas pop-up do seu navegador. "/>
+									<div class="EmptyBox30"></div>
+									<h:outputText value="Opções" styleClass="FontBold red" />
+									<div class="EmptyBox10"></div>
+									<h:outputText value="Por enquanto há apenas a opção de  " />
+									<h:outputText
+										value="Abrir o detalhe do boletim de ocorrência em janela separada. "
+										styleClass="FontBold" />
+									<h:outputText
+										value="Para essa opção atente-se ao bloqueador de janelas pop-up do seu navegador. " />
 
-							<div class="EmptyBox10"></div>	
-							<h:outputText value="Em breve, na medida da evolução da plataforma, haverá mais opções. "/>
+									<div class="EmptyBox10"></div>
+									<h:outputText
+										value="Em breve, na medida da evolução da plataforma, haverá mais opções. " />
 
-							
-							<div class="EmptyBox30"></div>	
-							<h:outputText value="Observações gerais" styleClass="FontBold red" />   
-							<div class="EmptyBox10"></div>	
-							<h:outputText value="A cada acionamento de opção, o sistema exibe na parte inferior direita da janela um ícone animado que "/>
-							<h:outputText value="indica que o sistema está processando a ação solicitada. É recomendado que aguarde o desaparecimento "/>
-							<h:outputText value="do ícone para continuar com o uso. Por motivos da funcionalidade estar em fase de protótipo e de melhoria "/>
-							<h:outputText value="contínua, instabilidades e problemas podem ocorrer. Caso o ícone exceda o tempo de aproximado de 30 segundos, "/>
-							<h:outputText value="acione a tecla de atualizar do navegador para que o sistema retorne a normalidade. "/>
-							<h:outputText value="Essa é a solução de contorno recomendada enquanto o sistema estiver nessa fase. "/>
-							</div>
+
+									<div class="EmptyBox30"></div>
+									<h:outputText value="Observações gerais"
+										styleClass="FontBold red" />
+									<div class="EmptyBox10"></div>
+									<h:outputText
+										value="A cada acionamento de opção, o sistema exibe na parte inferior direita da janela um ícone animado que " />
+									<h:outputText
+										value="indica que o sistema está processando a ação solicitada. É recomendado que aguarde o desaparecimento " />
+									<h:outputText
+										value="do ícone para continuar com o uso. Por motivos da funcionalidade estar em fase de protótipo e de melhoria " />
+									<h:outputText
+										value="contínua, instabilidades e problemas podem ocorrer. Caso o ícone exceda o tempo de aproximado de 30 segundos, " />
+									<h:outputText
+										value="acione a tecla de atualizar do navegador para que o sistema retorne a normalidade. " />
+									<h:outputText
+										value="Essa é a solução de contorno recomendada enquanto o sistema estiver nessa fase. " />
+								</div>
 							</h:panelGroup>
 						</h:panelGroup>
 						<div class="EmptyBox10"></div>
-						<p:panel id="panelPesquisa" 
-							styleClass="leaden-back">
+						<p:panel id="panelPesquisa" styleClass="leaden-back">
 
-							<h:panelGrid columns="3">
-
-								<p:outputLabel for="abrirDetalheOcorrenciaEmJanelaSeparada" value="Abrir o detalhe do boletim de ocorrência em janela separada:" />
-								<p:inputSwitch id="abrirDetalheOcorrenciaEmJanelaSeparada" value="#{usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}" >
-									<p:ajax  />
-								</p:inputSwitch>
-								<p:message for="abrirDetalheOcorrenciaEmJanelaSeparada"/>
+							<p:panelGrid>
 
 								<p:row>
+									<p:column>
+										<p:outputLabel for="abrirDetalheOcorrenciaEmJanelaSeparada"
+											value="Abrir o detalhe do boletim de ocorrência em janela separada:" />
+									</p:column>
+									<p:column>
+										<p:inputSwitch id="abrirDetalheOcorrenciaEmJanelaSeparada"
+											value="#{usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}">
+											<p:ajax />
+										</p:inputSwitch>
+									</p:column>
+									<p:column>
+										<p:message for="abrirDetalheOcorrenciaEmJanelaSeparada" />
+									</p:column>
+								</p:row>
+								<p:row>
 									<p:column colspan="3">
-										<h:outputText value="Para essa opção atente-se ao bloqueador de janelas pop-up do seu navegador." styleClass="FontLight red" />
+										<h:outputText
+											value="Para essa opção atente-se ao bloqueador de janelas pop-up do seu navegador."
+											styleClass="FontLight red" />
+									</p:column>
+								</p:row>
+								<p:row>
+									<p:column colspan="3">
+										<p:spacer height="0"/>
 									</p:column>
 								</p:row>
 
-							</h:panelGrid>
+
+								<p:row>
+									<p:column>
+										<p:outputLabel for="alturaDoMapa" value="Altura do mapa:" />
+									</p:column>
+									<p:column>
+										<p:selectOneMenu id="alturaDoMapa"
+											value="#{usuarioConfigMB.alturaDoMapa}">
+											<p:ajax process="alturaDoMapa" update="alturaDoMapa" />
+											<f:selectItem itemLabel="400 pixels (padrão)"
+												itemValue="400px" />
+											<f:selectItem itemLabel="600 pixels" itemValue="600px" />
+											<f:selectItem itemLabel="800 pixels" itemValue="800px" />
+											<f:selectItem itemLabel="1000 pixels" itemValue="1000px" />
+											<f:selectItem itemLabel="1200 pixels" itemValue="1200px" />
+										</p:selectOneMenu>
+									</p:column>
+									<p:column>
+										<p:message for="alturaDoMapa" />
+									</p:column>
+								</p:row>
+							</p:panelGrid>
 						</p:panel>
 
 					</div>
