@@ -80,7 +80,9 @@ public class PesquisaMB implements Serializable{
 	
 	private List<FiltroCondicao> pilhaDeFiltros;
 	
-	private String centroMapa = "-23.538419906917593, -46.63483794999996";
+	private final String CENTRO_MAPA_PADRAO = "-23.538419906917593, -46.63483794999996";
+	
+	private String centroMapa = CENTRO_MAPA_PADRAO;
 	private MapModel geoModel;
 //	private Marker marcaSelecionada;
 	
@@ -115,6 +117,7 @@ public class PesquisaMB implements Serializable{
 				.findComponent("form:listaDeOcorrenciasLazy");
 		dataTable.setFirst(0);
 		
+		limparMapa();
 		if (ocorrenciasSelecionadas != null)  
 		{
 			ocorrenciasSelecionadas.clear();
@@ -290,6 +293,7 @@ public class PesquisaMB implements Serializable{
 		try
 		{
 			geoModel = new DefaultMapModel();  	
+			centroMapa = CENTRO_MAPA_PADRAO;
 	
 			//-- exibe no mapa apenas ocorrencias que contem geoCode pre-processado
 			if (ocorrenciasSelecionadas != null)
@@ -421,6 +425,9 @@ public class PesquisaMB implements Serializable{
 		}
 	}
 	
+	/**
+	 * Adiciona os parametros como filtro na lista de filtros.
+	 */
 	public void listarRaio(Integer raioEmMetros, Ocorrencia ocorrencia)
 	{
 		try
@@ -429,6 +436,27 @@ public class PesquisaMB implements Serializable{
 			{
 				Double latitude = ocorrencia.getAuxiliar().getGeometry().getLatitude();
 				Double longitude = ocorrencia.getAuxiliar().getGeometry().getLongitude();
+				String endereco = formatadorOcorrenciaMB.formatarEndereco(ocorrencia);
+
+				listarRaio(raioEmMetros, latitude, longitude, endereco);
+			}
+		}
+		catch (Exception e)
+		{
+			String excecao = formatadorOcorrenciaMB.formatarExcecaoParaMessage(e);
+			Messages.create("Erro na montagem do raio.  {0}", excecao).error().add();
+		}
+	}
+	
+	/**
+	 * Adiciona os parametros como filtro na lista de filtros.
+	 */
+	public void listarRaio(Integer raioEmMetros, Double latitude, Double longitude, String endereco)
+	{
+		try
+		{
+			if (latitude != null && longitude != null && Verificador.isValorado(endereco))
+			{
 				
 				filtroModelo = new FiltroModelo();
 				filtroModelo.setRotulo("Pesquisa de ponto e raio no mapa");
@@ -438,7 +466,7 @@ public class PesquisaMB implements Serializable{
 				filtroModelo.setGeoRaioLatitude(latitude.toString());
 				filtroModelo.setGeoRaioLongitude(longitude.toString());
 				filtroModelo.setGeoRaioEmMetros(raioEmMetros.toString());
-				filtroModelo.setGeoRaioEndereco(formatadorOcorrenciaMB.formatarEndereco(ocorrencia));
+				filtroModelo.setGeoRaioEndereco(endereco);
 					
 				//-- pesquisar tradicional (montar lista paginada e atualizar total) com os filtros latitude, longitude e raioEmMetros
 				adicionarFiltro();
@@ -446,24 +474,27 @@ public class PesquisaMB implements Serializable{
 				//-- pesquisar no raio (limitado a 100 registros)
 				List<Ocorrencia> ocorrenciasRetornadas = filtroBO.pesquisarLazy(pilhaDeFiltros, 0, 100);
 				
-				//-- selecionar todos do resultado
-				ocorrenciasSelecionadas.addAll(ocorrenciasRetornadas);
-		
-				//-- montar mapa
-				exibirRegistrosSelecionadosNoMapa();
-				
-				//-- exibe circulo
-				LatLng latLng = new LatLng(latitude, longitude);
-				
-		        Circle circulo = new Circle(latLng, raioEmMetros);
-		        circulo.setStrokeColor("#d93c3c");
-		        circulo.setFillColor("#d93c3c");
-		        circulo.setFillOpacity(0.5);
-		        
-		        if (geoModel != null)
-		        {
-		        	geoModel.addOverlay(circulo);
-		        }
+				if (Verificador.isValorado(ocorrenciasRetornadas))
+				{
+					//-- selecionar todos do resultado
+					ocorrenciasSelecionadas.addAll(ocorrenciasRetornadas);
+			
+					//-- montar mapa
+					exibirRegistrosSelecionadosNoMapa();
+					
+					//-- exibe circulo
+					LatLng latLng = new LatLng(latitude, longitude);
+					
+			        Circle circulo = new Circle(latLng, raioEmMetros);
+			        circulo.setStrokeColor("#d93c3c");
+			        circulo.setFillColor("#d93c3c");
+			        circulo.setFillOpacity(0.5);
+			        
+			        if (geoModel != null)
+			        {
+			        	geoModel.addOverlay(circulo);
+			        }
+				}
 			}
 		}
 		catch (Exception e)
@@ -471,7 +502,7 @@ public class PesquisaMB implements Serializable{
 			String excecao = formatadorOcorrenciaMB.formatarExcecaoParaMessage(e);
 			Messages.create("Erro na montagem do raio.  {0}", excecao).error().add();
 		}
-	}
+	} 
 	
 	public LazyDataModel<Ocorrencia> getOcorrenciasResultadoLazy() {
 		return ocorrenciasResultadoLazy;
