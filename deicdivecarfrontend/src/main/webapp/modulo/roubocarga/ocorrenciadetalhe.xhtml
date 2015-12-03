@@ -7,23 +7,25 @@
 	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
 	xmlns:fe="http://xmlns.jcp.org/jsf/composite/fences/cc"
 	template="/WEB-INF/template.xhtml">
-	
-	
+
+
 	<ui:define name="topbar">
-		<h:panelGroup layout="block" rendered="#{not usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}">
-			<ui:include src="/WEB-INF/topbar.xhtml" >
+		<h:panelGroup layout="block"
+			rendered="#{not usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}">
+			<ui:include src="/WEB-INF/topbar.xhtml">
 				<ui:param name="apenasLogo" value="true" />
 			</ui:include>
 		</h:panelGroup>
 	</ui:define>
-	
+
 	<ui:define name="layoutmenu">
-		<h:panelGroup layout="block" rendered="#{not usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}">
+		<h:panelGroup layout="block"
+			rendered="#{not usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}">
 			<ui:include src="/WEB-INF/layoutmenu.xhtml" />
 		</h:panelGroup>
 	</ui:define>
-	
-	
+
+
 
 	<ui:define name="content">
 
@@ -33,89 +35,116 @@
 			<p:messages id="messages" showDetail="true" autoUpdate="true"
 				closable="true" />
 
-			<h:panelGroup layout="block" rendered="#{not usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}">
-			<div class="layout-portlets-box">
-				<div class="Container100">
-					<div class="ContainerIndent">
-						<p:breadCrumb rendered="#{ocorrenciaDetalheMB.origemDetalhe == 'pesquisa.xhtml'}">
-							<p:menuitem value="Home" url="#" disabled="true" />
-							<p:menuitem value="DEIC" url="#" disabled="true" />
-							<p:menuitem value="DIVECAR" url="#" disabled="true" />
-							<p:menuitem value="Roubo de carga e receptação" disabled="true" />
-							<p:menuitem value="Pesquisa de ocorrência" url="/modulo/roubocarga/pesquisa.xhtml" />
-							<p:menuitem value="Indiciado" url="/modulo/roubocarga/indiciado/indiciado.xhtml" rendered="#{ocorrenciaDetalheMB.origemDetalhe == 'indiciado.xhtml'}" />
-							<p:menuitem value="Boletim de ocorrência" disabled="true" />
-						</p:breadCrumb>
-					
-						<p:breadCrumb rendered="#{ocorrenciaDetalheMB.origemDetalhe == 'ocorrencia.xhtml'}">
-							<p:menuitem value="Home" url="#" disabled="true" />
-							<p:menuitem value="DEIC" url="#" disabled="true" />
-							<p:menuitem value="DIVECAR" url="#" disabled="true" />
-							<p:menuitem value="Roubo de carga e receptação" disabled="true" />
-							<p:menuitem value="Ocorrência" url="/modulo/roubocarga/ocorrencia.xhtml" />
-							<p:menuitem value="Indiciado" url="/modulo/roubocarga/indiciado/indiciado.xhtml" rendered="#{ocorrenciaDetalheMB.origemDetalhe == 'indiciado.xhtml'}" />
-							<p:menuitem value="Boletim de ocorrência" disabled="true" />
-						</p:breadCrumb>
-						
-						<p:breadCrumb rendered="#{ocorrenciaDetalheMB.origemDetalhe == 'indiciado.xhtml'}">
-							<p:menuitem value="Home" url="#" disabled="true" />
-							<p:menuitem value="DEIC" url="#" disabled="true" />
-							<p:menuitem value="DIVECAR" url="#" disabled="true" />
-							<p:menuitem value="Roubo de carga e receptação" disabled="true" />
-							
-							<p:menuitem value="Ocorrência" url="/modulo/roubocarga/ocorrencia.xhtml" rendered="#{indiciadoMB.origem == 'ocorrencia.xhtml'}" />
-							<p:menuitem value="Pesquisa de ocorrência" url="/modulo/roubocarga/pesquisa.xhtml" rendered="#{indiciadoMB.origem == 'pesquisa.xhtml'}" />
-							
-							<p:menuitem value="Indiciado" url="/modulo/roubocarga/indiciado/indiciado.xhtml" rendered="#{ocorrenciaDetalheMB.origemDetalhe == 'indiciado.xhtml'}" />
-							<p:menuitem value="Boletim de ocorrência" disabled="true" />
-						</p:breadCrumb>
-						
+			<h:panelGroup layout="block"
+				rendered="#{not usuarioConfigMB.abrirDetalheOcorrenciaEmJanelaSeparada}">
+				<div class="layout-portlets-box">
+					<div class="Container100">
+						<div class="ContainerIndent">
+							<p:breadCrumb
+								rendered="#{ocorrenciaDetalheMB.origemDetalhe == 'pesquisa.xhtml'}">
+								<p:menuitem value="Home" url="#" disabled="true" />
+								<p:menuitem value="DEIC" url="#" disabled="true" />
+								<p:menuitem value="DIVECAR" url="#" disabled="true" />
+								<p:menuitem value="Roubo de carga e receptação" disabled="true" />
+								<p:menuitem value="Pesquisa de ocorrência"
+									url="/modulo/roubocarga/pesquisa.xhtml" />
+								<p:menuitem value="Indiciado"
+									url="/modulo/roubocarga/indiciado/indiciado.xhtml"
+									rendered="#{ocorrenciaDetalheMB.origemDetalhe == 'indiciado.xhtml'}" />
+								<p:menuitem value="Boletim de ocorrência" disabled="true" />
+							</p:breadCrumb>
+
+							<p:breadCrumb
+								rendered="#{ocorrenciaDetalheMB.origemDetalhe == 'ocorrencia.xhtml'}">
+								<p:menuitem value="Home" url="#" disabled="true" />
+								<p:menuitem value="DEIC" url="#" disabled="true" />
+								<p:menuitem value="DIVECAR" url="#" disabled="true" />
+								<p:menuitem value="Roubo de carga e receptação" disabled="true" />
+								<p:menuitem value="Ocorrência"
+									url="/modulo/roubocarga/ocorrencia.xhtml" />
+								<p:menuitem value="Indiciado"
+									url="/modulo/roubocarga/indiciado/indiciado.xhtml"
+									rendered="#{ocorrenciaDetalheMB.origemDetalhe == 'indiciado.xhtml'}" />
+								<p:menuitem value="Boletim de ocorrência" disabled="true" />
+							</p:breadCrumb>
+
+							<p:breadCrumb
+								rendered="#{ocorrenciaDetalheMB.origemDetalhe == 'indiciado.xhtml'}">
+								<p:menuitem value="Home" url="#" disabled="true" />
+								<p:menuitem value="DEIC" url="#" disabled="true" />
+								<p:menuitem value="DIVECAR" url="#" disabled="true" />
+								<p:menuitem value="Roubo de carga e receptação" disabled="true" />
+
+								<p:menuitem value="Ocorrência"
+									url="/modulo/roubocarga/ocorrencia.xhtml"
+									rendered="#{indiciadoMB.origem == 'ocorrencia.xhtml'}" />
+								<p:menuitem value="Pesquisa de ocorrência"
+									url="/modulo/roubocarga/pesquisa.xhtml"
+									rendered="#{indiciadoMB.origem == 'pesquisa.xhtml'}" />
+
+								<p:menuitem value="Indiciado"
+									url="/modulo/roubocarga/indiciado/indiciado.xhtml"
+									rendered="#{ocorrenciaDetalheMB.origemDetalhe == 'indiciado.xhtml'}" />
+								<p:menuitem value="Boletim de ocorrência" disabled="true" />
+							</p:breadCrumb>
+
+						</div>
 					</div>
 				</div>
-			</div>
 			</h:panelGroup>
 
 			<div class="layout-portlets-box">
 				<div class="Container100">
 					<div class="ContainerIndent">
 						<h1 class="BigTopic">
-							<span class="TexAlLeft">Boletim de ocorrência</span>
-							<span class="Fright">
-								<p:commandLink 
+							<span class="TexAlLeft">Boletim de ocorrência</span> <span
+								class="Fright"> <p:commandLink
 									actionListener="#{ocorrenciaDetalheMB.mudarInformativoFuncionalidade()}"
-									styleClass="fa fa-question #{themeView.cor}" 
+									styleClass="fa fa-question #{themeView.cor}"
 									update="panelInformativoContainer"
 									style="text-decoration: none" />
-								
+
 							</span>
 						</h1>
-						<h:panelGroup layout="block" id="panelInformativoContainer" >
-							<h:panelGroup layout="block" rendered="#{ocorrenciaDetalheMB.informativoFuncionalidade}" styleClass="BorderedBox Container100 FontGray">
-							<div class="ContainerIndent">
-							<h:outputText value="Informativo da funcionalidade" styleClass="Fs24 red" />
-							<div class="EmptyBox10"></div>
-							<h:outputText value="Esta funcionalidade consiste na exibição detalhada das informações do boletim de ocorrência."/>
+						<h:panelGroup layout="block" id="panelInformativoContainer">
+							<h:panelGroup layout="block"
+								rendered="#{ocorrenciaDetalheMB.informativoFuncionalidade}"
+								styleClass="BorderedBox Container100 FontGray">
+								<div class="ContainerIndent">
+									<h:outputText value="Informativo da funcionalidade"
+										styleClass="Fs24 red" />
+									<div class="EmptyBox10"></div>
+									<h:outputText
+										value="Esta funcionalidade consiste na exibição detalhada das informações do boletim de ocorrência." />
 
-							<div class="EmptyBox30"></div>	
-							<h:outputText value="Associação entre complementares e complementados" styleClass="FontBold red" />   
-							<div class="EmptyBox10"></div>	
-							<h:outputText value="No caso do boletim de ocorrência atual ser complementar ou complementado, um link de navegação para "/>
-							<h:outputText value="esses será disponibilidado."/>
+									<div class="EmptyBox30"></div>
+									<h:outputText
+										value="Associação entre complementares e complementados"
+										styleClass="FontBold red" />
+									<div class="EmptyBox10"></div>
+									<h:outputText
+										value="No caso do boletim de ocorrência atual ser complementar ou complementado, um link de navegação para " />
+									<h:outputText value="esses será disponibilidado." />
 
-							<div class="EmptyBox30"></div>	
-							<h:outputText value="Observações gerais" styleClass="FontBold red" />   
-							<div class="EmptyBox10"></div>	
-							<h:outputText value="A exibição das informações está em aproximadamente 70% de compleitude, ou seja, do possível conteúdo que um boletim de ocorrência pode "/>
-							<h:outputText value="possuir. Por exemplo: as informações de um autor, seu modos operandi, e outros detalhes ainda não estão "/>
-							<h:outputText value="sendo contemplados por essa funcionalidade. Por esse motivo, no caso da necessidade de uma análise "/>
-							<h:outputText value="minuciosa das informações do boletim de ocorrência, recomenda-se a sua consulta diretamente no seu "/>
-							<h:outputText value="cadastro de origem (RDO). "/>
-							</div>
+									<div class="EmptyBox30"></div>
+									<h:outputText value="Observações gerais"
+										styleClass="FontBold red" />
+									<div class="EmptyBox10"></div>
+									<h:outputText
+										value="A exibição das informações está em aproximadamente 70% de compleitude, ou seja, do possível conteúdo que um boletim de ocorrência pode " />
+									<h:outputText
+										value="possuir. Por exemplo: as informações de um autor, seu modos operandi, e outros detalhes ainda não estão " />
+									<h:outputText
+										value="sendo contemplados por essa funcionalidade. Por esse motivo, no caso da necessidade de uma análise " />
+									<h:outputText
+										value="minuciosa das informações do boletim de ocorrência, recomenda-se a sua consulta diretamente no seu " />
+									<h:outputText value="cadastro de origem (RDO). " />
+								</div>
 							</h:panelGroup>
 						</h:panelGroup>
-						
-						
-						
+
+
+
 						<div class="EmptyBox10"></div>
 
 						<fe:exibir label="Dependência" text="#{ocorrencia.nomeDelegacia}" />
@@ -139,8 +168,8 @@
 										actionListener="#{ocorrenciaDetalheMB.atualizarOcorrenciaDetalhe(pai)}"
 										update="@form">
 										<ui:remove>
-										<f:setPropertyActionListener value="#{pai}"
-											target="#{ocorrenciaDetalheMB.ocorrenciaDetalhe}" />
+											<f:setPropertyActionListener value="#{pai}"
+												target="#{ocorrenciaDetalheMB.ocorrenciaDetalhe}" />
 										</ui:remove>
 									</p:commandLink>
 								</h:panelGrid>
@@ -153,7 +182,8 @@
 								<h:panelGrid columns="1">
 									<p:outputLabel value="Complementado pelo(s) R.D.O.(s) No.(s)" />
 									<h:panelGrid columns="1">
-										<ui:repeat value="#{ocorrencia.auxiliar.filhos.toArray()}" var="filho">
+										<ui:repeat value="#{ocorrencia.auxiliar.filhos.toArray()}"
+											var="filho">
 											<p:commandLink
 												value="#{filho.numBo}/#{filho.anoBo} - #{filho.nomeDelegacia}"
 												actionListener="#{ocorrenciaDetalheMB.atualizarOcorrenciaDetalhe(filho)}"
@@ -695,6 +725,92 @@
 
 
 
+					</div>
+
+					<div class="EmptyBox30" />
+					<div class="ContainerIndent">
+						<p:panel header="Informações técnicas"
+							id="panelInformacoesTecnicas" collapsed="true" toggleable="true">
+
+							<p:panelGrid>
+
+								<p:row>
+									<p:column>
+										<h:outputText value="Data de processamento" />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{ocorrencia.auxiliar.dataProcessamento}">
+											<f:converter converterId="dataConverter" />
+										</h:outputText>
+									</p:column>
+								</p:row>
+
+								<p:row>
+									<p:column>
+										<h:outputText
+											value="Indicador de complemento com natureza de localização" />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{empty ocorrencia.auxiliar.flagComplementarDeNaturezaLocalizacao ? 'Não' : ocorrencia.auxiliar.flagComplementarDeNaturezaLocalizacao}" />
+									</p:column>
+								</p:row>
+
+								<p:row>
+									<p:column>
+										<h:outputText value="Estado do geocoder" />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{ocorrencia.auxiliar.geocoderStatus}" />
+									</p:column>
+								</p:row>
+
+								<p:row>
+									<p:column>
+										<h:outputText value="Geometry (GeoJSON) type" />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{ocorrencia.auxiliar.geometry.type}" />
+									</p:column>
+								</p:row>
+
+								<p:row>
+									<p:column>
+										<h:outputText value="Geometry (GeoJSON) coordinates (LngLat)" />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{ocorrencia.auxiliar.geometry.coordinates[0]}" />
+										<h:outputText value=","
+											rendered="#{not empty ocorrencia.auxiliar.geometry.coordinates[0]}" />
+										<h:outputText
+											value="#{ocorrencia.auxiliar.geometry.coordinates[1]}" />
+									</p:column>
+								</p:row>
+
+								<p:row>
+									<p:column>
+										<h:outputText value="Possui pai" />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{empty ocorrencia.auxiliar.pai.id ? 'Não' : 'Sim'}" />
+									</p:column>
+								</p:row>
+
+								<p:row>
+									<p:column>
+										<h:outputText value="Quantos filhos" />
+									</p:column>
+									<p:column>
+										<h:outputText
+											value="#{fn:length(ocorrencia.auxiliar.filhos)}" />
+									</p:column>
+								</p:row>
+
+
+							</p:panelGrid>
+						</p:panel>
 					</div>
 				</div>
 			</div>
