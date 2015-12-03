@@ -13,6 +13,7 @@ public class UsuarioConfigMB implements Serializable{
 
 	private boolean abrirDetalheOcorrenciaEmJanelaSeparada;
 	private boolean informativoFuncionalidade;
+	private String alturaDoMapa = "400px";
 
 	
 	
@@ -37,6 +38,16 @@ public class UsuarioConfigMB implements Serializable{
 
 	public void setInformativoFuncionalidade(boolean informativoFuncionalidade) {
 		this.informativoFuncionalidade = informativoFuncionalidade;
+	}
+
+
+	public String getAlturaDoMapa() {
+		return alturaDoMapa;
+	}
+
+
+	public void setAlturaDoMapa(String alturaDoMapa) {
+		this.alturaDoMapa = alturaDoMapa;
 	}
 	
 	
