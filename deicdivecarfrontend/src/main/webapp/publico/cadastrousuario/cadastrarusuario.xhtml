@@ -1,0 +1,137 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+	template="/WEB-INF/template_public.xhtml">
+
+
+	<ui:define name="content">
+		<h:panelGroup layout="block" id="allPanel" styleClass="classAllPanel">
+
+			<div class="layout-portlets-box">
+				<div>
+					<div class="Container100 Responsive100">
+						<div class="ContainerIndent">
+							<h1 class="BigTopic">Cadastre-se no Σ Sigma</h1>
+							<h:form id="formCadastro">
+								<p:messages id="messages" showDetail="false" autoUpdate="true"
+									closable="true" escape="false" />
+
+								<p:focus />
+
+								<div class="EmptyBox10"></div>
+								<p:fieldset legend="Informações de autenticação (login)">
+									<p:panelGrid columns="2" layout="grid"
+										style="border:0px !important; background:none;"
+										styleClass="FormContent">
+
+										<p:panelGrid columns="1" layout="grid"
+											style="border:0px !important; background:none;"
+											styleClass="FormContent">
+											<p:inputText styleClass="Wid90" id="email1"
+												value="#{cadastrarUsuarioMB.usuario.username}"
+												placeholder="Email" required="true" type="email"
+												validatorMessage="O formato do email está inválido. O sistema permite apenas email do domínio institucional @policiacivil.sp.gov.br"
+												requiredMessage="O email é obrigatório."
+												style="text-transform: lowercase;">
+												<f:validateRegex
+													pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@(policiacivil\.sp\.gov\.br|fences\.com\.br)" />
+												<f:converter converterId="minusculoTextoConverter" />
+											</p:inputText>
+											<p:message for="email1" />
+										</p:panelGrid>
+
+										<p:panelGrid columns="1" layout="grid"
+											style="border:0px !important; background:none;"
+											styleClass="FormContent">
+											<p:inputText id="email2" styleClass="Wid90"
+												style="text-transform: lowercase;" type="email"
+												value="#{cadastrarUsuarioMB.emailConferencia}"
+												placeholder="Email de conferência" required="true"
+												validatorMessage="O formato do email de conferência está inválido."
+												requiredMessage="O email de conferência é obrigatório.">
+												<f:validateRegex
+													pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+												<f:converter converterId="minusculoTextoConverter" />
+											</p:inputText>
+											<p:message for="email2" />
+										</p:panelGrid>
+
+										<p:panelGrid columns="1" layout="grid"
+											style="border:0px !important; background:none;"
+											styleClass="FormContent">
+											<p:password styleClass="Wid90" id="senha1" match="senha2"
+												value="#{cadastrarUsuarioMB.usuario.password}"
+												placeholder="Senha" required="true"
+												validatorMessage="A senha deve coincidir com a senha de conferência."
+												requiredMessage="A senha é obrigatória." />
+											<p:message for="senha1" />
+										</p:panelGrid>
+
+										<p:panelGrid columns="1" layout="grid"
+											style="border:0px !important; background:none;"
+											styleClass="FormContent">
+											<p:password styleClass="Wid90" id="senha2"
+												placeholder="Senha de conferência" required="true"
+												requiredMessage="A senha de conferência é obrigatória." />
+											<p:message for="senha2" />
+										</p:panelGrid>
+									</p:panelGrid>
+								</p:fieldset>
+
+								<div class="EmptyBox20"></div>
+								<p:fieldset legend="Informação de sincronismo com o sistema RDO">
+									<p:panelGrid columns="4" layout="grid"
+										style="border:0px !important; background:none;"
+										styleClass="FormContent">
+
+										<p:panelGrid columns="1" layout="grid"
+											style="border:0px !important; background:none;"
+											styleClass="FormContent">
+											<p:inputMask id="rg" placeholder="RG" 
+												requiredMessage="O RG é obrigatório. O RG deve conter entre 6 e 11 dígitos sem pontos e hífen."
+												value="#{cadastrarUsuarioMB.usuario.rg}" required="true"
+												mask="999999?99999" styleClass="Wid90" />
+											<p:message for="rg" />
+
+										</p:panelGrid>
+
+
+
+									</p:panelGrid>
+
+									<h:outputText
+										value="O número do RG deve ser o mesmo que é utilizado para autenticação (login) no sistema RDO. Essa informação é necessário para efetuar o sincronismo de identificação e autorização." />
+
+								</p:fieldset>
+
+								<div class="EmptyBox20"></div>
+
+								<div class="EmptyBox20"></div>
+								<div class="Container100">
+									<h:panelGroup layout="block" style="text-align:right;">
+										<p:commandButton value="Cancelar" immediate="true"
+											action="#{navegacaoMB.getLogin()}"
+											icon="fa fa-close Fs16 white" />
+										<p:commandButton value="Cadastrar-se"
+											action="#{cadastrarUsuarioMB.cadastrarSe()}"
+											icon="fa fa-check Fs16 white" update="@form" />
+									</h:panelGroup>
+								</div>
+
+							</h:form>
+						</div>
+
+
+
+
+					</div>
+				</div>
+			</div>
+		</h:panelGroup>
+	</ui:define>
+</ui:composition>
+

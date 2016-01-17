@@ -9,6 +9,7 @@ import org.primefaces.model.SortOrder;
 
 import br.com.fences.deicdivecarfrontend.filtrocustom.FiltroBO;
 import br.com.fences.fencesutils.filtrocustom.FiltroCondicao;
+import br.com.fences.ocorrenciaentidade.composto.OcorrenciaResultadoComposto;
 import br.com.fences.ocorrenciaentidade.ocorrencia.Ocorrencia;
 /**
  * filtrocustom
@@ -51,6 +52,11 @@ public class FiltroLazyDataModel extends LazyDataModel<Ocorrencia> {
 		setRowCount(count);
 		
 		//setRowCount(ocorrencias.size());
+//		OcorrenciaResultadoComposto orc = filtroBO.pesquisarLazyComposto(filtroCondicoes, first, pageSize);
+//		ocorrencias = orc.getOcorrencias();
+//		setRowCount(orc.getQuantidadeTotal());
+		
+		
 		return ocorrencias;
 	}
 

@@ -34,6 +34,7 @@ import br.com.fences.fencesutils.filtrocustom.TipoPesquisaTexto;
 import br.com.fences.fencesutils.formatar.FormatarData;
 import br.com.fences.fencesutils.rest.tratamentoerro.util.VerificarErro;
 import br.com.fences.fencesutils.verificador.Verificador;
+import br.com.fences.ocorrenciaentidade.composto.OcorrenciaResultadoComposto;
 import br.com.fences.ocorrenciaentidade.ocorrencia.Ocorrencia;
 
 @SessionScoped 
@@ -346,6 +347,39 @@ public class FiltroBO implements Serializable{
 	}
 	
 	//--
+	public OcorrenciaResultadoComposto pesquisarLazyComposto(final List<FiltroCondicao> filtroCondicoes, final int primeiroRegistro, final int registrosPorPagina)
+	{
+		//List<Ocorrencia> ocorrencias = new ArrayList<>();
+		
+		host = appConfig.getServerBackendHost(); 
+		port = appConfig.getServerBackendPort();
+		
+		String json = gson.toJson(filtroCondicoes);
+		
+		Client client = ClientBuilder.newClient();
+		String servico = "http://" + host + ":"+ port + "/deicdivecarbackend/rest/" + 
+				"rouboCarga/pesquisarDinamicoLazyComposto/{primeiroRegistro}/{registrosPorPagina}"; 
+		WebTarget webTarget = client
+				.target(servico);
+		Response response = webTarget
+				.resolveTemplate("primeiroRegistro", primeiroRegistro)
+				.resolveTemplate("registrosPorPagina", registrosPorPagina)
+				.request(MediaType.APPLICATION_JSON)
+				.post(Entity.json(json));
+		json = response.readEntity(String.class);
+		if (verificarErro.contemErro(response, json))
+		{
+			String msg = verificarErro.criarMensagem(response, json, servico);
+			logger.error(msg);
+			throw new RuntimeException(msg);
+		}	
+		OcorrenciaResultadoComposto orc = gson.fromJson(json, OcorrenciaResultadoComposto.class);
+		return orc;
+//		Type collectionType = new TypeToken<List<Ocorrencia>>(){}.getType();
+//		ocorrencias = (List<Ocorrencia>) ocorrenciaConverter.paraObjeto(json, collectionType); 
+//	    return ocorrencias;
+	}   
+	
 	public List<Ocorrencia> pesquisarLazy(final List<FiltroCondicao> filtroCondicoes, final int primeiroRegistro, final int registrosPorPagina)
 	{
 		List<Ocorrencia> ocorrencias = new ArrayList<>();

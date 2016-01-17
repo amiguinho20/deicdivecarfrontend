@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" 
+	xmlns:o="http://omnifaces.org/ui">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+	</f:facet>
+	<title>Vigilante</title>
+	<h:outputScript name="js/layout.js" library="spark-layout" />
+
+	<h:outputText value="&lt;!--[if gte IE 9]&gt;" escape="false" />
+	<style type="text/css">
+/* styles for IE 9 */
+</style>
+	<h:outputText value="&lt;![endif]--&gt;" escape="false" />
+
+	<c:set var="baseURL"
+		value="#{request.requestURL.substring(0, request.requestURL.length() - request.requestURI.length())}#{request.contextPath}/" />
+
+
+	<ui:insert name="head" />
+</h:head>
+
+<h:body>
+
+	<div id="layout-portlets-cover">
+		<div
+			class="other-pages-box Container40 Responsive50 MarAuto Fnone TexAlCenter ShadowGray MarTop10"
+			style="margin-top:5%; background-image:url(#{baseURL}resources/spark-layout/images/loginpageillust.svg); background-repeat:no-repeat; background-position:center; background-size:cover;">
+			<div class="Container90 Fnone MarAuto TexAlCenter">
+				<o:form id="login" includeViewParams="true">
+
+					<div class="EmptyBox40"></div>
+					<h:graphicImage name="images/LogoSigma40.png" library="fences"
+						styleClass="MarAuto MarTop20 MarBot10" />
+					<div class="EmptyBox20"></div>
+					<p:inputText id="username" value="#{loginMB.username}" placeholder="Email"
+						styleClass="Container80 Fnone MarAuto Fs18" required="true" 
+						type="email"
+						validatorMessage="O formato do email está inválido."
+						requiredMessage="O email é obrigatório.">
+						<f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+						<f:converter converterId="minusculoTextoConverter" />	
+					</p:inputText>
+					<div class="Container90 Fnone MarAuto Fs18">
+						<p:message id="m_username" for="username" />
+					</div>
+					
+					<div class="EmptyBox10"></div>
+					<p:password id="password" value="#{loginMB.password}" placeholder="Senha"
+						styleClass="Container80 Fnone MarAuto Fs18" feedback="false"
+						required="true" 
+						requiredMessage="A senha é obrigatória."/>
+						<div class="Container90 Fnone MarAuto Fs18">
+						<p:message id="m_password" for="password" />	
+					</div>
+					<div class="EmptyBox20"></div>
+					<div class="Container85 Fnone MarAuto softgray">
+						<div class="EmptyBox5"></div>
+						<p:selectBooleanCheckbox value="#{loginMB.remember}"
+							itemLabel="Permanecer logado" />
+					</div>
+					<div class="EmptyBox30"></div>
+					<p:commandButton value="Entrar"
+						action="#{loginMB.autenticar}" styleClass="Fs16" ajax="false"/>
+					<ui:remove>
+						<p:button value="Log In / Sign Up" styleClass="Fs16"
+							href="dashboard.xhtml" ></p:button>
+					</ui:remove>
+					<div class="EmptyBox10"></div>
+					<div class="Seperator"></div>
+					<div class="EmptyBox10"></div>
+					<p:button value="Esqueceu a senha ?" styleClass="Fs16 RedButton"
+						href="dashboard.xhtml" rendered="false"></p:button>
+					<p:button value="Criar nova conta" styleClass="Fs16 RedButton"
+						href="#{navegacaoMB.cadastrarUsuario}" ></p:button>
+					<div class="EmptyBox40"></div>
+					<h:messages globalOnly="true" layout="table" />
+				</o:form>
+			</div>
+		</div>
+	</div>
+
+	<h:outputStylesheet name="css/core-layout.css" library="spark-layout" />
+	<h:outputStylesheet name="css/font-awesome.css" library="spark-layout" />
+	<h:outputStylesheet name="css/animate.css" library="spark-layout" />
+	<h:outputStylesheet name="css/spark-layout.css" library="spark-layout" />
+</h:body>
+
+</html>

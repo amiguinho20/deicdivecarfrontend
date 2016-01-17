@@ -3,13 +3,11 @@ package br.com.fences.deicdivecarfrontend.roubocarga.mb;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.Random;
 
 import javax.enterprise.inject.Model;
 
 import br.com.fences.fencesutils.conversor.ExcecaoParaMessageHtml;
 import br.com.fences.fencesutils.formatar.FormatarData;
-import br.com.fences.fencesutils.formatar.FormatarPrintStackTrace;
 import br.com.fences.fencesutils.verificador.Verificador;
 import br.com.fences.ocorrenciaentidade.ocorrencia.Ocorrencia;
 

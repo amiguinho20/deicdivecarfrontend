@@ -1,8 +1,11 @@
 <ui:composition 
     xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:ui="http://java.sun.com/jsf/facelets">
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
 
     
     <div id="layout-topbar" class="ShadowGray">
@@ -22,10 +25,12 @@
         	</a>
             <a href="#" id="mobile-menu-button" class="BordRad3 white ShowOnMobile"><i class="fa fa-bars"></i> Menu</a>
             <a href="#" id="mobile-menu-button-gray" class="BordRad3 white ShowOnMobile"><i class="fa fa-caret-down"></i> Menu Superior</a>
-            
+            <h:form id="formTopbar">
+            	<p:remoteCommand name="logout" actionListener="#{logoutMB.desautenticar()}" />
+            </h:form>
             <ul id="layout-topbar-menu">
             	<li>
-                	<a href="#" class="Animated05"><i class="fa fa-sign-out"></i> Sair</a>
+                	<a href="#" class="Animated05" onclick="logout();"><i class="fa fa-sign-out"></i> Sair</a>
                 </li>
                 <li class="fa fa-ellipsis-v menu-separator"></li>
                 <li>
@@ -58,9 +63,9 @@
 				</ui:remove>
                 <li class="fa fa-ellipsis-v menu-separator"></li>
                 <li>
-                	<a class="Animated05 CursPointer"><i class="fa fa-user"></i> Visitante, Bem-vindo <i class="fa fa-chevron-down Fs14 Fright ShowOnMobile"></i></a>
+                	<a class="Animated05 CursPointer"><i class="fa fa-user"></i><h:outputText value=" #{usuarioLogadoMB.primeiroNome}" />, Bem-vindo <i class="fa fa-chevron-down Fs14 Fright ShowOnMobile"></i></a>
                     <ul style="width:175px; margin-left:-10px;" class="Animated03 submenu">
-                    	<li><a class="Animated05"><i class="fa fa-user Fs30 Fleft"></i> <span class="Fright Fs20 TexAlRight">Visitante<span class="Fs10 DispBlock">Último login 18:50</span></span></a></li>
+                    	<li><a class="Animated05"><i class="fa fa-user Fs30 Fleft"></i> <span class="Fright Fs20 TexAlRight"><h:outputText value=" #{usuarioLogadoMB.primeiroNome}" /><ui:remove><span class="Fs10 DispBlock">Último login 18:50</span></ui:remove></span></a></li>
                     	<li><a href="#" class="Animated05"><i class="fa fa-dashboard"></i> Meu Perfil</a></li>
                         <li><a href="#{baseURL}/modulo/configuracao/configuracaousuario.xhtml" class="Animated05"><i class="fa fa-magic"></i> Minhas Configurações</a></li>
                         <ui:remove>
